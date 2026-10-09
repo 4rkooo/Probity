@@ -16,8 +16,12 @@ SCORE_HELP = (
 )
 
 
-def _integrity_panel(client: MockApiClient) -> None:
-    run = client.run_succeeded
+def _integrity_panel(client: MockApiClient, run=None) -> None:
+    run = run or (
+        client.get_reconstruction()
+        if client.uses_live_upload
+        else client.run_succeeded
+    )
     integrity = run.integrity
     st.markdown("### Deterministic Integrity Score")
     col_score, col_bars = st.columns([1, 2])
@@ -77,9 +81,14 @@ def _integrity_panel(client: MockApiClient) -> None:
         )
 
 
-def _policy_log(client: MockApiClient) -> None:
+def _policy_log(client: MockApiClient, run=None) -> None:
     st.markdown("### Ordered Policy Decision Log")
-    decisions = sorted(client.list_decisions(client.run_succeeded.run_id), key=lambda d: d.sequence)
+    run = run or (
+        client.get_reconstruction()
+        if client.uses_live_upload
+        else client.run_succeeded
+    )
+    decisions = sorted(client.list_decisions(run.run_id), key=lambda d: d.sequence)
     f1, f2, f3 = st.columns(3)
     with f1:
         codes = st.multiselect("Reason codes", sorted({str(d.rule_code) for d in decisions}))
@@ -117,9 +126,18 @@ def render_review_view(client: MockApiClient) -> None:
     ss = st.session_state
     st.subheader("6. Integrity Metrics, Policy Audit & Review Gate")
 
-    run = client.run_succeeded
-    _integrity_panel(client)
-    _policy_log(client)
+    run = (
+        client.get_reconstruction()
+        if client.uses_live_upload
+        else client.run_succeeded
+    )
+    if client.uses_live_upload:
+        st.info(
+            f"Reviewing live reconstruction for **{client.source_video.original_name}** "
+            "(not the bundled sedan demo)."
+        )
+    _integrity_panel(client, run)
+    _policy_log(client, run)
 
     st.markdown("---")
     st.markdown("### 🔒 Human Review & Hash Binding Gate")
@@ -173,7 +191,12 @@ def render_review_view(client: MockApiClient) -> None:
         )
         ss["review_inspected"] = inspected
         reviewer = st.text_input("Reviewer Alias", value=client.case.owner_alias)
-        comment = st.text_area("Review Findings / Comment", value="Verified rigid plate geometry across donors f409 and f424.")
+        default_comment = (
+            "Verified rigid ROI continuity across neighboring frames of the uploaded clip."
+            if client.uses_live_upload
+            else "Verified rigid plate geometry across donors f409 and f424."
+        )
+        comment = st.text_area("Review Findings / Comment", value=default_comment)
 
         btn_c1, btn_c2 = st.columns(2)
         with btn_c1:

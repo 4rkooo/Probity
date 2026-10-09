@@ -51,6 +51,13 @@ from probity.eval.window import WindowBundle, load_window
 from probity.ports import QueryPlanRequest, ReportFact, ReportFacts, ReportNarrative
 from probity.reports.gate import approval_blockers, export_blockers
 from probity.reports.validator import validate_or_fallback_narrative
+from probity.api.live_media import (
+    LiveFrame,
+    build_live_reconstruction,
+    build_live_track,
+    resolve_source_mp4,
+    sample_live_frames,
+)
 
 IngestOutcome = Literal["SUCCEEDED", "PARTIAL", "FAILED", "SPONSOR_TIMEOUT"]
 RunOutcome = Literal["SUCCEEDED", "REFUSED", "FAILED"]
@@ -127,6 +134,7 @@ class MockApiClient:
         self.live_job_id = None
         self.live_video_id = None
         self._live_source_path = None
+        self._clear_live_media()
         self.case = self._bundled_case
         self.source_video = self._bundled_source_video
         self.segments = list(self._bundled_segments)
@@ -134,6 +142,16 @@ class MockApiClient:
     @property
     def uses_live_upload(self) -> bool:
         return self.live_job_id is not None and self.live_api is not None
+
+    def _clear_live_media(self) -> None:
+        self._live_frames: list[LiveFrame] = []
+        self._live_frame_map: dict[int, Path] = {}
+        self._live_track: Track | None = None
+        self._live_run: ReconstructionRun | None = None
+        self._live_decisions: list[PolicyDecision] = []
+        self._live_result_path: Path | None = None
+        self._live_provenance_path: Path | None = None
+        self._live_npz_data: dict[str, np.ndarray] | None = None
 
     def adopt_live_upload(
         self,
@@ -152,6 +170,7 @@ class MockApiClient:
         self.live_job_id = job_id
         self._live_source_path = local_path
         self.segments = []
+        self._clear_live_media()
 
     def restore_bundled_demo(self) -> None:
         """Return to the offline bundled clip after a live custom-upload session."""
@@ -159,6 +178,8 @@ class MockApiClient:
         self.live_job_id = None
         self.live_video_id = None
         self._live_source_path = None
+        self._clear_live_media()
+        self.run_succeeded = self._run_succeeded_canonical
         self.case = self._bundled_case
         self.source_video = self._bundled_source_video
         self.segments = list(self._bundled_segments)
@@ -230,8 +251,17 @@ class MockApiClient:
         return self.source_video
 
     def source_path(self) -> Path:
-        if self._live_source_path is not None:
-            return self._live_source_path
+        if self._live_source_path is not None and Path(self._live_source_path).is_file():
+            return Path(self._live_source_path)
+        if self.uses_live_upload:
+            try:
+                return resolve_source_mp4(
+                    data_dir=self.root / "data",
+                    storage_uri=self.source_video.storage_uri,
+                    fallback=None,
+                )
+            except FileNotFoundError:
+                pass
         return self.demo_source_dir / self.source_video.original_name
 
     def verify_source(self) -> tuple[bool, str]:
@@ -254,7 +284,10 @@ class MockApiClient:
 
         Synthetic windows have no MP4 container; their identity is
         ``canonical_sha256({synth_version, pixel_sha256: [...]})`` over the lossless PNGs.
+        Live custom uploads re-hash the source MP4 against the ingest sha256.
         """
+        if self.uses_live_upload and self._live_run is not None:
+            return self.verify_source()
         window = window or self.window
         meta = json.loads((window.root / "window.json").read_text())
         hashes = []
@@ -271,6 +304,14 @@ class MockApiClient:
 
     def run_source_identity(self) -> dict[str, object]:
         """Display facts about the reconstruction source for the report."""
+        if self.uses_live_upload and self._live_run is not None:
+            return {
+                "original_name": self.source_video.original_name,
+                "width_px": self.source_video.width_px,
+                "height_px": self.source_video.height_px,
+                "duration_us": self.source_video.duration_us,
+                "sha256": self.source_video.sha256,
+            }
         frames = sorted(self.window.frames, key=lambda f: f.frame_number)
         return {
             "original_name": f"{self.window.fixture_id} (lossless PNG sequence, {len(frames)} frames)",
@@ -281,9 +322,15 @@ class MockApiClient:
         }
 
     def frame_path(self, frame_number: int, window: WindowBundle | None = None) -> Path:
+        if self.uses_live_upload and frame_number in self._live_frame_map:
+            return self._live_frame_map[frame_number]
         return (window or self.window).root / "frames" / f"f{frame_number:04d}.png"
 
     def frame_pts_us(self, frame_number: int) -> int:
+        if self.uses_live_upload:
+            for frame in self._live_frames:
+                if frame.frame_number == frame_number:
+                    return frame.pts_us
         for ref in self.window.frames:
             if ref.frame_number == frame_number:
                 return ref.pts_us
@@ -291,16 +338,78 @@ class MockApiClient:
 
     @property
     def target_frame_number(self) -> int:
+        if self.uses_live_upload and self._live_run is not None:
+            return parse_frame_id(self._live_run.target_frame_id)[1]
+        if self.uses_live_upload and self._live_track is not None:
+            return parse_frame_id(self._live_track.seed_frame_id)[1]
         return parse_frame_id(self.run_succeeded.target_frame_id)[1]
 
     def target_frame_path(self) -> Path:
         return self.frame_path(self.target_frame_number)
 
     def result_path(self) -> Path:
+        if self.uses_live_upload and self._live_result_path is not None:
+            return self._live_result_path
         return self.recon_dir / "result.png"
 
     def provenance_path(self) -> Path:
+        if self.uses_live_upload and self._live_provenance_path is not None:
+            return self._live_provenance_path
         return self.recon_dir / "provenance.npz"
+
+    def ensure_live_subject(self, seek_us: int) -> Track:
+        """Extract stills around the search hit and build a confirmed rigid-ROI track."""
+        if not self.uses_live_upload:
+            raise RuntimeError("ensure_live_subject requires a live custom upload")
+        if self._live_track is not None and self._live_frames:
+            return self._live_track
+        mp4 = self.source_path()
+        out_dir = self.root / "data" / "live_frames" / self.source_video.video_id
+        frames = sample_live_frames(
+            mp4=mp4,
+            out_dir=out_dir,
+            seek_us=seek_us,
+            duration_us=self.source_video.duration_us,
+            width_px=self.source_video.width_px,
+            height_px=self.source_video.height_px,
+        )
+        track = build_live_track(
+            case_id=self.case.case_id,
+            video_id=self.source_video.video_id,
+            frames=frames,
+            width_px=self.source_video.width_px,
+            height_px=self.source_video.height_px,
+        )
+        self._live_frames = frames
+        self._live_frame_map = {f.frame_number: f.path for f in frames}
+        self._live_track = track
+        return track
+
+    def ensure_live_reconstruction(self, target_frame_number: int) -> ReconstructionRun:
+        """Build live Probity artifacts from the custom-upload stills."""
+        if not self.uses_live_upload or self._live_track is None or not self._live_frames:
+            raise RuntimeError("ensure_live_reconstruction requires ensure_live_subject first")
+        if (
+            self._live_run is not None
+            and parse_frame_id(self._live_run.target_frame_id)[1] == target_frame_number
+        ):
+            return self._live_run
+        out_dir = self.root / "data" / "live_recon" / self.source_video.video_id
+        run, decisions, result_path, provenance_path, arrays = build_live_reconstruction(
+            case_id=self.case.case_id,
+            video_id=self.source_video.video_id,
+            track=self._live_track,
+            frames=self._live_frames,
+            target_frame_number=target_frame_number,
+            out_dir=out_dir,
+        )
+        self._live_run = run
+        self._live_decisions = decisions
+        self._live_result_path = result_path
+        self._live_provenance_path = provenance_path
+        self._live_npz_data = arrays
+        self.run_succeeded = run
+        return run
 
     def list_segments(self, video_id: str | None = None) -> list[VideoSegment]:
         if self.uses_live_upload and self.live_api is not None and self.live_video_id:
@@ -468,6 +577,10 @@ class MockApiClient:
     # -----------------------------------------------------------------------------------------
 
     def get_track(self, confirmed: bool = True) -> Track:
+        if self.uses_live_upload and self._live_track is not None:
+            if confirmed:
+                return self._live_track
+            return self.track_not_confirmed
         return self.track_confirmed if confirmed else self.track_not_confirmed
 
     # -----------------------------------------------------------------------------------------
@@ -481,6 +594,9 @@ class MockApiClient:
             return self.run_refused
         if outcome == "FAILED":
             return self.run_failed
+        if self.uses_live_upload and self._live_run is not None:
+            if run_id is None or run_id == self._live_run.run_id:
+                return self._live_run
         if run_id is not None:
             for run in (self.run_succeeded, self.run_refused, self.run_failed):
                 if run.run_id == run_id:
@@ -491,12 +607,20 @@ class MockApiClient:
         """Outcome of the verified cached run for this target.
 
         Only the golden target has a stored Probity run; other frames return ``NOT_CACHED``
-        rather than pretending a reconstruction ran.
+        rather than pretending a reconstruction ran. Live custom uploads reconstruct any
+        accepted subject-window frame on demand.
         """
         if self.run_outcome == "FAILED":
             return "FAILED"
         if self.run_outcome == "REFUSED":
             return "REFUSED"
+        if self.uses_live_upload and self._live_track is not None:
+            accepted = {
+                parse_frame_id(o.frame_id)[1]
+                for o in self._live_track.observations
+                if o.accepted
+            }
+            return "SUCCEEDED" if target_frame_number in accepted else "NOT_CACHED"
         if target_frame_number != self.target_frame_number:
             return "NOT_CACHED"
         return "SUCCEEDED"
@@ -533,7 +657,15 @@ class MockApiClient:
             return self.decisions_refused
         if run_id == self.run_failed.run_id:
             return []
+        if self.uses_live_upload and self._live_run is not None:
+            if run_id is None or run_id == self._live_run.run_id:
+                return list(self._live_decisions)
         return self.decisions_succeeded
+
+    def _active_npz(self) -> dict[str, np.ndarray] | None:
+        if self.uses_live_upload and self._live_npz_data is not None:
+            return self._live_npz_data
+        return self._npz_data
 
     def provenance_exceptions(self) -> list[list[float]]:
         """Pixels whose origin is not the identity mapping onto the target frame.
@@ -542,12 +674,13 @@ class MockApiClient:
         pixel is ORIGINAL, source index 0, at its own coordinate; the canvas uses this
         compact form to resolve any hovered pixel exactly as the NPZ does.
         """
-        if self._npz_data is None:
+        data = self._active_npz()
+        if data is None:
             return []
-        cls = self._npz_data["class"]
-        idx = self._npz_data["source_index"]
-        sx = self._npz_data["source_x"]
-        sy = self._npz_data["source_y"]
+        cls = data["class"]
+        idx = data["source_index"]
+        sx = data["source_x"]
+        sy = data["source_y"]
         h, w = cls.shape
         yy, xx = np.mgrid[0:h, 0:w]
         mask = (cls != 0) | (idx != 0) | (sx != xx) | (sy != yy)
@@ -559,26 +692,28 @@ class MockApiClient:
 
     def provenance_shape(self) -> tuple[int, int]:
         """(width, height) of the provenance arrays."""
-        if self._npz_data is None:
+        data = self._active_npz()
+        if data is None:
             return (self.source_video.width_px, self.source_video.height_px)
-        h, w = self._npz_data["class"].shape
+        h, w = data["class"].shape
         return (int(w), int(h))
 
     def resolve_pixel(self, x: int, y: int, run_id: str | None = None) -> PixelOrigin | None:
         """Resolve pixel origin from provenance NPZ and run source LUT."""
-        if self._npz_data is None:
+        data = self._active_npz()
+        if data is None:
             return None
 
-        h, w = self._npz_data["class"].shape
+        h, w = data["class"].shape
         if not (0 <= x < w and 0 <= y < h):
             return None
 
-        cls_val = int(self._npz_data["class"][y, x])
-        src_idx = int(self._npz_data["source_index"][y, x])
-        src_x = float(self._npz_data["source_x"][y, x])
-        src_y = float(self._npz_data["source_y"][y, x])
+        cls_val = int(data["class"][y, x])
+        src_idx = int(data["source_index"][y, x])
+        src_x = float(data["source_x"][y, x])
+        src_y = float(data["source_y"][y, x])
 
-        run = self.run_succeeded
+        run = self.get_reconstruction(run_id)
         lut = run.provenance.source_lut if run.provenance else ()
         entry = lut[src_idx] if src_idx < len(lut) else None
         if entry is None:
@@ -751,13 +886,14 @@ class MockApiClient:
 
     def export_artifacts(self) -> dict[str, tuple[Path, str]]:
         """Bundle filename -> (local path, role) for the current reconstruction."""
-        target = self.target_frame_number
+        run = self._live_run if (self.uses_live_upload and self._live_run is not None) else self.run_succeeded
+        target = parse_frame_id(run.target_frame_id)[1]
         artifacts = {
-            f"target_f{target}.png": (self.target_frame_path(), "target_still"),
+            f"target_f{target}.png": (self.frame_path(target), "target_still"),
             "result.png": (self.result_path(), "result"),
             "provenance.npz": (self.provenance_path(), "provenance"),
         }
-        for entry in self.run_succeeded.provenance.source_lut if self.run_succeeded.provenance else ():
+        for entry in run.provenance.source_lut if run.provenance else ():
             if entry.role == "DONOR":
                 artifacts[f"donor_f{entry.frame_number}.png"] = (
                     self.frame_path(entry.frame_number),
