@@ -61,7 +61,7 @@ class LiveCosmosUnderstanding:
         self._endpoint = endpoint
         self._token = token
         self._transport = transport
-        self._model_id = model_id
+        self._model_id = model_id or None
         self._timeout_s = timeout_s
         self._read_retry_delays_s = read_retry_delays_s
         self._sleep = sleep

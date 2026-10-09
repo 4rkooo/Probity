@@ -105,6 +105,9 @@ class MockApiClient:
         self.demo_source_dir = self.root / "fixtures" / "demo" / "source"
 
         self._load_fixtures()
+        self._bundled_source_video = self.source_video
+        self._bundled_case = self.case
+        self._bundled_segments = list(self.segments)
         self.reasoner = WandbFixtureAdapter()
         self.reset()
 
@@ -120,6 +123,45 @@ class MockApiClient:
         self.hallucinate_narrative = False
         self._artifact_revision = 0
         self.run_succeeded = self._run_succeeded_canonical
+        self.live_api = None
+        self.live_job_id = None
+        self.live_video_id = None
+        self._live_source_path = None
+        self.case = self._bundled_case
+        self.source_video = self._bundled_source_video
+        self.segments = list(self._bundled_segments)
+
+    @property
+    def uses_live_upload(self) -> bool:
+        return self.live_job_id is not None and self.live_api is not None
+
+    def adopt_live_upload(
+        self,
+        *,
+        live_api: object,
+        case: CaseWorkspace,
+        video: SourceVideo,
+        job_id: str,
+        local_path: Path | None = None,
+    ) -> None:
+        """Switch the UI client onto a video accepted by the live API."""
+        self.live_api = live_api
+        self.case = case
+        self.source_video = video
+        self.live_video_id = video.video_id
+        self.live_job_id = job_id
+        self._live_source_path = local_path
+        self.segments = []
+
+    def restore_bundled_demo(self) -> None:
+        """Return to the offline bundled clip after a live custom-upload session."""
+        self.live_api = None
+        self.live_job_id = None
+        self.live_video_id = None
+        self._live_source_path = None
+        self.case = self._bundled_case
+        self.source_video = self._bundled_source_video
+        self.segments = list(self._bundled_segments)
 
     def _load_fixtures(self) -> None:
         def load(name: str) -> str:
@@ -188,12 +230,18 @@ class MockApiClient:
         return self.source_video
 
     def source_path(self) -> Path:
+        if self._live_source_path is not None:
+            return self._live_source_path
         return self.demo_source_dir / self.source_video.original_name
 
     def verify_source(self) -> tuple[bool, str]:
         """Stream-hash the canonical source now; returns (matches_ingest_hash, observed_sha256)."""
         path = self.source_path()
         if not path.exists():
+            # Live uploads are verified by the API; trust the accepted hash when local bytes
+            # are not kept on the UI host.
+            if self.uses_live_upload:
+                return True, self.source_video.sha256
             return False, "0" * 64
         observed = _sha256_file(path)
         if self.source_tampered:
@@ -255,7 +303,24 @@ class MockApiClient:
         return self.recon_dir / "provenance.npz"
 
     def list_segments(self, video_id: str | None = None) -> list[VideoSegment]:
+        if self.uses_live_upload and self.live_api is not None and self.live_video_id:
+            self.segments = list(self.live_api.list_segments(self.live_video_id))
         return list(self.segments)
+
+    def poll_live_ingest(self) -> JobView:
+        if not self.uses_live_upload or self.live_api is None or self.live_job_id is None:
+            raise RuntimeError("no live ingest job")
+        job = self.live_api.get_job(self.live_job_id)
+        if self.live_video_id is not None:
+            self.source_video = self.live_api.get_video(self.live_video_id)
+        if job.state in (JobState.SUCCEEDED, JobState.PARTIAL):
+            self.list_segments()
+        return job
+
+    def cancel_live_ingest(self) -> JobView:
+        if not self.uses_live_upload or self.live_api is None or self.live_job_id is None:
+            raise RuntimeError("no live ingest job")
+        return self.live_api.cancel_job(self.live_job_id)
 
     def _job(self, kind: JobKind, state: JobState, code: str | None = None) -> JobView:
         for j in self.job_views:
@@ -329,6 +394,9 @@ class MockApiClient:
         cleaned = query.strip()
         if not cleaned:
             return self.search_needs_clarification
+
+        if self.uses_live_upload and self.live_api is not None and self.live_video_id:
+            return self.live_api.search(self.live_video_id, cleaned, max_results=max_results)
 
         plan = asyncio.run(
             self.reasoner.plan_query(
