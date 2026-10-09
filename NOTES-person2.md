@@ -8,14 +8,16 @@ contradict it is a bug in this file.
 
 | To | Request | Status |
 | --- | --- | --- |
-| Person 1 | `pyproject.toml`: `recon = ["opencv-contrib-python-headless>=4.10,<5", "scikit-image>=0.24,<0.25"]`, `live-yolo = ["ultralytics>=8.3,<9", "lap>=0.5.12"]`, and `[tool.uv] override-dependencies = ["opencv-python; sys_platform == 'never'", "opencv-python-headless; sys_platform == 'never'"]` (CSRT needs contrib; ultralytics pulls the non-headless wheel) | pending |
-| Person 1 | Regenerate the demo clip so frame 417 is the blurriest plate view and at least 3 sharper detector-backed frames fall inside +/-2 s; keep the bit-exact encode flags | pending |
-| Person 1 | Register `fixtures/demo/frames/` as frame_png; frame entity folders are `f{frame_number}` (':' is an NTFS stream separator) | pending |
+| Person 1 | `pyproject.toml`: `recon = ["opencv-contrib-python-headless>=4.10,<5", "scikit-image>=0.24,<0.25"]`, `live-yolo = ["ultralytics>=8.3,<9", "lap>=0.5.12"]`, and `[tool.uv] override-dependencies = ["opencv-python; sys_platform == 'never'", "opencv-python-headless; sys_platform == 'never'"]` (CSRT needs contrib; ultralytics pulls the non-headless wheel) | on branch `person2/requests-for-p1` (c1f8c0e); awaiting Person 1 merge |
+| Person 1 | Regenerate the demo clip so frame 417 is the blurriest plate view and at least 3 sharper detector-backed frames fall inside +/-2 s; keep the bit-exact encode flags | generator change on branch `person2/requests-for-p1` (d11eaca: focus-hunt blur peaking at 417; test render 417 Laplacian var 151.7 vs ~13000 elsewhere, 109 sharper frames in +/-2 s). Person 1 to re-render with their ffmpeg 9.0.2 and refresh source/frame/search fixtures |
+| Person 1 | Register `fixtures/demo/frames/` as frame_png; frame entity folders are `f{frame_number}` (':' is an NTFS stream separator) | pending (blocked on the regenerated clip) |
 | Person 1 | Confirm the worker does not re-register reconstruction AssetRefs I emit; reuse my `pixel_sha256` definition (below) for extracted frames | pending |
-| Team | Add to `config/policy.demo.yaml` (and `PolicyConfig`): `alignment.scale_ratio_min: 0.67`, `alignment.scale_ratio_max: 1.50`, `ransac.max_iters: 2000`, `ransac.confidence: 0.995`, `ransac.rng_seed: 20261009`, `clahe.clip_limit: 2.0`, `clahe.tile_grid: 4`, `akaze.detector_threshold: 0.001`, `ecc.gauss_filt_size: 5`. `config_sha256` changes | pending |
+| Team | Add to `config/policy.demo.yaml` (and `PolicyConfig`): `alignment.scale_ratio_min: 0.67`, `alignment.scale_ratio_max: 1.50`, `ransac.max_iters: 2000`, `ransac.confidence: 0.995`, `ransac.rng_seed: 20261009`, `clahe.clip_limit: 2.0`, `clahe.tile_grid: 4`, `akaze.detector_threshold: 0.001`, `ecc.gauss_filt_size: 5`. `config_sha256` changes | on branch `person2/requests-for-p1` (b93c80b; config_sha256 -> 43dbd6f0, contract run fixtures + demo manifest rebound); awaiting Person 1 merge |
+| Person 1 | Windows: 26 tests fail on `person1/platform` with no Person 2 changes (`test_source_storage` x7 + `test_demo_clip_ingestion_pipeline`: unlink/permission/symlink; `test_ffprobe` bytes args; `test_vast_adapter` x7, `test_cosmos_adapter` x4, `test_fixture_search` x3, `test_person1_slice` x3) | to report |
+| Integrator | After merging `person1/platform`: `ReconstructionRun.algorithm_version` is now `probity-tile-v1`; regenerate `fixtures/synthetic/*/reconstructions/*`, update `test_guards.py`, re-pin hashes | pending |
 | User | Root `.gitattributes`: `*.png binary`, `*.npz binary`, `*.npy binary`, `*.mp4 binary`, `*.json text eol=lf` (`fixtures/synthetic/.gitattributes` keeps `* -text` for goldens) | done (user-approved; renormalize changed no blobs) |
-| User | ffmpeg on PATH (`winget install Gyan.FFmpeg`), needed for demo frame extraction | pending |
-| Repo owner (4rkooo) | Give `Jeremiahadu` write access to `4rkooo/Probity`; every push of `person2/*` returns 403 | pending |
+| User | ffmpeg on PATH (`winget install Gyan.FFmpeg`), needed for demo frame extraction | done (Gyan.FFmpeg.Essentials 9.0.1; Person 1 fixtures used 9.0.2) |
+| Repo owner (4rkooo) | Give `Jeremiahadu` write access to `4rkooo/Probity`; every push of `person2/*` returns 403 | done |
 
 ## Findings to share
 
