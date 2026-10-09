@@ -18,7 +18,6 @@ from __future__ import annotations
 
 import argparse
 import math
-import statistics
 from collections.abc import Sequence
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -31,7 +30,6 @@ from probity.domain.enums import (
     AssetKind,
     InferenceMode,
     Interpolation,
-    ObservationSource,
     PolicyOutcome,
     PolicyStage,
     ProvenanceClass,
@@ -56,7 +54,7 @@ from probity.domain.policy import PolicyConfig, default_policy
 from probity.eval.synth import source_digest
 from probity.eval.window import WindowBundle, load_truth, load_window
 from probity.reconstruction import quality as q
-from probity.reconstruction.decisions import DecisionLog, passes
+from probity.reconstruction.decisions import DecisionLog
 from probity.reconstruction.determinism import FixedClock, seeded_uuid7
 from probity.reconstruction.io import (
     atomic_write_bytes,
@@ -66,6 +64,7 @@ from probity.reconstruction.io import (
     load_frame,
     sha256_bytes,
 )
+from probity.reconstruction.preflight import run_preflight
 from probity.reconstruction.provenance import (
     ProvenanceArrays,
     assert_supported_changes,
@@ -116,13 +115,6 @@ class HandbuiltRun:
     assets: tuple[AssetRef, ...] = ()
 
 
-def _occlusion(detections: dict[str, Detection], obs: TrackObservation) -> float:
-    if obs.detection_id is None:
-        return 0.0
-    det = detections[obs.detection_id]
-    return det.occlusion_score or 0.0
-
-
 def _ring_mask(shape: tuple[int, int], expanded: BBox, subject: BBox) -> np.ndarray:
     mask = np.zeros(shape, dtype=bool)
     ex1, ey1, ex2, ey2 = expanded
@@ -145,7 +137,9 @@ def build_handbuilt_run(window: WindowBundle, cfg: PolicyConfig, run_label: str)
     run_id = seeded_uuid7(f"{window.fixture_id}:{run_label}:run", clock.unix_ms)
     log = DecisionLog(run_id, clock)
     resolve = window.resolver
-    detections = {d.detection_id: d for d in window.detections}
+    detections: dict[str, list[Detection]] = {}
+    for det in window.detections:
+        detections.setdefault(det.frame_id, []).append(det)
     track = window.track
     started_at = clock.at(0)
 
@@ -161,116 +155,42 @@ def build_handbuilt_run(window: WindowBundle, cfg: PolicyConfig, run_label: str)
             "Frame pixel hashes re-verified; synthetic source digest matched", observed=digest[:12],
             operator="==", threshold=window.source_sha256[:12])
 
-    log.gate(ReasonCode.TRACK_CONFIRMED, PolicyStage.TRACK, track.track_id,
-             observed=track.detector_observation_count, operator=">=",
-             threshold=cfg.track.min_detector_observations, units="observations",
-             policy_key="track.min_detector_observations",
-             accept_reason="Detector-backed observations meet minimum",
-             reject_reason="Too few detector-backed observations")
-    log.gate(ReasonCode.TRACK_CONFIRMED, PolicyStage.TRACK, track.track_id,
-             observed=track.mean_confidence, operator=">=",
-             threshold=cfg.track.min_mean_confidence, units="confidence",
-             policy_key="track.min_mean_confidence",
-             accept_reason="Mean detector confidence meets minimum",
-             reject_reason="Mean detector confidence below minimum")
-
-    target_obs = next(o for o in track.observations if o.frame_id == window.target_frame_id)
     target_n = parse_frame_id(window.target_frame_id)[1]
     target_ref = window.frame(target_n)
-    target = images[target_n]
-    tbox: BBox = target_obs.bbox_px
-    H, W = target.shape[:2]
-    accepted = [o for o in track.observations if o.accepted]
-    median_aspect = statistics.median(q.box_aspect(o.bbox_px) for o in accepted)
-    tq = q.measure_observation(target, tbox, target_obs.confidence,
-                               _occlusion(detections, target_obs), median_aspect, cfg)
-    tw, th = q.box_size(tbox)
-    log.gate(ReasonCode.TARGET_TOO_SMALL, PolicyStage.QUALITY, target_obs.frame_id, observed=tw,
-             operator=">=", threshold=cfg.target.min_width_px, units="px",
-             policy_key="target.min_width_px", accept_reason="Target width meets minimum",
-             reject_reason="Target narrower than minimum")
-    log.gate(ReasonCode.TARGET_TOO_SMALL, PolicyStage.QUALITY, target_obs.frame_id, observed=th,
-             operator=">=", threshold=cfg.target.min_height_px, units="px",
-             policy_key="target.min_height_px", accept_reason="Target height meets minimum",
-             reject_reason="Target shorter than minimum")
-    log.gate(ReasonCode.TARGET_QUALITY_TOO_LOW, PolicyStage.QUALITY, target_obs.frame_id,
-             observed=tq.Q, operator=">=", threshold=cfg.target.min_quality, units="quality",
-             policy_key="target.min_quality", accept_reason="Target quality above floor",
-             reject_reason="Target quality below floor")
+    tbox: BBox = window.target_bbox_px
 
-    radius_s = cfg.track.window_radius_s
+    def refused(reason: ReasonCode, iterations: int, accepted_ids: tuple[str, ...] = ()
+                ) -> HandbuiltRun:
+        run = ReconstructionRun.create(
+            created_at=clock.at(len(log.rows) + 1),
+            run_id=run_id, case_id=window.case_id, video_id=window.video_id,
+            track_id=track.track_id, target_frame_id=target_ref.frame_id,
+            target_pts_us=target_ref.pts_us, target_bbox_px=tbox,
+            state=ReconstructionState.REFUSED, config_sha256=cfg.config_sha256,
+            iteration_count=iterations, accepted_donor_frame_ids=accepted_ids,
+            policy_decision_ids=log.ids, refusal_reasons=(reason,),
+            uncertainty=("No defensible enhancement produced; the original frame is unchanged.",
+                         SYNTHETIC_NOTE, HANDBUILT_NOTE),
+            mode=InferenceMode.FIXTURE, started_at=started_at,
+            finished_at=clock.at(len(log.rows) + 1),
+        )
+        return HandbuiltRun(run=run, decisions=log.rows)
+
+    pre = run_preflight(
+        log, track=track, video_id=window.video_id, case_id=window.case_id,
+        target_frame_id=window.target_frame_id, target_box=tbox,
+        frames={ref.frame_id: ref for ref in window.frames},
+        load=lambda ref: images[ref.frame_number], detections=detections, cfg=cfg)
+    if pre.refusal is not None:
+        return refused(pre.refusal, 0)
+    assert pre.target is not None
+    target = pre.target.image
+    H, W = target.shape[:2]
     target_luma = q.crop(q.to_luma(target), tbox)
+
     expanded_t = q.expand_box(tbox, cfg.crop.alignment_context_expand, W, H)
-    donors: list[Donor] = []
-    for obs in sorted(accepted, key=lambda o: o.pts_us):
-        if obs.frame_id == target_obs.frame_id:
-            continue
-        donor_video, n = parse_frame_id(obs.frame_id)
-        subject = obs.frame_id
-        if donor_video != window.video_id:
-            log.add(ReasonCode.DONOR_TRACK_MISMATCH, PolicyStage.PREFLIGHT, subject,
-                    PolicyOutcome.REJECT, "Donor frame belongs to another video",
-                    observed=donor_video, operator="==", threshold=window.video_id)
-            continue
-        dt_s = (obs.pts_us - target_obs.pts_us) / 1_000_000
-        img = images[n]
-        dq = q.measure_observation(img, obs.bbox_px, obs.confidence,
-                                   _occlusion(detections, obs), median_aspect, cfg)
-        scale = math.sqrt((q.box_size(obs.bbox_px)[0] * q.box_size(obs.bbox_px)[1]) / (tw * th))
-        aspect_change = abs(q.box_aspect(obs.bbox_px) / q.box_aspect(tbox) - 1.0)
-        stops = q.exposure_delta_stops(q.crop(q.to_luma(img), obs.bbox_px), target_luma)
-        pending: list[dict[str, object]] = [
-            dict(rule_code=ReasonCode.DONOR_OUTSIDE_WINDOW, observed=abs(dt_s), operator="<=",
-                 threshold=radius_s, units="s", policy_key="track.window_radius_s",
-                 accept_reason="Within temporal window", reject_reason="Outside temporal window"),
-            dict(rule_code=ReasonCode.IDENTITY_GEOMETRY_MISMATCH, observed=scale, operator=">=",
-                 threshold=cfg.track.box_scale_ratio_min, units="ratio",
-                 policy_key="track.box_scale_ratio_min", accept_reason="Box scale ratio in range",
-                 reject_reason="Box scale ratio too small"),
-            dict(rule_code=ReasonCode.IDENTITY_GEOMETRY_MISMATCH, observed=scale, operator="<=",
-                 threshold=cfg.track.box_scale_ratio_max, units="ratio",
-                 policy_key="track.box_scale_ratio_max", accept_reason="Box scale ratio in range",
-                 reject_reason="Box scale ratio too large"),
-            dict(rule_code=ReasonCode.IDENTITY_GEOMETRY_MISMATCH, observed=aspect_change,
-                 operator="<=", threshold=cfg.track.max_aspect_change, units="fraction",
-                 policy_key="track.max_aspect_change", accept_reason="Aspect change in range",
-                 reject_reason="Aspect change exceeds limit"),
-            dict(rule_code=ReasonCode.DONOR_OBSTRUCTED, observed=1.0 - dq.O, operator="<=",
-                 threshold=cfg.donor.max_occluded_fraction, units="fraction",
-                 policy_key="donor.max_occluded_fraction", accept_reason="Unobstructed view",
-                 reject_reason="Obstruction exceeds limit"),
-            dict(rule_code=ReasonCode.DONOR_NOT_CLEARER, observed=dq.Q, operator=">=",
-                 threshold=cfg.donor.min_quality, units="quality",
-                 policy_key="donor.min_quality", accept_reason="Donor quality above floor",
-                 reject_reason="Donor quality below absolute floor"),
-            dict(rule_code=ReasonCode.DONOR_NOT_CLEARER, observed=dq.Q - tq.Q, operator=">=",
-                 threshold=cfg.donor.min_quality_gain, units="quality",
-                 policy_key="donor.min_quality_gain", accept_reason="Donor clearer than target",
-                 reject_reason="Donor quality gain below minimum"),
-            dict(rule_code=ReasonCode.LIGHTING_OUT_OF_RANGE, observed=stops, operator="<=",
-                 threshold=cfg.donor.max_exposure_delta_stops, units="stops",
-                 policy_key="donor.max_exposure_delta_stops",
-                 accept_reason="Exposure difference in range",
-                 reject_reason="Exposure difference exceeds limit"),
-        ]
-        if obs.source is not ObservationSource.DETECTOR:
-            log.add(ReasonCode.IDENTITY_GEOMETRY_MISMATCH, PolicyStage.PREFLIGHT, subject,
-                    PolicyOutcome.REJECT, "Bridged-only identity cannot donate pixels",
-                    observed=str(obs.source), operator="==", threshold="DETECTOR")
-            continue
-        failed = next((g for g in pending if not passes(
-            float(g["observed"]), g["operator"], float(g["threshold"]))), None)  # type: ignore[arg-type]
-        stage = PolicyStage.PREFLIGHT
-        if failed is not None:
-            log.gate(failed["rule_code"], stage, subject, **{  # type: ignore[arg-type]
-                k: v for k, v in failed.items() if k != "rule_code"})
-            continue
-        donor = Donor(obs=obs, frame_number=n, image=img, quality=dq, dt_s=dt_s)
-        for g in pending:
-            log.gate(g["rule_code"], stage, subject, **{  # type: ignore[arg-type]
-                k: v for k, v in g.items() if k != "rule_code"})
-            donor.decision_ids.append(log.ids[-1])
-        donors.append(donor)
+    donors = [Donor(obs=m.obs, frame_number=m.frame_number, image=m.image, quality=m.quality,
+                    dt_s=m.dt_s, decision_ids=list(m.decision_ids)) for m in pre.donors]
 
     # Geometry (HAND-BUILT stand-in) and color compatibility.
     ys, xs = np.indices((H, W), dtype=np.float32)
@@ -331,25 +251,8 @@ def build_handbuilt_run(window: WindowBundle, cfg: PolicyConfig, run_label: str)
                       accept_reason="Enough compatible donors",
                       reject_reason="Fewer compatible donors than required")
     accepted_ids = tuple(d.obs.frame_id for d in ranked)
-
-    def refused(reason: ReasonCode, iterations: int) -> HandbuiltRun:
-        run = ReconstructionRun.create(
-            created_at=clock.at(len(log.rows) + 1),
-            run_id=run_id, case_id=window.case_id, video_id=window.video_id,
-            track_id=track.track_id, target_frame_id=target_ref.frame_id,
-            target_pts_us=target_ref.pts_us, target_bbox_px=tbox,
-            state=ReconstructionState.REFUSED, config_sha256=cfg.config_sha256,
-            iteration_count=iterations, accepted_donor_frame_ids=accepted_ids,
-            policy_decision_ids=log.ids, refusal_reasons=(reason,),
-            uncertainty=("No defensible enhancement produced; the original frame is unchanged.",
-                         SYNTHETIC_NOTE, HANDBUILT_NOTE),
-            mode=InferenceMode.FIXTURE, started_at=started_at,
-            finished_at=clock.at(len(log.rows) + 1),
-        )
-        return HandbuiltRun(run=run, decisions=log.rows)
-
     if not enough:
-        return refused(ReasonCode.INSUFFICIENT_COMPATIBLE_DONORS, 0)
+        return refused(ReasonCode.INSUFFICIENT_COMPATIBLE_DONORS, 0, accepted_ids)
 
     # Winner-take-all 8x8 tiles; never averages donors.
     tx1, ty1, tx2, ty2 = tbox
@@ -424,7 +327,7 @@ def build_handbuilt_run(window: WindowBundle, cfg: PolicyConfig, run_label: str)
         log.add(ReasonCode.NO_TILE_IMPROVED, PolicyStage.FUSE, "tiles", PolicyOutcome.REJECT,
                 "No tile met the improvement and residual gates", observed=0, operator=">=",
                 threshold=1, units="tiles", policy_key="fusion.min_sharpness_improvement")
-        return refused(ReasonCode.NO_TILE_IMPROVED, 1)
+        return refused(ReasonCode.NO_TILE_IMPROVED, 1, accepted_ids)
 
     lut = [SourceLutEntry(index=0, frame_id=target_ref.frame_id,
                           frame_number=target_ref.frame_number, pts_us=target_ref.pts_us,
@@ -463,7 +366,7 @@ def build_handbuilt_run(window: WindowBundle, cfg: PolicyConfig, run_label: str)
                   units="points", policy_key="integrity.min_score",
                   accept_reason="Integrity meets minimum", reject_reason="Integrity below minimum")
     if not ok:
-        return refused(ReasonCode.INTEGRITY_BELOW_MINIMUM, 1)
+        return refused(ReasonCode.INTEGRITY_BELOW_MINIMUM, 1, accepted_ids)
 
     png = encode_png(result)
     npz = encode_provenance(arrays)

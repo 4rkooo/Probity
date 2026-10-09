@@ -1,7 +1,9 @@
-"""Append-only, sequenced PolicyDecision log for one reconstruction run."""
+"""Append-only, sequenced PolicyDecision log for one reconstruction run, and declarative gates."""
 
 from __future__ import annotations
 
+from collections.abc import Iterable
+from dataclasses import dataclass
 from typing import Literal
 
 from probity.domain.enums import PolicyOutcome, PolicyStage, ReasonCode
@@ -11,7 +13,13 @@ from probity.reconstruction.determinism import FixedClock, seeded_uuid7
 Operator = Literal["<", "<=", ">", ">=", "==", "!=", "in", "none"]
 
 
-def passes(observed: float, operator: Operator, threshold: float) -> bool:
+def passes(observed: ScalarValue, operator: Operator, threshold: ScalarValue) -> bool:
+    if operator == "==":
+        return observed == threshold
+    if operator == "!=":
+        return observed != threshold
+    if not isinstance(observed, int | float) or not isinstance(threshold, int | float):
+        raise ValueError(f"operator {operator!r} needs numeric operands")
     if operator == "<":
         return observed < threshold
     if operator == "<=":
@@ -20,11 +28,41 @@ def passes(observed: float, operator: Operator, threshold: float) -> bool:
         return observed > threshold
     if operator == ">=":
         return observed >= threshold
-    if operator == "==":
-        return observed == threshold
-    if operator == "!=":
-        return observed != threshold
-    raise ValueError(f"operator {operator!r} is not numeric")
+    raise ValueError(f"operator {operator!r} is not a comparison")
+
+
+@dataclass(frozen=True)
+class Gate:
+    """One material comparison. ``reject_code`` defaults to ``rule_code``."""
+
+    rule_code: ReasonCode
+    stage: PolicyStage
+    observed: ScalarValue
+    operator: Operator
+    threshold: ScalarValue
+    units: str | None
+    policy_key: str | None
+    accept_reason: str
+    reject_reason: str
+    reject_code: ReasonCode | None = None
+
+    @property
+    def ok(self) -> bool:
+        return passes(self.observed, self.operator, self.threshold)
+
+    @property
+    def failure_code(self) -> ReasonCode:
+        return self.reject_code or self.rule_code
+
+
+def first_failure(gates: Iterable[Gate]) -> Gate | None:
+    return next((g for g in gates if not g.ok), None)
+
+
+def _normalize(value: ScalarValue) -> ScalarValue:
+    if isinstance(value, bool) or value is None or isinstance(value, int | str):
+        return value
+    return float(value)
 
 
 class DecisionLog:
@@ -66,14 +104,31 @@ class DecisionLog:
             subject_ref=subject_ref,
             outcome=outcome,
             reason=reason,
-            observed=observed,
+            observed=_normalize(observed),
             operator=operator,
-            threshold=threshold,
+            threshold=_normalize(threshold),
             units=units,
             policy_key=policy_key,
         )
         self._rows.append(row)
         return row
+
+    def check(self, gate: Gate, subject_ref: str) -> bool:
+        """Record ``gate`` as ACCEPT or REJECT and return whether it passed."""
+        ok = gate.ok
+        self.add(
+            gate.rule_code if ok else gate.failure_code,
+            gate.stage,
+            subject_ref,
+            PolicyOutcome.ACCEPT if ok else PolicyOutcome.REJECT,
+            gate.accept_reason if ok else gate.reject_reason,
+            observed=gate.observed,
+            operator=gate.operator,
+            threshold=gate.threshold,
+            units=gate.units,
+            policy_key=gate.policy_key,
+        )
+        return ok
 
     def gate(
         self,
@@ -88,22 +143,8 @@ class DecisionLog:
         policy_key: str,
         accept_reason: str,
         reject_reason: str,
-        record_accept: bool = True,
+        reject_code: ReasonCode | None = None,
     ) -> bool:
         """Evaluate ``observed operator threshold``, record it, and return whether it passed."""
-        ok = passes(observed, operator, threshold)
-        if ok and not record_accept:
-            return True
-        self.add(
-            rule_code,
-            stage,
-            subject_ref,
-            PolicyOutcome.ACCEPT if ok else PolicyOutcome.REJECT,
-            accept_reason if ok else reject_reason,
-            observed=observed if isinstance(observed, int) else float(observed),
-            operator=operator,
-            threshold=threshold,
-            units=units,
-            policy_key=policy_key,
-        )
-        return ok
+        return self.check(Gate(rule_code, stage, observed, operator, threshold, units, policy_key,
+                               accept_reason, reject_reason, reject_code), subject_ref)

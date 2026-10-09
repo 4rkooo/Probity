@@ -137,3 +137,26 @@ contradict it is a bug in this file.
     integrity score (96) is optimistic; step 8 replaces these files with real pipeline output.
 34. Color in the hand-built run is identity gain/bias with the context-ring residual and sample
     gates still enforced. Audit completeness Au = 1.0 by construction.
+
+### Preflight hard gates (step 3, `reconstruction/preflight.py`)
+
+35. Track gates (all logged): run video and case match the track (`DONOR_TRACK_MISMATCH`), then
+    state `CONFIRMED`, detector-backed count >= 5 and mean confidence >= 0.55 (all reject as
+    `TRACK_NOT_CONFIRMED`). Each rejected track observation also gets a TRACK-stage REJECT row.
+36. Target selection (first failure): the target frame must be a track observation
+    (`TRACK_NOT_CONFIRMED`), detector-backed (`IDENTITY_GEOMETRY_MISMATCH`), and the request box
+    must overlap the tracked box with IoU >= 0.30 (`IDENTITY_GEOMETRY_MISMATCH`). Target size and
+    target Q are then all logged (`TARGET_TOO_SMALL`, `TARGET_QUALITY_TOO_LOW`).
+37. Donor lineage runs before any pixel load, first failure: donor video == run video, donor is an
+    accepted member of this track (`DONOR_TRACK_MISMATCH`, observed `NOT_MEMBER`), donor source is
+    `DETECTOR`. A foreign-video or foreign-track candidate is therefore never decoded.
+38. O_i = max(mask fraction, detector `occlusion_score`). The mask is the union of out-of-frame
+    area and overlap with other detections in the same frame, excluding the subject's own
+    detection and any detection that fully contains the subject box (its carrier, e.g. the car).
+39. Inputs go through `assert_evidentiary_input` before loading. A generated/baseline asset is a
+    `GENERATED_INPUT_REJECTED` row and a pixel-hash mismatch is `DECODE_NOT_DETERMINISTIC`; for the
+    target that refuses the run, for a donor it rejects the donor. Neither is an exception.
+40. Cancellation is checked once per donor candidate; `JobCancelled` propagates (cancellation is
+    not a refusal).
+41. Thresholds compare full-precision floats, so a computed gain like 0.60 - 0.50 sits just under
+    0.10 and rejects. Real Q values are continuous; tests check just inside and just outside.
