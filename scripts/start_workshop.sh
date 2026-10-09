@@ -46,3 +46,21 @@ print("status", d.get("status"), "mode", d.get("mode"))
 for a in d.get("adapters", []):
     print(f"  {a['adapter_name']}: {a['status']} ({a['mode']}) detail={a.get('detail')}")
 PY
+
+# Streamlit UI (same workshop env). Use .uvenv — there is no .venv in this checkout.
+while read -r pid; do
+  [ -n "$pid" ] && kill "$pid" 2>/dev/null || true
+done < <(pgrep -f '[.]uvenv/bin/streamlit run src/probity/ui/Home.py' || true)
+sleep 1
+env "${common[@]}" PROBITY_API_BASE="${PROBITY_API_BASE:-http://127.0.0.1:8000}" \
+  .uvenv/bin/streamlit run src/probity/ui/Home.py \
+  --server.port 8501 --server.address 0.0.0.0 --server.headless true \
+  >/tmp/probity-streamlit.log 2>&1 &
+echo "streamlit_pid=$!"
+for _ in $(seq 1 40); do
+  if curl -sf http://127.0.0.1:8501/_stcore/health >/dev/null; then
+    echo "streamlit_ok"
+    break
+  fi
+  sleep 0.25
+done

@@ -45,6 +45,12 @@ class LiveApiClient:
         response.raise_for_status()
         return CaseWorkspace.model_validate(response.json())
 
+    def get_case(self, case_id: str) -> CaseWorkspace:
+        with httpx.Client(timeout=self.timeout_s) as client:
+            response = client.get(f"{self.base_url}/v1/cases/{case_id}")
+        response.raise_for_status()
+        return CaseWorkspace.model_validate(response.json())
+
     def upload_video(
         self,
         case_id: str,

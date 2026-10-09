@@ -12,12 +12,17 @@ import streamlit as st
 from probity.api.live_client import LiveApiClient
 from probity.api.mock_client import MockApiClient
 from probity.ui.components.states import empty_state
+from probity.ui.state import persist_live_session
 
 MAX_UPLOAD_MB = 250
 
 
 def _live_client() -> LiveApiClient:
     return LiveApiClient()
+
+
+def _persist_live_session(*, video_id: str, job_id: str, case_id: str) -> None:
+    persist_live_session(video_id=video_id, job_id=job_id, case_id=case_id)
 
 
 def render_upload_view(client: MockApiClient) -> None:
@@ -37,23 +42,43 @@ def render_upload_view(client: MockApiClient) -> None:
 
         st.info("Purpose: **DEMO_RESEARCH** - synthetic and licensed demo footage only.")
 
+        options = [
+            "Bundled Demo Clip (90-second sedan/plate clip, synthetic)",
+            "Upload New MP4 (Experimental)",
+        ]
+        # Prefer custom upload when a live session (or pending file) is already in play.
+        default_idx = 1 if (
+            client.uses_live_upload
+            or st.session_state.get("live_video_id")
+            or st.session_state.get("pending_upload")
+        ) else 0
         source_choice = st.radio(
             "Select Source Media:",
-            ["Bundled Demo Clip (90-second sedan/plate clip, synthetic)", "Upload New MP4 (Experimental)"],
-            index=0,
+            options,
+            index=default_idx,
         )
         bundled = "Bundled" in source_choice
         upload_ok = False
         pending = st.session_state.get("pending_upload")
 
         if bundled:
+            # Do not wipe a live custom-upload binding just because this radio is selected.
+            # restore_bundled_demo() runs only when the analyst confirms the bundled case.
             if client.uses_live_upload:
-                client.restore_bundled_demo()
-            st.success(
-                f"✅ Bundled 90s test clip selected "
-                f"(`fixtures/demo/source/{client.source_video.original_name}`)"
-            )
-            st.caption(f"License: {client.source_video.license_note}")
+                st.warning(
+                    "A custom live upload is still active. Confirming the bundled demo below "
+                    "will switch away from it."
+                )
+                st.caption(
+                    f"Active live video: `{client.live_video_id}` · "
+                    f"{client.source_video.original_name}"
+                )
+            else:
+                st.success(
+                    f"✅ Bundled 90s test clip selected "
+                    f"(`fixtures/demo/source/{client.source_video.original_name}`)"
+                )
+                st.caption(f"License: {client.source_video.license_note}")
             upload_ok = True
         else:
             st.caption(
@@ -162,6 +187,10 @@ def render_upload_view(client: MockApiClient) -> None:
             disabled=not (bundled or upload_ok),
         ):
             if bundled:
+                if client.uses_live_upload:
+                    client.restore_bundled_demo()
+                for key in ("live_video_id", "live_job_id", "live_case_id"):
+                    st.session_state.pop(key, None)
                 client.create_case(display_name=case_name, owner_alias=owner_alias)
                 st.session_state.pop("pending_upload", None)
                 st.session_state["case_confirmed"] = True
@@ -192,6 +221,14 @@ def render_upload_view(client: MockApiClient) -> None:
                         job_id=accepted.job_id,
                         local_path=tmp,
                     )
+                    st.session_state["live_video_id"] = video.video_id
+                    st.session_state["live_job_id"] = accepted.job_id
+                    st.session_state["live_case_id"] = case.case_id
+                    _persist_live_session(
+                        video_id=video.video_id,
+                        job_id=accepted.job_id,
+                        case_id=case.case_id,
+                    )
                 except (httpx.HTTPError, OSError, ValueError) as exc:
                     st.error(f"Live upload failed: {live.error_detail(exc)}")
                     return
@@ -202,5 +239,7 @@ def render_upload_view(client: MockApiClient) -> None:
             st.session_state["ingest_tick"] = 0
             st.session_state["ingest_cancel"] = False
             st.session_state.pop("ingest_job", None)
+            st.session_state.pop("search_result", None)
+            st.session_state.pop("query_input", None)
             st.session_state["step"] = "Ingest"
             st.rerun()
