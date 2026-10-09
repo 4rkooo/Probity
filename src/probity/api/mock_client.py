@@ -18,6 +18,7 @@ from pathlib import Path
 from typing import Literal
 
 import numpy as np
+from PIL import Image
 
 from probity.adapters.fixture.wandb import WandbFixtureAdapter
 from probity.adapters.fixture.weave import WeaveFixtureAdapter
@@ -31,7 +32,7 @@ from probity.domain.enums import (
     SearchStatus,
     VetoReason,
 )
-from probity.domain.ids import new_uuid7
+from probity.domain.ids import canonical_sha256, new_uuid7, parse_frame_id
 from probity.domain.models import (
     CaseWorkspace,
     EvidenceReport,
@@ -46,6 +47,7 @@ from probity.domain.models import (
     Track,
     VideoSegment,
 )
+from probity.eval.window import WindowBundle, load_window
 from probity.ports import QueryPlanRequest, ReportFact, ReportFacts, ReportNarrative
 from probity.reports.gate import approval_blockers, export_blockers
 from probity.reports.validator import validate_or_fallback_narrative
@@ -76,6 +78,13 @@ HALLUCINATED_PARAGRAPH = (
     "The blue sedan was driven by the suspect at 00:42 and the plate reads ABC-1234 with "
     "99% confidence, which is conclusive proof of the vehicle's identity."
 )
+
+
+# Person 2's real reconstruction goldens (fixtures/synthetic). The completed run is the
+# Probity output the analyst inspects; the single-donor window supplies a real refusal.
+EVAL_WINDOW = Path("fixtures/synthetic/plate_translate_v1")
+REFUSAL_WINDOW = Path("fixtures/synthetic/plate_single_donor_v1")
+PIXEL_HASH_VERSION = "probity-pixel-v1"
 
 
 def _sha256_file(path: Path) -> str:
@@ -126,19 +135,27 @@ class MockApiClient:
         self.search_needs_clarification = SearchEvidence.model_validate_json(
             load("search_evidence_needs_clarification.json")
         )
-        self.track_confirmed = Track.model_validate_json(load("track_confirmed.json"))
+        self.window: WindowBundle = load_window(self.root / EVAL_WINDOW)
+        self.refusal_window: WindowBundle = load_window(self.root / REFUSAL_WINDOW)
+        self.recon_dir = self.window.root / "reconstructions" / "completed"
+        refused_dir = self.refusal_window.root / "reconstructions" / "refused"
+        self.track_confirmed = self.window.track
         self.track_not_confirmed = Track.model_validate_json(load("track_not_confirmed.json"))
         self._run_succeeded_canonical = ReconstructionRun.model_validate_json(
-            load("reconstruction_run_succeeded.json")
+            (self.recon_dir / "run.json").read_text()
         )
         self.run_succeeded = self._run_succeeded_canonical
-        self.run_refused = ReconstructionRun.model_validate_json(load("reconstruction_run_refused.json"))
+        self.run_refused = ReconstructionRun.model_validate_json(
+            (refused_dir / "run.json").read_text()
+        )
         self.run_failed = ReconstructionRun.model_validate_json(load("reconstruction_run_failed.json"))
         self.decisions_succeeded = [
-            PolicyDecision.model_validate(d) for d in json.loads(load("policy_decisions_succeeded.json"))
+            PolicyDecision.model_validate(d)
+            for d in json.loads((self.recon_dir / "decisions.json").read_text())
         ]
         self.decisions_refused = [
-            PolicyDecision.model_validate(d) for d in json.loads(load("policy_decisions_refused.json"))
+            PolicyDecision.model_validate(d)
+            for d in json.loads((refused_dir / "decisions.json").read_text())
         ]
         self.job_views = [JobView.model_validate(j) for j in json.loads(load("job_views.json"))]
         self.fixture_report = EvidenceReport.model_validate_json(load("evidence_report.json"))
@@ -147,7 +164,7 @@ class MockApiClient:
         self.manifest = manifest["fixtures"][0]
         self.manifest_created_at: str = self.manifest.get("created_at", "unknown")
 
-        npz_path = self.artifacts_dir / "provenance.npz"
+        npz_path = self.recon_dir / "provenance.npz"
         self._npz_data = dict(np.load(npz_path)) if npz_path.exists() else None
 
     # -----------------------------------------------------------------------------------------
@@ -183,6 +200,59 @@ class MockApiClient:
             # Simulates altered bytes on disk without touching the real fixture.
             observed = hashlib.sha256(observed.encode() + b"tampered").hexdigest()
         return observed == self.source_video.sha256, observed
+
+    def verify_run_source(self, window: WindowBundle | None = None) -> tuple[bool, str]:
+        """Re-verify the reconstruction source: the ordered pixel-hash digest of every frame.
+
+        Synthetic windows have no MP4 container; their identity is
+        ``canonical_sha256({synth_version, pixel_sha256: [...]})`` over the lossless PNGs.
+        """
+        window = window or self.window
+        meta = json.loads((window.root / "window.json").read_text())
+        hashes = []
+        for ref in sorted(window.frames, key=lambda f: f.frame_number):
+            with Image.open(self.frame_path(ref.frame_number, window)) as img:
+                rgb = np.asarray(img.convert("RGB"), dtype=np.uint8)
+            h, w, _ = rgb.shape
+            header = f"{PIXEL_HASH_VERSION}|uint8|{h},{w},3|RGB\n".encode("ascii")
+            hashes.append(hashlib.sha256(header + rgb.tobytes()).hexdigest())
+        observed = canonical_sha256({"synth_version": meta["synth_version"], "pixel_sha256": hashes})
+        if self.source_tampered:
+            observed = hashlib.sha256(observed.encode() + b"tampered").hexdigest()
+        return observed == window.source_sha256, observed
+
+    def run_source_identity(self) -> dict[str, object]:
+        """Display facts about the reconstruction source for the report."""
+        frames = sorted(self.window.frames, key=lambda f: f.frame_number)
+        return {
+            "original_name": f"{self.window.fixture_id} (lossless PNG sequence, {len(frames)} frames)",
+            "width_px": frames[0].width_px,
+            "height_px": frames[0].height_px,
+            "duration_us": frames[-1].pts_us,
+            "sha256": self.window.source_sha256,
+        }
+
+    def frame_path(self, frame_number: int, window: WindowBundle | None = None) -> Path:
+        return (window or self.window).root / "frames" / f"f{frame_number:04d}.png"
+
+    def frame_pts_us(self, frame_number: int) -> int:
+        for ref in self.window.frames:
+            if ref.frame_number == frame_number:
+                return ref.pts_us
+        raise LookupError(frame_number)
+
+    @property
+    def target_frame_number(self) -> int:
+        return parse_frame_id(self.run_succeeded.target_frame_id)[1]
+
+    def target_frame_path(self) -> Path:
+        return self.frame_path(self.target_frame_number)
+
+    def result_path(self) -> Path:
+        return self.recon_dir / "result.png"
+
+    def provenance_path(self) -> Path:
+        return self.recon_dir / "provenance.npz"
 
     def list_segments(self, video_id: str | None = None) -> list[VideoSegment]:
         return list(self.segments)
@@ -350,11 +420,17 @@ class MockApiClient:
         return self.run_succeeded
 
     def outcome_for_target(self, target_frame_number: int) -> str:
-        """The fixture refusal run targets f414; f417 is the defensible target."""
+        """Outcome of the verified cached run for this target.
+
+        Only the golden target has a stored Probity run; other frames return ``NOT_CACHED``
+        rather than pretending a reconstruction ran.
+        """
         if self.run_outcome == "FAILED":
             return "FAILED"
-        if self.run_outcome == "REFUSED" or target_frame_number == 414:
+        if self.run_outcome == "REFUSED":
             return "REFUSED"
+        if target_frame_number != self.target_frame_number:
+            return "NOT_CACHED"
         return "SUCCEEDED"
 
     def reconstruction_job_sequence(self, outcome: str) -> list[JobView]:
@@ -479,7 +555,7 @@ class MockApiClient:
             raise ValueError(f"Unknown run {run_id}.")
 
         if decision == "APPROVE":
-            verified, _ = self.verify_source()
+            verified, _ = self.verify_run_source()
             blockers = approval_blockers(run, source_verified=verified)
             if blockers:
                 raise ValueError("Approval blocked: " + "; ".join(b.message for b in blockers))
@@ -579,7 +655,7 @@ class MockApiClient:
     def create_report(self, run_id: str) -> EvidenceReport:
         run = self.get_reconstruction(run_id)
         review = self._reviews.get(run_id)
-        verified, observed = self.verify_source()
+        verified, observed = self.verify_run_source()
         blockers = export_blockers(run, review, source_verified=verified)
         if blockers or review is None:
             raise ValueError("Export blocked: " + "; ".join(b.message for b in blockers))
@@ -605,9 +681,22 @@ class MockApiClient:
                 return base / name
         raise FileNotFoundError(name)
 
-    def frame_asset_name(self, frame_number: int) -> str | None:
-        """Lossless still for a frame number, if the fixture bundle has one."""
-        for name in (f"target_f{frame_number}.png", f"donor_f{frame_number}.png"):
-            if (self.artifacts_dir / name).exists():
-                return name
-        return None
+    def export_artifacts(self) -> dict[str, tuple[Path, str]]:
+        """Bundle filename -> (local path, role) for the current reconstruction."""
+        target = self.target_frame_number
+        artifacts = {
+            f"target_f{target}.png": (self.target_frame_path(), "target_still"),
+            "result.png": (self.result_path(), "result"),
+            "provenance.npz": (self.provenance_path(), "provenance"),
+        }
+        for entry in self.run_succeeded.provenance.source_lut if self.run_succeeded.provenance else ():
+            if entry.role == "DONOR":
+                artifacts[f"donor_f{entry.frame_number}.png"] = (
+                    self.frame_path(entry.frame_number),
+                    "donor_still",
+                )
+        return artifacts
+
+    def refusal_target_path(self) -> Path:
+        frame = parse_frame_id(self.run_refused.target_frame_id)[1]
+        return self.frame_path(frame, self.refusal_window)

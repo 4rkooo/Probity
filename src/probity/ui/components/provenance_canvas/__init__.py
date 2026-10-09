@@ -2,8 +2,8 @@
 
 Self-contained HTML/JS component rendered through ``streamlit.components.v1.html``:
 
-- Synchronized original / recompressed-preview players driven by one master clock
-  (play, pause, seek, and frame-step are mirrored; the selected PTS stays visible).
+- Synchronized original / preview players over the lossless source frames, driven by one
+  master frame index (play, pause, seek, and frame-step are mirrored; PTS stays visible).
 - Lossless still comparison (target vs. result) with a shared pixel-exact zoom.
 - Pixel provenance overlay from the authoritative ``provenance.npz`` arrays: gray for
   ORIGINAL, cyan for BORROWED, magenta hatching for GENERATED_BLEND. The legend stays
@@ -62,14 +62,14 @@ def build_canvas_html(
     target_img_uri: str,
     result_img_uri: str,
     donor_img_uris: dict[int, str],
-    source_video_uri: str,
+    source_frame_uris: list[str],
+    source_frame_pts_us: list[int],
     lut_entries: list[dict[str, Any]],
     exceptions: list[list[float]],
     frame_size: tuple[int, int],
     subject_bbox: Sequence[int],
     decision_codes: dict[str, str],
     target_pts_us: int,
-    nominal_fps: float,
     initial_pixel: tuple[int, int],
 ) -> str:
     data = {
@@ -80,7 +80,8 @@ def build_canvas_html(
         "bbox": list(subject_bbox),
         "decisions": decision_codes,
         "targetPtsUs": target_pts_us,
-        "fps": nominal_fps,
+        "framePts": source_frame_pts_us,
+        "frames": source_frame_uris,
         "initial": list(initial_pixel),
         "donors": {str(k): v for k, v in donor_img_uris.items()},
         "classNames": list(PROVENANCE_CLASS_NAMES),
@@ -88,7 +89,6 @@ def build_canvas_html(
     return (
         _TEMPLATE.replace("__TARGET__", target_img_uri)
         .replace("__RESULT__", result_img_uri)
-        .replace("__VIDEO__", source_video_uri)
         .replace("__DATA__", json.dumps(data))
     )
 
@@ -113,7 +113,7 @@ _TEMPLATE = r"""<!DOCTYPE html>
   .panel { background:#1e293b; border:1px solid #334155; border-radius:6px; padding:8px; }
   .hdr { display:flex; justify-content:space-between; font-size:12px; font-weight:600; margin-bottom:6px; gap:6px; }
   .warn { background:#78350f; color:#fef3c7; border-left:4px solid #f59e0b; padding:4px 8px; font-size:11px; font-weight:700; border-radius:3px; margin-bottom:6px; }
-  video, canvas { width:100%; display:block; background:#000; border-radius:4px; }
+  img.player, canvas { width:100%; display:block; background:#000; border-radius:4px; image-rendering:pixelated; }
   .stage { position:relative; }
   .stage img.result-at-pts { position:absolute; inset:0; width:100%; height:100%; display:none; image-rendering:pixelated; }
   .controls { display:flex; align-items:center; gap:8px; margin:8px 0; font-size:12px; flex-wrap:wrap; }
@@ -132,13 +132,13 @@ _TEMPLATE = r"""<!DOCTYPE html>
 <h4>Synchronized playback (one master clock)</h4>
 <div class="grid">
   <div class="panel">
-    <div class="hdr"><span style="color:#94a3b8;">ORIGINAL SOURCE (canonical bytes, browser decode)</span><span id="ptsA">0.000s</span></div>
-    <div class="stage"><video id="vA" src="__VIDEO__" muted playsinline preload="auto"></video></div>
+    <div class="hdr"><span style="color:#94a3b8;">ORIGINAL SOURCE (lossless frames)</span><span id="ptsA">0.000s</span></div>
+    <div class="stage"><img id="vA" class="player" alt="Original source frame"></div>
   </div>
   <div class="panel">
     <div class="warn">RECOMPRESSED PREVIEW - NOT THE CANONICAL RESULT</div>
     <div class="hdr"><span style="color:#38bdf8;">DERIVED PREVIEW (result shown at target PTS)</span><span id="ptsB">0.000s</span></div>
-    <div class="stage"><video id="vB" src="__VIDEO__" muted playsinline preload="auto"></video>
+    <div class="stage"><img id="vB" class="player" alt="Preview frame">
       <img class="result-at-pts" id="resAtPts" src="__RESULT__" alt="Result at target PTS"></div>
   </div>
 </div>
@@ -147,7 +147,7 @@ _TEMPLATE = r"""<!DOCTYPE html>
   <button class="secondary" id="stepBack">◀ 1 frame</button>
   <button class="secondary" id="stepFwd">1 frame ▶</button>
   <button class="secondary" id="toTarget">Seek target PTS</button>
-  <input type="range" id="seek" min="0" max="90" step="0.001" value="0">
+  <input type="range" id="seek" min="0" max="0" step="1" value="0">
   <span id="clock" style="font-family:monospace;">master 0.000s</span>
 </div>
 
@@ -192,32 +192,42 @@ function resolve(x, y) {
 }
 
 // ---------------- synchronized players ----------------
+// One master frame index drives both players; frames are the lossless source PNGs, so
+// seeking is frame-exact and PTS comes from the frame manifest, never fps * time.
 const vA = document.getElementById('vA'), vB = document.getElementById('vB');
 const seek = document.getElementById('seek'), resAtPts = document.getElementById('resAtPts');
-const targetS = D.targetPtsUs / 1e6, frameS = 1 / D.fps;
-function syncFrom(master) {
-  const t = master.currentTime;
-  const other = master === vA ? vB : vA;
-  if (Math.abs(other.currentTime - t) > frameS / 2) other.currentTime = t;
-  document.getElementById('ptsA').textContent = vA.currentTime.toFixed(3) + 's';
-  document.getElementById('ptsB').textContent = t.toFixed(3) + 's';
-  document.getElementById('clock').textContent = 'master ' + t.toFixed(3) + 's';
-  seek.value = t;
-  resAtPts.style.display = Math.abs(t - targetS) <= frameS / 2 ? 'block' : 'none';
+const N = D.frames.length;
+const targetIdx = Math.max(0, D.framePts.indexOf(D.targetPtsUs));
+let cur = 0, timer = null;
+seek.max = N - 1;
+function frameIndexForPts(us) {
+  let best = 0;
+  for (let i = 0; i < N; i++) if (Math.abs(D.framePts[i] - us) < Math.abs(D.framePts[best] - us)) best = i;
+  return best;
 }
-function seekTo(t) { vA.currentTime = t; vB.currentTime = t; syncFrom(vA); }
-vA.addEventListener('loadedmetadata', () => { seek.max = vA.duration; seekTo(targetS); });
-vA.addEventListener('timeupdate', () => syncFrom(vA));
-vA.addEventListener('seeked', () => syncFrom(vA));
+function showFrame(i) {
+  cur = Math.max(0, Math.min(N - 1, i));
+  vA.src = D.frames[cur]; vB.src = D.frames[cur];
+  const t = (D.framePts[cur] / 1e6).toFixed(3) + 's';
+  document.getElementById('ptsA').textContent = 'f' + cur + ' · ' + t;
+  document.getElementById('ptsB').textContent = 'f' + cur + ' · ' + t;
+  document.getElementById('clock').textContent = 'master f' + cur + ' · ' + t;
+  seek.value = cur;
+  resAtPts.style.display = cur === targetIdx ? 'block' : 'none';
+}
+function seekToPts(us) { showFrame(frameIndexForPts(us)); }
+const frameMs = N > 1 ? (D.framePts[N - 1] - D.framePts[0]) / (N - 1) / 1000 : 66;
 document.getElementById('play').onclick = (e) => {
-  if (vA.paused) { vA.play(); vB.play(); e.target.textContent = '❚❚ Pause'; }
-  else { vA.pause(); vB.pause(); seekTo(vA.currentTime); e.target.textContent = '▶ Play'; }
+  if (timer === null) {
+    timer = setInterval(() => { if (cur >= N - 1) { clearInterval(timer); timer = null; document.getElementById('play').textContent = '▶ Play'; } else showFrame(cur + 1); }, frameMs);
+    e.target.textContent = '❚❚ Pause';
+  } else { clearInterval(timer); timer = null; e.target.textContent = '▶ Play'; }
 };
-vA.addEventListener('pause', () => vB.pause());
-document.getElementById('stepBack').onclick = () => seekTo(Math.max(0, vA.currentTime - frameS));
-document.getElementById('stepFwd').onclick = () => seekTo(vA.currentTime + frameS);
-document.getElementById('toTarget').onclick = () => seekTo(targetS);
-seek.oninput = () => seekTo(parseFloat(seek.value));
+document.getElementById('stepBack').onclick = () => showFrame(cur - 1);
+document.getElementById('stepFwd').onclick = () => showFrame(cur + 1);
+document.getElementById('toTarget').onclick = () => showFrame(targetIdx);
+seek.oninput = () => showFrame(parseInt(seek.value, 10));
+showFrame(targetIdx);
 
 // ---------------- lossless stills ----------------
 const imgT = new Image(), imgR = new Image();
@@ -225,13 +235,15 @@ imgT.src = "__TARGET__"; imgR.src = "__RESULT__";
 const donorImgs = {};
 for (const k in D.donors) { const im = new Image(); im.src = D.donors[k]; im.onload = refresh; donorImgs[k] = im; }
 const cL = document.getElementById('cL'), cR = document.getElementById('cR');
+for (const c of [cL, cR]) { c.width = 640; c.height = Math.round(640 * H / W); }
 let showOverlay = true, zoomed = true, leftIdx = 0, pinned = null, hover = null;
 
 function viewport() {
   if (!zoomed) return {x0:0, y0:0, w:W, h:H};
   const [x1, y1, x2, y2] = D.bbox;
-  let w = Math.max((x2 - x1) * 2.2, 160), h = w * 9 / 16;
-  if (h < (y2 - y1) * 2.2) { h = (y2 - y1) * 2.2; w = h * 16 / 9; }
+  const aspect = H / W;
+  let w = Math.min(W, Math.max((x2 - x1) * 1.6, 160)), h = w * aspect;
+  if (h < (y2 - y1) * 1.6) { h = Math.min(H, (y2 - y1) * 1.6); w = h / aspect; }
   const cx = (x1 + x2) / 2, cy = (y1 + y2) / 2;
   return {x0: Math.max(0, Math.min(W - w, cx - w / 2)), y0: Math.max(0, Math.min(H - h, cy - h / 2)), w, h};
 }
@@ -300,7 +312,11 @@ function inspect(x, y) {
   document.getElementById('iXf').textContent = (e.transform_id || 'identity') + ' · ' + e.alignment_method +
     (e.matrix ? ' [' + e.matrix.map(n => +n.toFixed(3)).join(',') + ']' : '');
   document.getElementById('iColor').textContent = e.color_gain ? 'gain ' + e.color_gain.join('/') + ' bias ' + e.color_bias.join('/') : 'no color transform';
-  document.getElementById('iReasons').textContent = e.decision_ids.length ? e.decision_ids.map(id => D.decisions[id] || id.slice(0, 8)).join(', ') : 'n/a (target pixel)';
+  const counts = {};
+  for (const id of e.decision_ids) { const c = D.decisions[id] || id.slice(0, 8); counts[c] = (counts[c] || 0) + 1; }
+  document.getElementById('iReasons').textContent = e.decision_ids.length
+    ? Object.entries(counts).map(([c, n]) => n > 1 ? c + ' ×' + n : c).join(', ')
+    : 'n/a (target pixel)';
   document.getElementById('openSrc').disabled = o.idx === 0;
   const crop = document.getElementById('crop').getContext('2d');
   crop.imageSmoothingEnabled = false;
@@ -334,7 +350,7 @@ document.getElementById('openSrc').onclick = () => {
   document.getElementById('leftTitle').textContent = 'SOURCE DONOR f' + e.frame_number + ' (lossless PNG)';
   document.getElementById('leftTitle').style.color = '#f59e0b';
   document.getElementById('leftPts').textContent = 'PTS ' + fmtPts(e.pts_us);
-  seekTo(e.pts_us / 1e6);
+  seekToPts(e.pts_us);
   inspect(p[0], p[1]);
   drawAll();
 };
@@ -343,7 +359,7 @@ document.getElementById('backTarget').onclick = () => {
   document.getElementById('leftTitle').textContent = 'TARGET FRAME (lossless PNG)';
   document.getElementById('leftTitle').style.color = '#94a3b8';
   document.getElementById('leftPts').textContent = 'PTS ' + fmtPts(D.targetPtsUs);
-  seekTo(targetS); drawAll();
+  showFrame(targetIdx); drawAll();
 };
 document.getElementById('ovl').onchange = (e) => { showOverlay = e.target.checked; drawAll(); };
 document.getElementById('zoom').onchange = (e) => { zoomed = e.target.checked; drawAll(); };

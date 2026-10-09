@@ -48,3 +48,11 @@ def texts(at: AppTest) -> str:
     for kind in (at.warning, at.error, at.success, at.info, at.caption):
         parts.extend(str(e.value) for e in kind)
     return "\n".join(parts)
+
+
+def borrowed_pixel(client: MockApiClient, frame_number: int) -> tuple[int, int, int]:
+    """First BORROWED output pixel sourced from donor ``frame_number``: (x, y, pts_us)."""
+    lut = client.run_succeeded.provenance.source_lut
+    entry = next(e for e in lut if e.frame_number == frame_number)
+    row = next(r for r in client.provenance_exceptions() if r[2] == 1 and r[3] == entry.index)
+    return int(row[0]), int(row[1]), entry.pts_us

@@ -64,7 +64,7 @@ def completed_progress(segment_id: str | None = None) -> dict[str, Any]:
         "case_confirmed": True,
         "ingest_state": "SUCCEEDED",
         "selected_segment": segment_id or client.search_evidence.results[0].segment_id,
-        "target_frame": 417,
+        "target_frame": client.target_frame_number,
         "run_outcome": "SUCCEEDED",
         "recon_done": True,
     }

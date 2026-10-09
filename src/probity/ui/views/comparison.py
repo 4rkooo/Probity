@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import time
-from fractions import Fraction
 
 import streamlit as st
 from PIL import Image
@@ -52,7 +51,7 @@ def _baseline_image(client: MockApiClient, run: ReconstructionRun) -> Image.Imag
     """Conventional 4x Lanczos upscale of the subject crop, a stand-in display baseline."""
     x1, y1, x2, y2 = run.target_bbox_px
     pad = 12
-    with Image.open(client.get_asset_path("target_f417.png")) as img:
+    with Image.open(client.target_frame_path()) as img:
         crop = img.crop((x1 - pad, y1 - pad, x2 + pad, y2 + pad))
         return crop.resize((crop.width * 4, crop.height * 4), Image.Resampling.LANCZOS)
 
@@ -61,11 +60,12 @@ def _pixel_inspector(client: MockApiClient, run: ReconstructionRun) -> None:
     """Server-side inspector using the provenance endpoint semantics (exact NPZ lookup)."""
     ss = st.session_state
     st.markdown("#### Pixel provenance lookup (authoritative NPZ)")
+    first = next((r for r in client.provenance_exceptions() if r[2] == 1), [0, 0])
     c1, c2, c3 = st.columns([1, 1, 2])
     with c1:
-        x = st.number_input("x", min_value=0, max_value=client.provenance_shape()[0] - 1, value=230, key="inspect_x")
+        x = st.number_input("x", min_value=0, max_value=client.provenance_shape()[0] - 1, value=int(first[0]), key="inspect_x")
     with c2:
-        y = st.number_input("y", min_value=0, max_value=client.provenance_shape()[1] - 1, value=481, key="inspect_y")
+        y = st.number_input("y", min_value=0, max_value=client.provenance_shape()[1] - 1, value=int(first[1]), key="inspect_y")
     origin = client.resolve_pixel(int(x), int(y), run.run_id)
     if origin is None:
         st.warning("No provenance record for this pixel.")
@@ -92,22 +92,20 @@ def _pixel_inspector(client: MockApiClient, run: ReconstructionRun) -> None:
         o1, o2 = st.columns(2)
         with o1:
             st.markdown(f"**Source donor f{opened['frame']} @ {opened['pts_us'] / 1e6:.3f}s (lossless still)**")
-            name = client.frame_asset_name(opened["frame"])
-            if name:
-                with Image.open(client.get_asset_path(name)) as img:
-                    sx, sy = int(opened["x"]), int(opened["y"])
-                    region = img.crop((sx - 40, sy - 20, sx + 40, sy + 20)).resize((320, 160), Image.Resampling.NEAREST)
-                st.image(region, caption=f"Source region around ({sx}, {sy})")
+            with Image.open(client.frame_path(opened["frame"])) as img:
+                sx, sy = int(opened["x"]), int(opened["y"])
+                region = img.crop((sx - 40, sy - 20, sx + 40, sy + 20)).resize((320, 160), Image.Resampling.NEAREST)
+            st.image(region, caption=f"Source region around ({sx}, {sy})")
         with o2:
-            st.markdown(f"**Original player seeked to {opened['pts_us'] / 1e6:.3f}s**")
-            st.video(str(client.source_path()), start_time=int(opened["pts_us"] // 1_000_000))
+            st.markdown(f"**Original source seeked to f{opened['frame']} @ {opened['pts_us'] / 1e6:.3f}s**")
+            st.image(str(client.frame_path(opened["frame"])), caption="Full donor frame (lossless PNG)")
 
 
 def render_comparison_view(client: MockApiClient) -> None:
     ss = st.session_state
     st.subheader("5. Probity Reconstruction & Provenance Comparison")
 
-    target_frame = ss.get("target_frame", 417)
+    target_frame = ss.get("target_frame", client.target_frame_number)
     outcome = client.outcome_for_target(int(target_frame))
     if not ss.get("recon_done"):
         _run_progress(client, outcome)
@@ -119,7 +117,7 @@ def render_comparison_view(client: MockApiClient) -> None:
     if outcome == "REFUSED":
         refusal_panel([str(r) for r in run.refusal_reasons], client.list_decisions(run.run_id))
         st.markdown(f"**Original target frame f{parse_frame_id(run.target_frame_id)[1]} - unchanged**")
-        st.video(str(client.source_path()), start_time=int(run.target_pts_us // 1_000_000))
+        st.image(str(client.refusal_target_path()), caption=f"{client.refusal_window.fixture_id} · unchanged source frame")
         st.caption("; ".join(run.uncertainty))
         _choose_another_target()
         return
@@ -141,13 +139,26 @@ def render_comparison_view(client: MockApiClient) -> None:
         _choose_another_target()
         return
 
+    if outcome == "NOT_CACHED":
+        st.warning(
+            f"No verified cached Probity run exists for target f{target_frame}. In verified-cache mode "
+            f"only the evaluated target f{client.target_frame_number} has a stored reconstruction; "
+            "a live run requires the reconstruction API."
+        )
+        _choose_another_target()
+        return
+
+    st.caption(
+        f"Real Probity output on evaluation window `{client.window.fixture_id}` "
+        f"(algorithm {run.algorithm_version}, {len(run.accepted_donor_frame_ids)} donors)."
+    )
     lut = list(run.provenance.source_lut) if run.provenance else []
-    donor_uris = {}
-    for entry in lut:
-        if entry.role == "DONOR":
-            name = client.frame_asset_name(entry.frame_number)
-            if name:
-                donor_uris[entry.index] = load_b64(client.get_asset_path(name))
+    donor_uris = {
+        entry.index: load_b64(client.frame_path(entry.frame_number))
+        for entry in lut
+        if entry.role == "DONOR"
+    }
+    frames = sorted(client.window.frames, key=lambda f: f.frame_number)
     first_borrowed = next((r for r in client.provenance_exceptions() if r[2] == 1), None)
     initial = (int(first_borrowed[0]) + 8, int(first_borrowed[1]) + 3) if first_borrowed else (0, 0)
 
@@ -160,17 +171,17 @@ def render_comparison_view(client: MockApiClient) -> None:
 
     with tab1:
         render_provenance_canvas(
-            target_img_uri=load_b64(client.get_asset_path("target_f417.png")),
-            result_img_uri=load_b64(client.get_asset_path("result.png")),
+            target_img_uri=load_b64(client.target_frame_path()),
+            result_img_uri=load_b64(client.result_path()),
             donor_img_uris=donor_uris,
-            source_video_uri=load_b64(client.source_path()),
+            source_frame_uris=[load_b64(client.frame_path(f.frame_number)) for f in frames],
+            source_frame_pts_us=[f.pts_us for f in frames],
             lut_entries=[e.model_dump(mode="json") for e in lut],
             exceptions=client.provenance_exceptions(),
             frame_size=client.provenance_shape(),
             subject_bbox=run.target_bbox_px,
             decision_codes={d.decision_id: str(d.rule_code) for d in client.list_decisions(run.run_id)},
             target_pts_us=run.target_pts_us,
-            nominal_fps=float(Fraction(client.source_video.nominal_fps)),
             initial_pixel=initial,
         )
         st.caption(
@@ -193,7 +204,7 @@ def render_comparison_view(client: MockApiClient) -> None:
         b1, b2 = st.columns(2)
         with b1:
             x1, y1, x2, y2 = run.target_bbox_px
-            with Image.open(client.get_asset_path("result.png")) as img:
+            with Image.open(client.result_path()) as img:
                 res_crop = img.crop((x1 - 12, y1 - 12, x2 + 12, y2 + 12))
                 st.image(
                     res_crop.resize((res_crop.width * 4, res_crop.height * 4), Image.Resampling.NEAREST),
@@ -203,7 +214,7 @@ def render_comparison_view(client: MockApiClient) -> None:
             st.image(
                 _baseline_image(client, run),
                 caption="Conventional 4x Lanczos upscale - NON-EVIDENTIARY display baseline "
-                "(Real-ESRGAN asset not bundled in this fixture set)",
+                "(Real-ESRGAN output not bundled with this window)",
             )
 
     with tab4:
@@ -211,20 +222,27 @@ def render_comparison_view(client: MockApiClient) -> None:
         g_cols = st.columns(max(len(lut), 1))
         for i, entry in enumerate(lut):
             with g_cols[i]:
-                name = client.frame_asset_name(entry.frame_number)
-                if name:
-                    st.image(str(client.get_asset_path(name)))
+                st.image(str(client.frame_path(entry.frame_number)))
                 st.caption(
                     f"f{entry.frame_number} · {entry.role} · {entry.pts_us / 1e6:.3f}s · {entry.alignment_method}"
                 )
         rejected = [d for d in client.list_decisions(run.run_id) if str(d.outcome) == "REJECT"]
-        st.markdown("**Rejected donors and why**")
+        st.markdown(f"**Rejected donor candidates and why ({len(rejected)})**")
         if rejected:
-            for d in rejected:
-                st.markdown(
-                    f"- `{d.rule_code}` on `{d.subject_ref.split(':')[-1]}`: {d.reason} "
-                    f"(observed {d.observed} {d.operator} {d.threshold} {d.units or ''})"
-                )
+            st.dataframe(
+                [
+                    {
+                        "Frame": d.subject_ref.split(":")[-1],
+                        "Rule Code": str(d.rule_code),
+                        "Reason": d.reason,
+                        "Observed": str(d.observed),
+                        "Threshold": f"{d.operator} {d.threshold} {d.units or ''}".strip(),
+                    }
+                    for d in rejected
+                ],
+                hide_index=True,
+                width="stretch",
+            )
         else:
             st.caption("No donors were rejected in this run.")
 

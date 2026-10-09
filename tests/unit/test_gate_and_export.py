@@ -11,7 +11,12 @@ from probity.adapters.fixture.weave import sanitize_attributes
 from probity.api.mock_client import MockApiClient
 from probity.domain.enums import ExplanationSource, VetoReason
 from probity.ports import ReportNarrative
-from probity.reports.export import ExportBlockedError, export_evidence_bundle, verify_bundle
+from probity.reports.export import (
+    ExportBlockedError,
+    SourceIdentity,
+    export_evidence_bundle,
+    verify_bundle,
+)
 from probity.reports.gate import approval_blockers, export_blockers, review_is_current
 
 
@@ -34,25 +39,20 @@ def _approve(client: MockApiClient):
 
 def _export(client: MockApiClient, tmp_path: Path, review):
     run = client.run_succeeded
-    artifacts = {
-        "target_f417.png": (client.get_asset_path("target_f417.png"), "target_still"),
-        "result.png": (client.get_asset_path("result.png"), "result"),
-        "provenance.npz": (client.get_asset_path("provenance.npz"), "provenance"),
-    }
+    artifacts = client.export_artifacts()
     narrative, fell_back = client.draft_narrative(client.report_facts(run, review))
     return export_evidence_bundle(
         case=client.case,
-        video=client.source_video,
+        source=SourceIdentity(**client.run_source_identity()),
+        observed_source_sha256=client.verify_run_source()[1],
         run=run,
         review=review,
         decisions=client.list_decisions(run.run_id),
-        source_path=client.source_path(),
         artifacts=artifacts,
         trace_spans=client.trace.spans,
         narrative=narrative,
         narrative_fell_back=fell_back,
         output_dir=tmp_path / "bundle",
-        source_tampered=client.source_tampered,
     )
 
 
@@ -147,7 +147,8 @@ def test_export_bundle_contents_and_hashes_verify(client: MockApiClient, tmp_pat
         "manifest.json",
         "result.png",
         "provenance.npz",
-        "target_f417.png",
+        f"target_f{client.target_frame_number}.png",
+        "donor_f43.png",
         "policy_decisions.json",
         "trace_summary.json",
     } <= names
@@ -156,15 +157,14 @@ def test_export_bundle_contents_and_hashes_verify(client: MockApiClient, tmp_pat
     by_role = {f["role"]: f for f in manifest["files"]}
     assert by_role["result"]["sha256"] == client.run_succeeded.result_png_sha256
     assert by_role["provenance"]["sha256"] == client.run_succeeded.provenance_sha256
-    assert by_role["source_video"]["sha256"] == client.source_video.sha256
+    assert by_role["source"]["sha256"] == client.window.source_sha256
 
     html = bundle.html_path.read_text()
     for needle in (
-        "13900000",
-        "13633333",
-        "14133333",
+        str(client.run_succeeded.target_pts_us),
+        *(str(e.pts_us) for e in client.run_succeeded.provenance.source_lut),
         "ALIGNMENT_AKAZE_ACCEPTED",
-        client.source_video.sha256,
+        client.window.source_sha256,
         "Recorded uncertainty",
         "FIXTURE",
         "Artifact Manifest",
