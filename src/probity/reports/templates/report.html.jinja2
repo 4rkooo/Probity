@@ -173,6 +173,14 @@
         <div class="value">{{ review.reviewer_alias }}</div>
       </div>
       <div class="card">
+        <div class="label">Reviewed At (UTC)</div>
+        <div class="value">{{ review.created_at }}</div>
+      </div>
+      <div class="card">
+        <div class="label">Adapter Mode</div>
+        <div class="value">{{ report.mode }}{% if report.mode == "FIXTURE" %} (verified cached inference){% endif %}</div>
+      </div>
+      <div class="card">
         <div class="label">Reviewed Result Hash</div>
         <div class="value code">{{ review.reviewed_result_sha256 }}</div>
       </div>
@@ -186,9 +194,52 @@
     {% endif %}
 
     <h2>6. Narrative & Uncertainty Callouts</h2>
+    <p class="label">Narrative source: {{ narrative.source }}{% if narrative_fell_back %} - W&amp;B draft failed grounding validation; deterministic template used{% endif %}</p>
     {% for para in narrative.paragraphs %}
     <p>{{ para }}</p>
     {% endfor %}
+    {% if run.uncertainty %}
+    <p><strong>Recorded uncertainty:</strong></p>
+    <ul>
+      {% for u in run.uncertainty %}<li>{{ u }}</li>{% endfor %}
+    </ul>
+    {% endif %}
+    {% if run.integrity %}
+    <p><strong>Integrity components</strong> (formula {{ run.integrity.formula_version }}; a lineage-completeness measure, not accuracy or admissibility):
+      supported coverage {{ run.integrity.supported_coverage }},
+      source confidence {{ run.integrity.mean_source_confidence }},
+      alignment confidence {{ run.integrity.mean_alignment_confidence }},
+      track continuity {{ run.integrity.track_continuity }},
+      audit completeness {{ run.integrity.audit_completeness }}.</p>
+    {% endif %}
+
+    {% if decisions %}
+    <h2>Policy Decision Log</h2>
+    <table>
+      <thead><tr><th>#</th><th>Rule code</th><th>Stage</th><th>Subject</th><th>Outcome</th><th>Observed</th><th>Threshold</th><th>Reason</th></tr></thead>
+      <tbody>
+        {% for d in decisions %}
+        <tr>
+          <td>{{ d.sequence }}</td><td class="code">{{ d.rule_code }}</td><td>{{ d.stage }}</td>
+          <td>{{ d.subject_ref.split(':')[-1] }}</td><td>{{ d.outcome }}</td>
+          <td>{{ d.observed }}</td><td>{{ d.operator }} {{ d.threshold }} {{ d.units or '' }}</td><td>{{ d.reason }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% endif %}
+
+    {% if manifest %}
+    <h2>Artifact Manifest</h2>
+    <table>
+      <thead><tr><th>File</th><th>Role</th><th>SHA-256</th></tr></thead>
+      <tbody>
+        {% for m in manifest %}
+        <tr><td>{{ m.path }}</td><td>{{ m.role }}</td><td class="code">{{ m.sha256 }}</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% endif %}
 
     <h2>7. Technical Limitations & Disclosures</h2>
     <ul>

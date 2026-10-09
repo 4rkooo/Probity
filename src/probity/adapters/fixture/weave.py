@@ -28,13 +28,21 @@ FORBIDDEN_KEY_SUBSTRINGS = (
     "api_key",
 )
 
+# Token *counts* are safe usage metrics (design section 12); token values never are.
+SAFE_TOKEN_METRIC_KEYS = frozenset(
+    {"token_count", "tokens_in", "tokens_out", "prompt_tokens", "completion_tokens", "total_tokens"}
+)
+
 
 def sanitize_attributes(attrs: dict[str, Any]) -> dict[str, Any]:
     """Strip any video, image, crop, secret, or sensitive user note attributes."""
     safe: dict[str, Any] = {}
     for k, v in attrs.items():
         k_lower = k.lower()
-        if any(bad in k_lower for bad in FORBIDDEN_KEY_SUBSTRINGS):
+        forbidden = FORBIDDEN_KEY_SUBSTRINGS
+        if k_lower in SAFE_TOKEN_METRIC_KEYS:
+            forbidden = tuple(b for b in forbidden if b != "token")
+        if any(bad in k_lower for bad in forbidden):
             continue
         if isinstance(v, (bytes, bytearray)):
             continue

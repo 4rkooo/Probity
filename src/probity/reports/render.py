@@ -11,6 +11,7 @@ from __future__ import annotations
 import hashlib
 import json
 from pathlib import Path
+from typing import Any
 
 from jinja2 import Environment, FileSystemLoader
 
@@ -65,6 +66,7 @@ class ReportRenderer:
         narrative: ReportNarrative | None = None,
         source_path: Path | str | None = None,
         mode: InferenceMode = InferenceMode.FIXTURE,
+        extra_context: dict[str, Any] | None = None,
     ) -> tuple[EvidenceReport, Path, Path]:
         """Validate review and source hash, then render HTML and JSON report bundle."""
         # 1. Gate: review must be APPROVE
@@ -164,6 +166,7 @@ class ReportRenderer:
             review=review,
             report=final_report,
             narrative=narrative,
+            **(extra_context or {}),
         )
 
         html_file = out_path / "report.html"
