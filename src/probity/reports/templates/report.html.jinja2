@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Provity Evidence Report - {{ case.display_name }}</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      margin: 0;
+      padding: 30px;
+      background: #f8fafc;
+      color: #0f172a;
+      line-height: 1.5;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: #ffffff;
+      padding: 40px;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      border: 1px solid #e2e8f0;
+    }
+    .header {
+      border-bottom: 2px solid #0284c7;
+      padding-bottom: 20px;
+      margin-bottom: 30px;
+    }
+    .disclaimer {
+      background: #fffbeb;
+      border-left: 4px solid #f59e0b;
+      padding: 12px 16px;
+      margin-bottom: 24px;
+      font-size: 0.9em;
+      color: #92400e;
+      font-weight: 500;
+    }
+    h1 { margin: 0 0 8px 0; font-size: 24px; color: #0f172a; }
+    h2 { font-size: 18px; margin-top: 30px; margin-bottom: 12px; color: #0284c7; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+    .card { background: #f1f5f9; padding: 14px; border-radius: 6px; }
+    .label { font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 600; }
+    .value { font-size: 14px; font-weight: 500; margin-top: 4px; word-break: break-all; }
+    .code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 12px; background: #e2e8f0; padding: 2px 6px; border-radius: 4px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
+    th, td { text-align: left; padding: 8px 12px; border-bottom: 1px solid #e2e8f0; }
+    th { background: #f8fafc; color: #475569; font-weight: 600; }
+    .badge-approved { background: #dcfce7; color: #166534; padding: 3px 8px; border-radius: 9999px; font-weight: 600; font-size: 12px; }
+    .badge-vetoed { background: #fee2e2; color: #991b1b; padding: 3px 8px; border-radius: 9999px; font-weight: 600; font-size: 12px; }
+    .footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid #e2e8f0; font-size: 12px; color: #64748b; text-align: center; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Provity Video Evidence & Provenance Report</h1>
+      <div class="label">Report ID: <span class="code">{{ report.report_id }}</span> | Generated: {{ report.generated_at }}</div>
+    </div>
+
+    <div class="disclaimer">
+      <strong>RESEARCH / DEMO PROTOTYPE - NOT FOR LEGAL CONCLUSIONS.</strong><br>
+      This document records algorithmic reconstruction lineage and application-level integrity controls.
+      It does not establish legal chain of custody or factual truth beyond the specified mathematical transformations.
+    </div>
+
+    <h2>1. Case & Source Lineage</h2>
+    <div class="grid">
+      <div class="card">
+        <div class="label">Case Name</div>
+        <div class="value">{{ case.display_name }} ({{ case.case_id }})</div>
+      </div>
+      <div class="card">
+        <div class="label">Analyst Alias</div>
+        <div class="value">{{ case.owner_alias }}</div>
+      </div>
+      <div class="card">
+        <div class="label">Source Media</div>
+        <div class="value">{{ video.original_name }} ({{ video.width_px }}x{{ video.height_px }}, {{ video.duration_us // 1000000 }}s)</div>
+      </div>
+      <div class="card">
+        <div class="label">Source SHA-256 (Ingest &amp; Export Verified)</div>
+        <div class="value code">{{ report.source_sha256_verified_at_export }}</div>
+      </div>
+    </div>
+
+    <h2>2. TrueFrame Reconstruction & Integrity</h2>
+    <div class="grid">
+      <div class="card">
+        <div class="label">Target Frame &amp; PTS</div>
+        <div class="value">Frame {{ run.target_frame_id.split(':')[-1] }} @ {{ run.target_pts_us }} µs</div>
+      </div>
+      <div class="card">
+        <div class="label">Integrity Score</div>
+        <div class="value"><strong>{{ run.integrity.score_0_100 }} / 100</strong> (integrity-v1)</div>
+      </div>
+      <div class="card">
+        <div class="label">Supported Coverage</div>
+        <div class="value">{{ run.integrity.supported_coverage * 100 }}%</div>
+      </div>
+      <div class="card">
+        <div class="label">Semantic Generated Blend</div>
+        <div class="value">{{ run.integrity.semantic_generated_pct }}% (Zero Generative Inpainting)</div>
+      </div>
+    </div>
+
+    <h2>3. Provenance Breakdown</h2>
+    <p>Output pixels resolved via <code>provenance.npz</code> authority:</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Class</th>
+          <th>Full Output Frame %</th>
+          <th>Subject Region %</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>ORIGINAL (0)</td>
+          <td>{{ run.provenance.coverage_pct.ORIGINAL }}%</td>
+          <td>{{ run.provenance.subject_coverage_pct.ORIGINAL }}%</td>
+          <td>Preserved from target frame unchanged</td>
+        </tr>
+        <tr>
+          <td>BORROWED (1)</td>
+          <td>{{ run.provenance.coverage_pct.BORROWED }}%</td>
+          <td>{{ run.provenance.subject_coverage_pct.BORROWED }}%</td>
+          <td>Transferred from accepted same-track donors via homography</td>
+        </tr>
+        <tr>
+          <td>GENERATED_BLEND (2)</td>
+          <td>{{ run.provenance.coverage_pct.GENERATED_BLEND }}%</td>
+          <td>{{ run.provenance.subject_coverage_pct.GENERATED_BLEND }}%</td>
+          <td>Generative blend pixels (strictly 0.0% in MVP)</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>4. Source Donor LUT (Look-Up Table)</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Index</th>
+          <th>Role</th>
+          <th>Frame ID</th>
+          <th>PTS (µs)</th>
+          <th>Alignment Method</th>
+          <th>Transform ID</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for entry in run.provenance.source_lut %}
+        <tr>
+          <td>{{ entry.index }}</td>
+          <td><strong>{{ entry.role }}</strong></td>
+          <td>{{ entry.frame_id }}</td>
+          <td>{{ entry.pts_us }}</td>
+          <td>{{ entry.alignment_method }}</td>
+          <td>{{ entry.transform_id or "identity" }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <h2>5. Human Review Gate</h2>
+    <div class="grid">
+      <div class="card">
+        <div class="label">Review Decision</div>
+        <div class="value"><span class="badge-approved">{{ review.decision }}</span></div>
+      </div>
+      <div class="card">
+        <div class="label">Reviewer Alias</div>
+        <div class="value">{{ review.reviewer_alias }}</div>
+      </div>
+      <div class="card">
+        <div class="label">Reviewed Result Hash</div>
+        <div class="value code">{{ review.reviewed_result_sha256 }}</div>
+      </div>
+      <div class="card">
+        <div class="label">Reviewed Provenance Hash</div>
+        <div class="value code">{{ review.reviewed_provenance_sha256 }}</div>
+      </div>
+    </div>
+    {% if review.comment %}
+    <p><strong>Reviewer Comment:</strong> {{ review.comment }}</p>
+    {% endif %}
+
+    <h2>6. Narrative & Uncertainty Callouts</h2>
+    {% for para in narrative.paragraphs %}
+    <p>{{ para }}</p>
+    {% endfor %}
+
+    <h2>7. Technical Limitations & Disclosures</h2>
+    <ul>
+      {% for item in report.limitations %}
+      <li>{{ item }}</li>
+      {% endfor %}
+    </ul>
+
+    <div class="footer">
+      Generated by Provity Evidence Agent | Bundle SHA-256: <code>{{ report.bundle_sha256 }}</code>
+    </div>
+  </div>
+</body>
+</html>

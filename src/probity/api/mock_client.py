@@ -23,6 +23,7 @@ from probity.domain.enums import (
     TrackState,
     VetoReason,
 )
+from probity.domain.ids import new_uuid7
 from probity.domain.models import (
     CaseWorkspace,
     EvidenceReport,
@@ -249,6 +250,7 @@ class MockApiClient:
                 raise ValueError("Integrity score below 70; approval disallowed.")
 
             review = HumanReview.create(
+                review_id=new_uuid7(),
                 run_id=run.run_id,
                 reviewer_alias=reviewer_alias,
                 decision=ReviewDecision.APPROVE,
@@ -264,6 +266,7 @@ class MockApiClient:
                 raise ValueError("Veto comment cannot be empty.")
 
             review = HumanReview.create(
+                review_id=new_uuid7(),
                 run_id=run.run_id,
                 reviewer_alias=reviewer_alias,
                 decision=ReviewDecision.VETO,
