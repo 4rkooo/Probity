@@ -2,16 +2,21 @@
 
 from __future__ import annotations
 
+import ast
 import asyncio
+import importlib.util
 import json
+import sys
 from pathlib import Path
 
 import pytest
 
 from probity.adapters.fixture.yolo import FixtureYoloAdapter
-from probity.adapters.live.yolo import LiveYoloAdapter, NotConfigured
+from probity.adapters.live import yolo as live_yolo
+from probity.adapters.live.yolo import LiveYoloAdapter, NotConfigured, ultralytics_available
 from probity.domain.enums import AdapterMode, HealthStatus, SubjectType
-from probity.domain.errors import FixtureNotFound
+from probity.domain.errors import FixtureNotFound, ValidationFailed
+from probity.domain.ids import parse_frame_id
 from probity.domain.models import Track
 from probity.eval.window import load_window
 from probity.ports import DetectorTracker, TrackRequest
@@ -96,6 +101,38 @@ def test_fixture_missing_root_is_unavailable(tmp_path: Path) -> None:
         )))
 
 
+def test_fixture_detect_filters_frames_and_empty_classes() -> None:
+    win, _request = _synth_request()
+    adapter = FixtureYoloAdapter(SYNTH)
+    one = win.frames[:1]
+    found = asyncio.run(adapter.detect(one, {"license_plate"}))
+    assert found
+    assert all(det.frame_id == one[0].frame_id for det in found)
+    assert asyncio.run(adapter.detect(win.frames, set())) == ()
+
+
+def test_fixture_track_matches_seed_when_id_differs() -> None:
+    win, request = _synth_request()
+    adapter = FixtureYoloAdapter(SYNTH)
+    alt = request.model_copy(update={"track_id": "01a1219b-7a81-7637-9c64-97d31e307100"})
+    assert asyncio.run(adapter.track(alt)) == win.track
+    missing = alt.model_copy(update={"seed_bbox_px": (1, 2, 3, 4)})
+    with pytest.raises(FixtureNotFound):
+        asyncio.run(adapter.track(missing))
+
+
+def test_fixture_reads_tracks_subdirectory(tmp_path: Path) -> None:
+    win, request = _synth_request()
+    tracks = tmp_path / "tracks"
+    tracks.mkdir()
+    (tracks / "one.json").write_text(
+        (SYNTH / "track.json").read_text(encoding="utf-8"),
+        encoding="utf-8",
+    )
+    adapter = FixtureYoloAdapter(tmp_path)
+    assert asyncio.run(adapter.track(request)) == win.track
+
+
 def test_fixture_never_reads_ground_truth(monkeypatch: pytest.MonkeyPatch) -> None:
     win, _request = _synth_request()
     forbidden = SYNTH / "ground_truth"
@@ -133,3 +170,59 @@ def test_live_refuses_hub_name_without_local_file() -> None:
     with pytest.raises(NotConfigured, match="checkpoint|download"):
         asyncio.run(adapter.detect((), {"license_plate"}))
     assert not Path("yolov8n.pt").exists()
+
+
+def test_live_module_does_not_import_ultralytics() -> None:
+    tree = ast.parse(Path(live_yolo.__file__).read_text(encoding="utf-8"))
+    top_level: list[str] = []
+    for node in tree.body:
+        if isinstance(node, ast.Import):
+            top_level.extend(alias.name.split(".", 1)[0] for alias in node.names)
+        elif isinstance(node, ast.ImportFrom) and node.module:
+            top_level.append(node.module.split(".", 1)[0])
+    assert "ultralytics" not in top_level
+    sys.modules.pop("ultralytics", None)
+    assert ultralytics_available() is (importlib.util.find_spec("ultralytics") is not None)
+    assert "ultralytics" not in sys.modules
+
+
+def test_live_track_requires_bound_frames_and_loader(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    weights = tmp_path / "local.pt"
+    weights.write_bytes(b"not-a-real-checkpoint")
+    monkeypatch.setattr(live_yolo, "ultralytics_available", lambda: True)
+    win, request = _synth_request()
+    bare = LiveYoloAdapter(weights_path=weights)
+    with pytest.raises(ValidationFailed, match="frames"):
+        asyncio.run(bare.track(request))
+    no_loader = LiveYoloAdapter(weights_path=weights, frames=win.frames)
+    with pytest.raises(ValidationFailed, match="frame loader"):
+        asyncio.run(no_loader.track(request))
+    with pytest.raises(ValidationFailed, match="frame loader"):
+        asyncio.run(no_loader.detect(win.frames[:1], {"license_plate"}))
+
+
+def test_live_detect_sorts_by_frame_number(monkeypatch: pytest.MonkeyPatch) -> None:
+    win, _request = _synth_request()
+    by_id = {det.frame_id: det for det in win.detections}
+    numbered = sorted(
+        (parse_frame_id(frame_id)[1], det) for frame_id, det in by_id.items()
+    )
+    earlier = numbered[0][1]
+    later = next(det for number, det in numbered if number >= 10)
+    assert parse_frame_id(later.frame_id)[1] > parse_frame_id(earlier.frame_id)[1]
+
+    def fake_predict(
+        self: LiveYoloAdapter, ref: object, *, track: bool
+    ) -> list[tuple[object, None]]:
+        del self, track
+        det = by_id.get(getattr(ref, "frame_id"))
+        return [(det, None)] if det is not None else []
+
+    monkeypatch.setattr(LiveYoloAdapter, "_require_local", lambda self: None)
+    monkeypatch.setattr(LiveYoloAdapter, "_predict_boxes", fake_predict)
+    frames = [ref for ref in win.frames if ref.frame_id in {earlier.frame_id, later.frame_id}]
+    frames.sort(key=lambda ref: ref.frame_number, reverse=True)
+    found = asyncio.run(LiveYoloAdapter().detect(frames, {"license_plate"}))
+    assert [det.detection_id for det in found] == [earlier.detection_id, later.detection_id]

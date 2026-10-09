@@ -16,7 +16,7 @@ from typing import Any
 
 from probity.domain.enums import AdapterMode, ErrorCode, HealthStatus, InferenceMode
 from probity.domain.errors import ProbityError, ValidationFailed
-from probity.domain.ids import utc_now
+from probity.domain.ids import parse_frame_id, utc_now
 from probity.domain.models import AdapterHealth, Detection, FrameReference, Track
 from probity.domain.policy import PolicyConfig, default_policy
 from probity.ports import TrackRequest
@@ -235,7 +235,7 @@ class LiveYoloAdapter:
             for det, _tid in self._predict_boxes(ref, track=False):
                 if det.class_name in classes:
                     found.append(det)
-        found.sort(key=lambda d: (d.video_id, d.frame_id, d.detection_id))
+        found.sort(key=lambda d: (d.video_id, parse_frame_id(d.frame_id)[1], d.detection_id))
         return tuple(found)
 
     async def track(self, request: TrackRequest) -> Track:

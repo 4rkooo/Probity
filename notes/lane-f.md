@@ -46,3 +46,5 @@ Contract: `docs/person2-lanes.md`.
 - [x] CoreWeave remote path is NotConfigured (no guessed URLs)
 - [x] Shared contract test for live + fixture
 - [x] No OCR / plate characters
+- [x] Live `detect` order is `(video_id, frame_number, detection_id)` (not string `frame_id`)
+- [x] Empty class set, seed-bbox track lookup, bound-frame ValidationFailed, and no-import tests

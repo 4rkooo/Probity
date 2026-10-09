@@ -119,6 +119,7 @@ def test_detect_and_track_share_domain_contract(
 
     empty = asyncio.run(adapter.detect(win.frames, {"vehicle"}))
     assert empty == ()
+    assert asyncio.run(adapter.detect(win.frames, set())) == ()
 
     track = asyncio.run(adapter.track(_request(win)))
     assert isinstance(track, Track)
