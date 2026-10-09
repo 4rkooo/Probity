@@ -1,0 +1,24 @@
+{
+  "schema_version": "1.0",
+  "created_at": "2026-10-09T16:10:00.000000Z",
+  "content_sha256": "abf576cf9c4f7f9a4ff38634ef68011e8a95fb55f225881088fd023b78c8ca07",
+  "report_id": "01a1216d-b3c0-745e-9183-1319e89c4d65",
+  "case_id": "01a12164-8c00-7bfc-9416-0a1e8674dac6",
+  "run_id": "01a12169-1fe0-739f-a1f0-04111b204a6b",
+  "review_id": "01a1216c-2d20-7f23-8ae4-086d01307eb7",
+  "source_sha256": "9806895754d3af16f50ba66a99514f4b7c1b6659b278fdf7f8260cfd12bf05e5",
+  "source_sha256_verified_at_export": "9806895754d3af16f50ba66a99514f4b7c1b6659b278fdf7f8260cfd12bf05e5",
+  "source_verified": true,
+  "html_uri": "asset://01a1216d-b3c0-783a-9ac7-306da5dcb1fc",
+  "json_uri": "asset://01a1216d-b3c1-7617-bb9b-991992699283",
+  "bundle_sha256": "8533ac98ff0b1477e782bc6379f29e7d8b52fe0dd79154b109149a0a7b9ea047",
+  "generated_at": "2026-10-09T16:10:01.000000Z",
+  "draft_model_id": null,
+  "mode": "FIXTURE",
+  "limitations": [
+    "Research/demo prototype - not for legal conclusions.",
+    "Application-level immutability only; not formal chain of custody.",
+    "Verified cached inference (fixture mode) supplied search and tracking.",
+    "Codec loss already present in the source cannot be reversed."
+  ]
+}

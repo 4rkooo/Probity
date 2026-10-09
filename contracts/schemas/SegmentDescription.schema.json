@@ -1,0 +1,392 @@
+{
+  "$defs": {
+    "InferenceMode": {
+      "description": "Disclosed origin of a produced record: live sponsor call or verified fixture cache.",
+      "enum": [
+        "LIVE",
+        "FIXTURE"
+      ],
+      "title": "InferenceMode",
+      "type": "string"
+    },
+    "Legibility": {
+      "enum": [
+        "CLEAR",
+        "PARTIAL",
+        "ILLEGIBLE"
+      ],
+      "title": "Legibility",
+      "type": "string"
+    },
+    "ObservedAction": {
+      "additionalProperties": false,
+      "properties": {
+        "confidence": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "description": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        },
+        "direction": {
+          "anyOf": [
+            {
+              "maxLength": 60,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Direction"
+        },
+        "time_range": {
+          "$ref": "#/$defs/TimeRangeUs"
+        }
+      },
+      "required": [
+        "description",
+        "confidence",
+        "time_range"
+      ],
+      "title": "ObservedAction",
+      "type": "object"
+    },
+    "RigidSubjectKind": {
+      "enum": [
+        "LICENSE_PLATE",
+        "SIGN",
+        "OTHER_RIGID"
+      ],
+      "title": "RigidSubjectKind",
+      "type": "string"
+    },
+    "RigidSubjectObservation": {
+      "additionalProperties": false,
+      "properties": {
+        "approximate_size": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Approximate Size"
+        },
+        "color": {
+          "anyOf": [
+            {
+              "maxLength": 40,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Color"
+        },
+        "confidence": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "has_multiple_clearer_observations": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Has Multiple Clearer Observations"
+        },
+        "kind": {
+          "$ref": "#/$defs/RigidSubjectKind"
+        },
+        "legibility": {
+          "$ref": "#/$defs/Legibility"
+        },
+        "location": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Location",
+          "type": "string"
+        },
+        "orientation": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Orientation"
+        },
+        "quoted_text": {
+          "anyOf": [
+            {
+              "maxLength": 32,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only when every quoted character is visibly supported",
+          "title": "Quoted Text"
+        },
+        "time_range": {
+          "$ref": "#/$defs/TimeRangeUs"
+        },
+        "uncertainty": {
+          "anyOf": [
+            {
+              "maxLength": 300,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Uncertainty"
+        }
+      },
+      "required": [
+        "kind",
+        "location",
+        "legibility",
+        "confidence",
+        "time_range"
+      ],
+      "title": "RigidSubjectObservation",
+      "type": "object"
+    },
+    "TimeRangeUs": {
+      "additionalProperties": false,
+      "properties": {
+        "end_pts_us": {
+          "description": "Presentation timestamp in integer microseconds",
+          "minimum": 0,
+          "title": "End Pts Us",
+          "type": "integer"
+        },
+        "start_pts_us": {
+          "description": "Presentation timestamp in integer microseconds",
+          "minimum": 0,
+          "title": "Start Pts Us",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "start_pts_us",
+        "end_pts_us"
+      ],
+      "title": "TimeRangeUs",
+      "type": "object"
+    },
+    "VisibilityKind": {
+      "enum": [
+        "CLEAR",
+        "OCCLUSION",
+        "MOTION_BLUR",
+        "FOCUS_BLUR",
+        "COMPRESSION",
+        "LOW_RESOLUTION",
+        "GLARE",
+        "DARKNESS",
+        "UNKNOWN"
+      ],
+      "title": "VisibilityKind",
+      "type": "string"
+    },
+    "VisibilityLimit": {
+      "additionalProperties": false,
+      "properties": {
+        "confidence": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "kind": {
+          "$ref": "#/$defs/VisibilityKind"
+        },
+        "observable_source": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Observable Source"
+        },
+        "time_range": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/TimeRangeUs"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "kind",
+        "confidence"
+      ],
+      "title": "VisibilityLimit",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Validated structured Cosmos output for one segment (section 8 ingestion prompt).",
+  "properties": {
+    "actions": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/ObservedAction"
+      },
+      "title": "Actions",
+      "type": "array"
+    },
+    "confidence": {
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "title": "Confidence",
+      "type": "number"
+    },
+    "mode": {
+      "$ref": "#/$defs/InferenceMode"
+    },
+    "model_id": {
+      "maxLength": 200,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9._:/@+-]+$",
+      "title": "Model Id",
+      "type": "string"
+    },
+    "prompt_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Prompt Sha256",
+      "type": "string"
+    },
+    "raw_output_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Raw Output Sha256",
+      "type": "string"
+    },
+    "rigid_subjects": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/RigidSubjectObservation"
+      },
+      "title": "Rigid Subjects",
+      "type": "array"
+    },
+    "scene_changes": {
+      "default": [],
+      "items": {
+        "maxLength": 200,
+        "type": "string"
+      },
+      "title": "Scene Changes",
+      "type": "array"
+    },
+    "search_terms": {
+      "default": [],
+      "items": {
+        "maxLength": 40,
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Search Terms",
+      "type": "array"
+    },
+    "segment_id": {
+      "examples": [
+        "0199a51e-43bf-7aa2-86e1-b2a0bb287492:s0004"
+      ],
+      "pattern": "^(?P<video_id>[0-9a-f-]{36}):s(?P<n>\\d{4,})$",
+      "title": "Segment Id",
+      "type": "string"
+    },
+    "source_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Source Sha256",
+      "type": "string"
+    },
+    "summary": {
+      "maxLength": 1000,
+      "minLength": 1,
+      "title": "Summary",
+      "type": "string"
+    },
+    "time_range": {
+      "$ref": "#/$defs/TimeRangeUs"
+    },
+    "uncertainty": {
+      "default": [],
+      "items": {
+        "maxLength": 300,
+        "type": "string"
+      },
+      "title": "Uncertainty",
+      "type": "array"
+    },
+    "video_id": {
+      "examples": [
+        "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+      ],
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "title": "Video Id",
+      "type": "string"
+    },
+    "visibility": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/VisibilityLimit"
+      },
+      "title": "Visibility",
+      "type": "array"
+    }
+  },
+  "required": [
+    "segment_id",
+    "video_id",
+    "source_sha256",
+    "time_range",
+    "model_id",
+    "prompt_sha256",
+    "raw_output_sha256",
+    "summary",
+    "confidence",
+    "mode"
+  ],
+  "title": "SegmentDescription",
+  "type": "object"
+}

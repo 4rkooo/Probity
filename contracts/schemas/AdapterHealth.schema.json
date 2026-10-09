@@ -1,0 +1,96 @@
+{
+  "$defs": {
+    "AdapterMode": {
+      "description": "Mode an adapter resolved to at startup health check.",
+      "enum": [
+        "LIVE",
+        "DEGRADED",
+        "FIXTURE",
+        "DISABLED"
+      ],
+      "title": "AdapterMode",
+      "type": "string"
+    },
+    "HealthStatus": {
+      "enum": [
+        "OK",
+        "DEGRADED",
+        "UNAVAILABLE",
+        "DISABLED"
+      ],
+      "title": "HealthStatus",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "adapter_name": {
+      "maxLength": 64,
+      "minLength": 1,
+      "title": "Adapter Name",
+      "type": "string"
+    },
+    "checked_at": {
+      "examples": [
+        "2026-10-09T16:00:00.000000Z"
+      ],
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,6})?Z$",
+      "title": "Checked At",
+      "type": "string"
+    },
+    "detail": {
+      "anyOf": [
+        {
+          "maxLength": 500,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Detail"
+    },
+    "latency_ms": {
+      "minimum": 0,
+      "title": "Latency Ms",
+      "type": "integer"
+    },
+    "mode": {
+      "$ref": "#/$defs/AdapterMode"
+    },
+    "model_id": {
+      "anyOf": [
+        {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9._:/@+-]+$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Model Id"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "status": {
+      "$ref": "#/$defs/HealthStatus"
+    }
+  },
+  "required": [
+    "adapter_name",
+    "model_id",
+    "mode",
+    "status",
+    "checked_at",
+    "latency_ms"
+  ],
+  "title": "AdapterHealth",
+  "type": "object"
+}

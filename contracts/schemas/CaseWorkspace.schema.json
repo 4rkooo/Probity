@@ -1,0 +1,88 @@
+{
+  "$defs": {
+    "CaseStatus": {
+      "enum": [
+        "ACTIVE",
+        "QUARANTINED",
+        "ARCHIVED"
+      ],
+      "title": "CaseStatus",
+      "type": "string"
+    },
+    "OperatingMode": {
+      "description": "Configured process mode (PROBITY_MODE).",
+      "enum": [
+        "AUTO",
+        "LIVE",
+        "FIXTURE"
+      ],
+      "title": "OperatingMode",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "case_id": {
+      "examples": [
+        "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+      ],
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "title": "Case Id",
+      "type": "string"
+    },
+    "content_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Content Sha256",
+      "type": "string"
+    },
+    "created_at": {
+      "examples": [
+        "2026-10-09T16:00:00.000000Z"
+      ],
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,6})?Z$",
+      "title": "Created At",
+      "type": "string"
+    },
+    "display_name": {
+      "maxLength": 120,
+      "minLength": 1,
+      "title": "Display Name",
+      "type": "string"
+    },
+    "mode": {
+      "$ref": "#/$defs/OperatingMode"
+    },
+    "owner_alias": {
+      "maxLength": 64,
+      "minLength": 1,
+      "title": "Owner Alias",
+      "type": "string"
+    },
+    "purpose": {
+      "const": "DEMO_RESEARCH",
+      "default": "DEMO_RESEARCH",
+      "title": "Purpose",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "status": {
+      "$ref": "#/$defs/CaseStatus"
+    }
+  },
+  "required": [
+    "created_at",
+    "content_sha256",
+    "case_id",
+    "display_name",
+    "mode",
+    "owner_alias",
+    "status"
+  ],
+  "title": "CaseWorkspace",
+  "type": "object"
+}

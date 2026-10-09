@@ -1,0 +1,321 @@
+{
+  "$defs": {
+    "ClassConfidence": {
+      "additionalProperties": false,
+      "properties": {
+        "class_name": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Class Name",
+          "type": "string"
+        },
+        "detection_count": {
+          "minimum": 0,
+          "title": "Detection Count",
+          "type": "integer"
+        },
+        "max_confidence": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Max Confidence",
+          "type": "number"
+        }
+      },
+      "required": [
+        "class_name",
+        "max_confidence",
+        "detection_count"
+      ],
+      "title": "ClassConfidence",
+      "type": "object"
+    },
+    "IndexState": {
+      "description": "VideoSegment lifecycle.",
+      "enum": [
+        "PENDING",
+        "DESCRIBED",
+        "EMBEDDED",
+        "INDEXED",
+        "FAILED"
+      ],
+      "title": "IndexState",
+      "type": "string"
+    },
+    "InferenceMode": {
+      "description": "Disclosed origin of a produced record: live sponsor call or verified fixture cache.",
+      "enum": [
+        "LIVE",
+        "FIXTURE"
+      ],
+      "title": "InferenceMode",
+      "type": "string"
+    },
+    "VisibilityKind": {
+      "enum": [
+        "CLEAR",
+        "OCCLUSION",
+        "MOTION_BLUR",
+        "FOCUS_BLUR",
+        "COMPRESSION",
+        "LOW_RESOLUTION",
+        "GLARE",
+        "DARKNESS",
+        "UNKNOWN"
+      ],
+      "title": "VisibilityKind",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "clip_uri": {
+      "anyOf": [
+        {
+          "description": "Opaque, case-scoped asset reference served by GET /v1/assets/{asset_id}",
+          "pattern": "^asset://[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Clip Uri"
+    },
+    "content_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Content Sha256",
+      "type": "string"
+    },
+    "created_at": {
+      "examples": [
+        "2026-10-09T16:00:00.000000Z"
+      ],
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,6})?Z$",
+      "title": "Created At",
+      "type": "string"
+    },
+    "description": {
+      "anyOf": [
+        {
+          "maxLength": 1000,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Description"
+    },
+    "description_model_id": {
+      "anyOf": [
+        {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9._:/@+-]+$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Description Model Id"
+    },
+    "detected_classes": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/ClassConfidence"
+      },
+      "title": "Detected Classes",
+      "type": "array"
+    },
+    "embedding_dimension": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Embedding Dimension"
+    },
+    "embedding_model_id": {
+      "anyOf": [
+        {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9._:/@+-]+$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Embedding Model Id"
+    },
+    "embedding_ref": {
+      "anyOf": [
+        {
+          "maxLength": 200,
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Embedding Ref"
+    },
+    "end_frame": {
+      "description": "Inclusive last frame with pts_us < end_pts_us",
+      "minimum": 0,
+      "title": "End Frame",
+      "type": "integer"
+    },
+    "end_pts_us": {
+      "description": "Presentation timestamp in integer microseconds",
+      "minimum": 0,
+      "title": "End Pts Us",
+      "type": "integer"
+    },
+    "evidence_detection_ids": {
+      "default": [],
+      "items": {
+        "examples": [
+          "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+        ],
+        "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+        "type": "string"
+      },
+      "title": "Evidence Detection Ids",
+      "type": "array"
+    },
+    "index_state": {
+      "$ref": "#/$defs/IndexState"
+    },
+    "mode": {
+      "$ref": "#/$defs/InferenceMode"
+    },
+    "ordinal": {
+      "minimum": 0,
+      "title": "Ordinal",
+      "type": "integer"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "search_terms": {
+      "default": [],
+      "items": {
+        "maxLength": 40,
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Search Terms",
+      "type": "array"
+    },
+    "segment_id": {
+      "examples": [
+        "0199a51e-43bf-7aa2-86e1-b2a0bb287492:s0004"
+      ],
+      "pattern": "^(?P<video_id>[0-9a-f-]{36}):s(?P<n>\\d{4,})$",
+      "title": "Segment Id",
+      "type": "string"
+    },
+    "source_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Source Sha256",
+      "type": "string"
+    },
+    "start_frame": {
+      "minimum": 0,
+      "title": "Start Frame",
+      "type": "integer"
+    },
+    "start_pts_us": {
+      "description": "Presentation timestamp in integer microseconds",
+      "minimum": 0,
+      "title": "Start Pts Us",
+      "type": "integer"
+    },
+    "thumbnail_frame": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Thumbnail Frame"
+    },
+    "thumbnail_uri": {
+      "anyOf": [
+        {
+          "description": "Opaque, case-scoped asset reference served by GET /v1/assets/{asset_id}",
+          "pattern": "^asset://[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "480 px-wide JPEG, non-canonical",
+      "title": "Thumbnail Uri"
+    },
+    "uncertainty": {
+      "default": [],
+      "items": {
+        "maxLength": 300,
+        "type": "string"
+      },
+      "title": "Uncertainty",
+      "type": "array"
+    },
+    "video_id": {
+      "examples": [
+        "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+      ],
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "title": "Video Id",
+      "type": "string"
+    },
+    "visibility_tags": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/VisibilityKind"
+      },
+      "title": "Visibility Tags",
+      "type": "array"
+    }
+  },
+  "required": [
+    "created_at",
+    "content_sha256",
+    "segment_id",
+    "video_id",
+    "source_sha256",
+    "ordinal",
+    "start_pts_us",
+    "end_pts_us",
+    "start_frame",
+    "end_frame",
+    "index_state",
+    "mode"
+  ],
+  "title": "VideoSegment",
+  "type": "object"
+}

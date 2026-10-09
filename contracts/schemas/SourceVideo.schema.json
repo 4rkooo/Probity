@@ -1,0 +1,242 @@
+{
+  "$defs": {
+    "IngestState": {
+      "description": "SourceVideo lifecycle.",
+      "enum": [
+        "STORED",
+        "INDEXING",
+        "SEARCHABLE",
+        "PARTIAL",
+        "FAILED",
+        "CANCELLED",
+        "QUARANTINED"
+      ],
+      "title": "IngestState",
+      "type": "string"
+    },
+    "TimeRangeUs": {
+      "additionalProperties": false,
+      "properties": {
+        "end_pts_us": {
+          "description": "Presentation timestamp in integer microseconds",
+          "minimum": 0,
+          "title": "End Pts Us",
+          "type": "integer"
+        },
+        "start_pts_us": {
+          "description": "Presentation timestamp in integer microseconds",
+          "minimum": 0,
+          "title": "Start Pts Us",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "start_pts_us",
+        "end_pts_us"
+      ],
+      "title": "TimeRangeUs",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "byte_length": {
+      "exclusiveMinimum": 0,
+      "title": "Byte Length",
+      "type": "integer"
+    },
+    "case_id": {
+      "examples": [
+        "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+      ],
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "title": "Case Id",
+      "type": "string"
+    },
+    "container": {
+      "const": "mp4",
+      "title": "Container",
+      "type": "string"
+    },
+    "content_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Content Sha256",
+      "type": "string"
+    },
+    "created_at": {
+      "examples": [
+        "2026-10-09T16:00:00.000000Z"
+      ],
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,6})?Z$",
+      "title": "Created At",
+      "type": "string"
+    },
+    "duration_us": {
+      "exclusiveMinimum": 0,
+      "maximum": 600000000,
+      "title": "Duration Us",
+      "type": "integer"
+    },
+    "fixture_id": {
+      "anyOf": [
+        {
+          "pattern": "^[a-z0-9][a-z0-9-]{1,63}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Fixture Id"
+    },
+    "frame_count": {
+      "exclusiveMinimum": 0,
+      "title": "Frame Count",
+      "type": "integer"
+    },
+    "has_audio": {
+      "title": "Has Audio",
+      "type": "boolean"
+    },
+    "height_px": {
+      "exclusiveMinimum": 0,
+      "maximum": 1080,
+      "title": "Height Px",
+      "type": "integer"
+    },
+    "indexed_range": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/TimeRangeUs"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "ingest_state": {
+      "$ref": "#/$defs/IngestState"
+    },
+    "license_note": {
+      "anyOf": [
+        {
+          "maxLength": 500,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "License Note"
+    },
+    "mime": {
+      "const": "video/mp4",
+      "description": "Detected by probe, never taken from the client",
+      "title": "Mime",
+      "type": "string"
+    },
+    "nominal_fps": {
+      "description": "Display only; never used to derive frame identity",
+      "examples": [
+        "30000/1001"
+      ],
+      "pattern": "^[1-9]\\d*/[1-9]\\d*$",
+      "title": "Nominal Fps",
+      "type": "string"
+    },
+    "original_name": {
+      "description": "Client-supplied; display only, untrusted",
+      "maxLength": 255,
+      "minLength": 1,
+      "title": "Original Name",
+      "type": "string"
+    },
+    "probe_sha256": {
+      "description": "SHA-256 of canonical JSON of the ffprobe result",
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Probe Sha256",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Sha256",
+      "type": "string"
+    },
+    "source_asset_uri": {
+      "description": "Opaque, case-scoped asset reference served by GET /v1/assets/{asset_id}",
+      "pattern": "^asset://[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "title": "Source Asset Uri",
+      "type": "string"
+    },
+    "storage_uri": {
+      "description": "Content-addressed, write-once source path relative to the data root",
+      "pattern": "^source/sha256/[0-9a-f]{2}/[0-9a-f]{64}/original\\.mp4$",
+      "title": "Storage Uri",
+      "type": "string"
+    },
+    "time_base": {
+      "examples": [
+        "30000/1001"
+      ],
+      "pattern": "^[1-9]\\d*/[1-9]\\d*$",
+      "title": "Time Base",
+      "type": "string"
+    },
+    "video_codec": {
+      "enum": [
+        "h264",
+        "hevc"
+      ],
+      "title": "Video Codec",
+      "type": "string"
+    },
+    "video_id": {
+      "examples": [
+        "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+      ],
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "title": "Video Id",
+      "type": "string"
+    },
+    "width_px": {
+      "exclusiveMinimum": 0,
+      "maximum": 1920,
+      "title": "Width Px",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "created_at",
+    "content_sha256",
+    "video_id",
+    "case_id",
+    "original_name",
+    "sha256",
+    "byte_length",
+    "mime",
+    "container",
+    "video_codec",
+    "width_px",
+    "height_px",
+    "duration_us",
+    "time_base",
+    "nominal_fps",
+    "frame_count",
+    "has_audio",
+    "storage_uri",
+    "source_asset_uri",
+    "probe_sha256",
+    "ingest_state"
+  ],
+  "title": "SourceVideo",
+  "type": "object"
+}

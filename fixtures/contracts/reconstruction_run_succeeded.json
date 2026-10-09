@@ -1,0 +1,158 @@
+{
+  "schema_version": "1.0",
+  "created_at": "2026-10-09T16:05:00.000000Z",
+  "content_sha256": "d2f9e9d2edbd1c76577c4f5f9a30305d90c446ac8d4af1014f0e1f1edd8a3429",
+  "run_id": "01a12169-1fe0-739f-a1f0-04111b204a6b",
+  "case_id": "01a12164-8c00-7bfc-9416-0a1e8674dac6",
+  "video_id": "01a12164-8fe8-7cab-9c96-17404faf2b24",
+  "track_id": "01a12167-9940-7889-9da4-457ed98b35dd",
+  "target_frame_id": "01a12164-8fe8-7cab-9c96-17404faf2b24:f417",
+  "target_pts_us": 13900000,
+  "target_bbox_px": [
+    216,
+    470,
+    292,
+    496
+  ],
+  "state": "SUCCEEDED",
+  "policy_profile": "demo-conservative-v1",
+  "config_sha256": "4b092bf020018373de8fd528f9dd62748017d3e8fafd3f169d7f9d774a6ef28c",
+  "algorithm_version": "trueframe-tile-v1",
+  "iteration_count": 2,
+  "accepted_donor_frame_ids": [
+    "01a12164-8fe8-7cab-9c96-17404faf2b24:f409",
+    "01a12164-8fe8-7cab-9c96-17404faf2b24:f424"
+  ],
+  "result_png_uri": "asset://01a12169-46f0-7d6b-ab93-3f5155e92caa",
+  "inspection_clip_uri": null,
+  "provenance_uri": "asset://01a12169-46f1-7187-bb4c-f5028a9cde1a",
+  "provenance": {
+    "encoding_version": "npz-pixel-v1",
+    "tile_size_px": 8,
+    "coverage_pct": {
+      "ORIGINAL": 99.9375,
+      "BORROWED": 0.0625,
+      "GENERATED_BLEND": 0.0
+    },
+    "subject_coverage_pct": {
+      "ORIGINAL": 70.8502,
+      "BORROWED": 29.1498,
+      "GENERATED_BLEND": 0.0
+    },
+    "coverage_complete": true,
+    "source_lut": [
+      {
+        "index": 0,
+        "frame_id": "01a12164-8fe8-7cab-9c96-17404faf2b24:f417",
+        "frame_number": 417,
+        "pts_us": 13900000,
+        "role": "TARGET",
+        "transform_id": null,
+        "alignment_method": "IDENTITY",
+        "matrix": null,
+        "interpolation": "IDENTITY",
+        "color_gain": null,
+        "color_bias": null,
+        "decision_ids": []
+      },
+      {
+        "index": 1,
+        "frame_id": "01a12164-8fe8-7cab-9c96-17404faf2b24:f409",
+        "frame_number": 409,
+        "pts_us": 13633333,
+        "role": "DONOR",
+        "transform_id": "h_409",
+        "alignment_method": "AKAZE_HOMOGRAPHY",
+        "matrix": [
+          1.0,
+          0.0,
+          34.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "interpolation": "LANCZOS4",
+        "color_gain": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "color_bias": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "decision_ids": [
+          "01a12169-1fe2-7ff2-8173-3db629221c77"
+        ]
+      },
+      {
+        "index": 2,
+        "frame_id": "01a12164-8fe8-7cab-9c96-17404faf2b24:f424",
+        "frame_number": 424,
+        "pts_us": 14133333,
+        "role": "DONOR",
+        "transform_id": "h_424",
+        "alignment_method": "AKAZE_HOMOGRAPHY",
+        "matrix": [
+          1.0,
+          0.0,
+          -30.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "interpolation": "LANCZOS4",
+        "color_gain": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "color_bias": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "decision_ids": [
+          "01a12169-1fe3-7656-9f39-f523fd5b09b4"
+        ]
+      }
+    ]
+  },
+  "result_png_sha256": "bd9179f6554d0519a32707c81d8fee6103985703b9ff5e629bd8b3dc18de1103",
+  "provenance_sha256": "c3108994fd4d2ec64adf6d04edd5b8002fedcb68c803a23285680ae73674f1fb",
+  "policy_decision_ids": [
+    "01a12169-1fe0-75ca-bb5f-63209141566c",
+    "01a12169-1fe1-7d08-adef-c38e1eb9dd37",
+    "01a12169-1fe2-7ff2-8173-3db629221c77",
+    "01a12169-1fe3-7656-9f39-f523fd5b09b4",
+    "01a12169-1fe4-72c6-a13d-c4c04ffcd3e9",
+    "01a12169-1fe5-7e34-97f5-b8c4865db61d",
+    "01a12169-1fe6-7546-b878-f48a34b92fb6"
+  ],
+  "integrity": {
+    "score_0_100": 94,
+    "supported_coverage": 1.0,
+    "mean_source_confidence": 0.86,
+    "mean_alignment_confidence": 0.93,
+    "track_continuity": 0.94,
+    "audit_completeness": 1.0,
+    "semantic_generated_pct": 0.0,
+    "formula_version": "integrity-v1"
+  },
+  "refusal_reasons": [],
+  "uncertainty": [
+    "Result may remain blurry where no compatible donor was clearer.",
+    "Contract mock artifact: pixels copied by recorded translation, not TrueFrame output.",
+    "Verified cached inference (fixture mode)."
+  ],
+  "mode": "FIXTURE",
+  "started_at": "2026-10-09T16:05:00.000000Z",
+  "finished_at": "2026-10-09T16:05:02.500000Z"
+}

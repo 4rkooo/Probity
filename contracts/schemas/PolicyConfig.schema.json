@@ -1,0 +1,918 @@
+{
+  "$defs": {
+    "AdapterPolicy": {
+      "additionalProperties": false,
+      "properties": {
+        "health_budget_s": {
+          "exclusiveMinimum": 0,
+          "title": "Health Budget S",
+          "type": "number"
+        },
+        "read_retry_delays_s": {
+          "items": {
+            "type": "number"
+          },
+          "title": "Read Retry Delays S",
+          "type": "array"
+        },
+        "timeouts_s": {
+          "$ref": "#/$defs/AdapterTimeouts"
+        }
+      },
+      "required": [
+        "health_budget_s",
+        "read_retry_delays_s",
+        "timeouts_s"
+      ],
+      "title": "AdapterPolicy",
+      "type": "object"
+    },
+    "AdapterTimeouts": {
+      "additionalProperties": false,
+      "properties": {
+        "cosmos_per_segment": {
+          "exclusiveMinimum": 0,
+          "title": "Cosmos Per Segment",
+          "type": "number"
+        },
+        "vast": {
+          "exclusiveMinimum": 0,
+          "title": "Vast",
+          "type": "number"
+        },
+        "wandb": {
+          "exclusiveMinimum": 0,
+          "title": "Wandb",
+          "type": "number"
+        },
+        "yolo_per_window": {
+          "exclusiveMinimum": 0,
+          "title": "Yolo Per Window",
+          "type": "number"
+        }
+      },
+      "required": [
+        "vast",
+        "wandb",
+        "cosmos_per_segment",
+        "yolo_per_window"
+      ],
+      "title": "AdapterTimeouts",
+      "type": "object"
+    },
+    "AkazePolicy": {
+      "additionalProperties": false,
+      "properties": {
+        "min_good_matches": {
+          "exclusiveMinimum": 0,
+          "title": "Min Good Matches",
+          "type": "integer"
+        },
+        "min_keypoints": {
+          "exclusiveMinimum": 0,
+          "title": "Min Keypoints",
+          "type": "integer"
+        },
+        "ratio_test": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Ratio Test",
+          "type": "number"
+        }
+      },
+      "required": [
+        "min_keypoints",
+        "ratio_test",
+        "min_good_matches"
+      ],
+      "title": "AkazePolicy",
+      "type": "object"
+    },
+    "AlignmentPolicy": {
+      "additionalProperties": false,
+      "properties": {
+        "max_corner_outside_fraction": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Max Corner Outside Fraction",
+          "type": "number"
+        },
+        "max_median_reprojection_px": {
+          "exclusiveMinimum": 0,
+          "title": "Max Median Reprojection Px",
+          "type": "number"
+        },
+        "min_inlier_ratio": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Min Inlier Ratio",
+          "type": "number"
+        },
+        "min_valid_coverage": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Min Valid Coverage",
+          "type": "number"
+        }
+      },
+      "required": [
+        "min_inlier_ratio",
+        "max_median_reprojection_px",
+        "min_valid_coverage",
+        "max_corner_outside_fraction"
+      ],
+      "title": "AlignmentPolicy",
+      "type": "object"
+    },
+    "ColorPolicy": {
+      "additionalProperties": false,
+      "properties": {
+        "bias_max_8bit": {
+          "title": "Bias Max 8Bit",
+          "type": "integer"
+        },
+        "bias_min_8bit": {
+          "title": "Bias Min 8Bit",
+          "type": "integer"
+        },
+        "gain_max": {
+          "exclusiveMinimum": 0,
+          "title": "Gain Max",
+          "type": "number"
+        },
+        "gain_min": {
+          "exclusiveMinimum": 0,
+          "title": "Gain Min",
+          "type": "number"
+        },
+        "max_context_gradient_8bit": {
+          "maximum": 255,
+          "minimum": 0,
+          "title": "Max Context Gradient 8Bit",
+          "type": "integer"
+        },
+        "max_mean_abs_residual_8bit": {
+          "maximum": 255,
+          "minimum": 0,
+          "title": "Max Mean Abs Residual 8Bit",
+          "type": "number"
+        },
+        "min_context_samples": {
+          "exclusiveMinimum": 0,
+          "title": "Min Context Samples",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "gain_min",
+        "gain_max",
+        "bias_min_8bit",
+        "bias_max_8bit",
+        "max_context_gradient_8bit",
+        "min_context_samples",
+        "max_mean_abs_residual_8bit"
+      ],
+      "title": "ColorPolicy",
+      "type": "object"
+    },
+    "CropPolicy": {
+      "additionalProperties": false,
+      "properties": {
+        "alignment_context_expand": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Alignment Context Expand",
+          "type": "number"
+        }
+      },
+      "required": [
+        "alignment_context_expand"
+      ],
+      "title": "CropPolicy",
+      "type": "object"
+    },
+    "DetectPolicy": {
+      "additionalProperties": false,
+      "properties": {
+        "max_sample_fps": {
+          "exclusiveMinimum": 0,
+          "title": "Max Sample Fps",
+          "type": "number"
+        }
+      },
+      "required": [
+        "max_sample_fps"
+      ],
+      "title": "DetectPolicy",
+      "type": "object"
+    },
+    "DisallowedTerms": {
+      "additionalProperties": false,
+      "properties": {
+        "identity": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Identity",
+          "type": "array"
+        },
+        "intent": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Intent",
+          "type": "array"
+        },
+        "legal": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Legal",
+          "type": "array"
+        }
+      },
+      "required": [
+        "identity",
+        "legal",
+        "intent"
+      ],
+      "title": "DisallowedTerms",
+      "type": "object"
+    },
+    "DonorPolicy": {
+      "additionalProperties": false,
+      "properties": {
+        "max_count": {
+          "exclusiveMinimum": 0,
+          "title": "Max Count",
+          "type": "integer"
+        },
+        "max_exposure_delta_stops": {
+          "exclusiveMinimum": 0,
+          "title": "Max Exposure Delta Stops",
+          "type": "number"
+        },
+        "max_occluded_fraction": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Max Occluded Fraction",
+          "type": "number"
+        },
+        "min_count": {
+          "exclusiveMinimum": 0,
+          "title": "Min Count",
+          "type": "integer"
+        },
+        "min_quality": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Min Quality",
+          "type": "number"
+        },
+        "min_quality_gain": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Min Quality Gain",
+          "type": "number"
+        },
+        "temporal_decay_s": {
+          "exclusiveMinimum": 0,
+          "title": "Temporal Decay S",
+          "type": "number"
+        }
+      },
+      "required": [
+        "min_quality",
+        "min_quality_gain",
+        "max_occluded_fraction",
+        "max_exposure_delta_stops",
+        "temporal_decay_s",
+        "max_count",
+        "min_count"
+      ],
+      "title": "DonorPolicy",
+      "type": "object"
+    },
+    "EccPolicy": {
+      "additionalProperties": false,
+      "properties": {
+        "epsilon": {
+          "exclusiveMinimum": 0,
+          "title": "Epsilon",
+          "type": "number"
+        },
+        "max_iterations": {
+          "exclusiveMinimum": 0,
+          "title": "Max Iterations",
+          "type": "integer"
+        },
+        "min_correlation": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Min Correlation",
+          "type": "number"
+        }
+      },
+      "required": [
+        "max_iterations",
+        "epsilon",
+        "min_correlation"
+      ],
+      "title": "EccPolicy",
+      "type": "object"
+    },
+    "FusionPolicy": {
+      "additionalProperties": false,
+      "properties": {
+        "keep_original_sharpness": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Keep Original Sharpness",
+          "type": "number"
+        },
+        "min_sharpness_improvement": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Min Sharpness Improvement",
+          "type": "number"
+        },
+        "required_valid_tile_coverage": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Required Valid Tile Coverage",
+          "type": "number"
+        },
+        "sharpness_ratio_epsilon": {
+          "exclusiveMinimum": 0,
+          "title": "Sharpness Ratio Epsilon",
+          "type": "number"
+        },
+        "tile_px": {
+          "const": 8,
+          "title": "Tile Px",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "tile_px",
+        "keep_original_sharpness",
+        "min_sharpness_improvement",
+        "sharpness_ratio_epsilon",
+        "required_valid_tile_coverage"
+      ],
+      "title": "FusionPolicy",
+      "type": "object"
+    },
+    "IdempotencyPolicy": {
+      "additionalProperties": false,
+      "properties": {
+        "ttl_hours": {
+          "exclusiveMinimum": 0,
+          "title": "Ttl Hours",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "ttl_hours"
+      ],
+      "title": "IdempotencyPolicy",
+      "type": "object"
+    },
+    "IntegrityPolicy": {
+      "additionalProperties": false,
+      "properties": {
+        "max_semantic_generated_fraction": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Max Semantic Generated Fraction",
+          "type": "number"
+        },
+        "min_score": {
+          "maximum": 100,
+          "minimum": 0,
+          "title": "Min Score",
+          "type": "integer"
+        },
+        "required_provenance_coverage": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Required Provenance Coverage",
+          "type": "number"
+        }
+      },
+      "required": [
+        "min_score",
+        "required_provenance_coverage",
+        "max_semantic_generated_fraction"
+      ],
+      "title": "IntegrityPolicy",
+      "type": "object"
+    },
+    "IterationPolicy": {
+      "additionalProperties": false,
+      "properties": {
+        "convergence_changed_fraction": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Convergence Changed Fraction",
+          "type": "number"
+        },
+        "max_passes": {
+          "maximum": 2,
+          "minimum": 1,
+          "title": "Max Passes",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "max_passes",
+        "convergence_changed_fraction"
+      ],
+      "title": "IterationPolicy",
+      "type": "object"
+    },
+    "JobsPolicy": {
+      "additionalProperties": false,
+      "properties": {
+        "lease_renew_seconds": {
+          "exclusiveMinimum": 0,
+          "title": "Lease Renew Seconds",
+          "type": "integer"
+        },
+        "lease_seconds": {
+          "exclusiveMinimum": 0,
+          "title": "Lease Seconds",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "lease_seconds",
+        "lease_renew_seconds"
+      ],
+      "title": "JobsPolicy",
+      "type": "object"
+    },
+    "QualityPolicy": {
+      "additionalProperties": false,
+      "properties": {
+        "analyst_seed_confidence": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Analyst Seed Confidence",
+          "type": "number"
+        },
+        "black_luma_8bit": {
+          "maximum": 255,
+          "minimum": 0,
+          "title": "Black Luma 8Bit",
+          "type": "integer"
+        },
+        "laplacian_variance_normalizer": {
+          "exclusiveMinimum": 0,
+          "title": "Laplacian Variance Normalizer",
+          "type": "number"
+        },
+        "max_clipped_fraction": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Max Clipped Fraction",
+          "type": "number"
+        },
+        "pose_aspect_ratio_limit": {
+          "exclusiveMinimum": 0,
+          "title": "Pose Aspect Ratio Limit",
+          "type": "number"
+        },
+        "resize_long_edge_px": {
+          "exclusiveMinimum": 0,
+          "title": "Resize Long Edge Px",
+          "type": "integer"
+        },
+        "subject_size_normalizer_px": {
+          "exclusiveMinimum": 0,
+          "title": "Subject Size Normalizer Px",
+          "type": "number"
+        },
+        "white_luma_8bit": {
+          "maximum": 255,
+          "minimum": 0,
+          "title": "White Luma 8Bit",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "resize_long_edge_px",
+        "laplacian_variance_normalizer",
+        "subject_size_normalizer_px",
+        "black_luma_8bit",
+        "white_luma_8bit",
+        "max_clipped_fraction",
+        "pose_aspect_ratio_limit",
+        "analyst_seed_confidence"
+      ],
+      "title": "QualityPolicy",
+      "type": "object"
+    },
+    "RansacPolicy": {
+      "additionalProperties": false,
+      "properties": {
+        "reprojection_threshold_px": {
+          "exclusiveMinimum": 0,
+          "title": "Reprojection Threshold Px",
+          "type": "number"
+        }
+      },
+      "required": [
+        "reprojection_threshold_px"
+      ],
+      "title": "RansacPolicy",
+      "type": "object"
+    },
+    "SearchPolicy": {
+      "additionalProperties": false,
+      "properties": {
+        "disallowed_terms": {
+          "$ref": "#/$defs/DisallowedTerms"
+        },
+        "max_results": {
+          "exclusiveMinimum": 0,
+          "maximum": 5,
+          "title": "Max Results",
+          "type": "integer"
+        },
+        "overlap_collapse_time_iou": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Overlap Collapse Time Iou",
+          "type": "number"
+        },
+        "top_k": {
+          "exclusiveMinimum": 0,
+          "title": "Top K",
+          "type": "integer"
+        },
+        "weights": {
+          "$ref": "#/$defs/SearchWeights"
+        }
+      },
+      "required": [
+        "top_k",
+        "max_results",
+        "overlap_collapse_time_iou",
+        "weights",
+        "disallowed_terms"
+      ],
+      "title": "SearchPolicy",
+      "type": "object"
+    },
+    "SearchWeights": {
+      "additionalProperties": false,
+      "properties": {
+        "cosine": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Cosine",
+          "type": "number"
+        },
+        "detection_match": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Detection Match",
+          "type": "number"
+        },
+        "lexical_overlap": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Lexical Overlap",
+          "type": "number"
+        },
+        "visibility_match": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Visibility Match",
+          "type": "number"
+        }
+      },
+      "required": [
+        "cosine",
+        "lexical_overlap",
+        "detection_match",
+        "visibility_match"
+      ],
+      "title": "SearchWeights",
+      "type": "object"
+    },
+    "SegmentPolicy": {
+      "additionalProperties": false,
+      "properties": {
+        "duration_s": {
+          "exclusiveMinimum": 0,
+          "title": "Duration S",
+          "type": "integer"
+        },
+        "min_final_duration_s": {
+          "exclusiveMinimum": 0,
+          "title": "Min Final Duration S",
+          "type": "integer"
+        },
+        "overlap_s": {
+          "minimum": 0,
+          "title": "Overlap S",
+          "type": "integer"
+        },
+        "thumbnail_width_px": {
+          "exclusiveMinimum": 0,
+          "title": "Thumbnail Width Px",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "duration_s",
+        "overlap_s",
+        "min_final_duration_s",
+        "thumbnail_width_px"
+      ],
+      "title": "SegmentPolicy",
+      "type": "object"
+    },
+    "TargetPolicy": {
+      "additionalProperties": false,
+      "properties": {
+        "min_height_px": {
+          "exclusiveMinimum": 0,
+          "title": "Min Height Px",
+          "type": "integer"
+        },
+        "min_quality": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Min Quality",
+          "type": "number"
+        },
+        "min_width_px": {
+          "exclusiveMinimum": 0,
+          "title": "Min Width Px",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "min_width_px",
+        "min_height_px",
+        "min_quality"
+      ],
+      "title": "TargetPolicy",
+      "type": "object"
+    },
+    "TrackPolicy": {
+      "additionalProperties": false,
+      "properties": {
+        "box_scale_ratio_max": {
+          "exclusiveMinimum": 0,
+          "title": "Box Scale Ratio Max",
+          "type": "number"
+        },
+        "box_scale_ratio_min": {
+          "exclusiveMinimum": 0,
+          "title": "Box Scale Ratio Min",
+          "type": "number"
+        },
+        "max_aspect_change": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Max Aspect Change",
+          "type": "number"
+        },
+        "max_bridge_gap_frames": {
+          "minimum": 0,
+          "title": "Max Bridge Gap Frames",
+          "type": "integer"
+        },
+        "max_center_step_diag": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Max Center Step Diag",
+          "type": "number"
+        },
+        "max_competing_box_iou": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Max Competing Box Iou",
+          "type": "number"
+        },
+        "min_detector_observations": {
+          "exclusiveMinimum": 0,
+          "title": "Min Detector Observations",
+          "type": "integer"
+        },
+        "min_hsv_hist_correlation": {
+          "maximum": 1,
+          "minimum": -1,
+          "title": "Min Hsv Hist Correlation",
+          "type": "number"
+        },
+        "min_iou_for_association": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Min Iou For Association",
+          "type": "number"
+        },
+        "min_mean_confidence": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Min Mean Confidence",
+          "type": "number"
+        },
+        "window_radius_s": {
+          "exclusiveMinimum": 0,
+          "title": "Window Radius S",
+          "type": "number"
+        }
+      },
+      "required": [
+        "window_radius_s",
+        "min_detector_observations",
+        "min_mean_confidence",
+        "max_bridge_gap_frames",
+        "min_iou_for_association",
+        "max_center_step_diag",
+        "box_scale_ratio_min",
+        "box_scale_ratio_max",
+        "max_aspect_change",
+        "min_hsv_hist_correlation",
+        "max_competing_box_iou"
+      ],
+      "title": "TrackPolicy",
+      "type": "object"
+    },
+    "ValidationPolicy": {
+      "additionalProperties": false,
+      "properties": {
+        "max_boundary_discontinuity_8bit": {
+          "maximum": 255,
+          "minimum": 0,
+          "title": "Max Boundary Discontinuity 8Bit",
+          "type": "number"
+        }
+      },
+      "required": [
+        "max_boundary_discontinuity_8bit"
+      ],
+      "title": "ValidationPolicy",
+      "type": "object"
+    },
+    "VideoPolicy": {
+      "additionalProperties": false,
+      "properties": {
+        "allowed_codecs": {
+          "items": {
+            "enum": [
+              "h264",
+              "hevc"
+            ],
+            "type": "string"
+          },
+          "title": "Allowed Codecs",
+          "type": "array"
+        },
+        "max_bytes": {
+          "exclusiveMinimum": 0,
+          "title": "Max Bytes",
+          "type": "integer"
+        },
+        "max_duration_s": {
+          "exclusiveMinimum": 0,
+          "title": "Max Duration S",
+          "type": "integer"
+        },
+        "max_height": {
+          "exclusiveMinimum": 0,
+          "title": "Max Height",
+          "type": "integer"
+        },
+        "max_width": {
+          "exclusiveMinimum": 0,
+          "title": "Max Width",
+          "type": "integer"
+        },
+        "probe_timeout_s": {
+          "exclusiveMinimum": 0,
+          "title": "Probe Timeout S",
+          "type": "number"
+        }
+      },
+      "required": [
+        "max_duration_s",
+        "max_bytes",
+        "max_width",
+        "max_height",
+        "probe_timeout_s",
+        "allowed_codecs"
+      ],
+      "title": "VideoPolicy",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "adapters": {
+      "$ref": "#/$defs/AdapterPolicy"
+    },
+    "akaze": {
+      "$ref": "#/$defs/AkazePolicy"
+    },
+    "alignment": {
+      "$ref": "#/$defs/AlignmentPolicy"
+    },
+    "color": {
+      "$ref": "#/$defs/ColorPolicy"
+    },
+    "crop": {
+      "$ref": "#/$defs/CropPolicy"
+    },
+    "detect": {
+      "$ref": "#/$defs/DetectPolicy"
+    },
+    "donor": {
+      "$ref": "#/$defs/DonorPolicy"
+    },
+    "ecc": {
+      "$ref": "#/$defs/EccPolicy"
+    },
+    "fusion": {
+      "$ref": "#/$defs/FusionPolicy"
+    },
+    "idempotency": {
+      "$ref": "#/$defs/IdempotencyPolicy"
+    },
+    "integrity": {
+      "$ref": "#/$defs/IntegrityPolicy"
+    },
+    "iteration": {
+      "$ref": "#/$defs/IterationPolicy"
+    },
+    "jobs": {
+      "$ref": "#/$defs/JobsPolicy"
+    },
+    "profile": {
+      "const": "demo-conservative-v1",
+      "title": "Profile",
+      "type": "string"
+    },
+    "quality": {
+      "$ref": "#/$defs/QualityPolicy"
+    },
+    "ransac": {
+      "$ref": "#/$defs/RansacPolicy"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "search": {
+      "$ref": "#/$defs/SearchPolicy"
+    },
+    "segment": {
+      "$ref": "#/$defs/SegmentPolicy"
+    },
+    "target": {
+      "$ref": "#/$defs/TargetPolicy"
+    },
+    "track": {
+      "$ref": "#/$defs/TrackPolicy"
+    },
+    "validation": {
+      "$ref": "#/$defs/ValidationPolicy"
+    },
+    "video": {
+      "$ref": "#/$defs/VideoPolicy"
+    }
+  },
+  "required": [
+    "profile",
+    "schema_version",
+    "video",
+    "segment",
+    "detect",
+    "track",
+    "crop",
+    "quality",
+    "target",
+    "donor",
+    "akaze",
+    "ransac",
+    "alignment",
+    "ecc",
+    "color",
+    "fusion",
+    "validation",
+    "iteration",
+    "integrity",
+    "search",
+    "adapters",
+    "idempotency",
+    "jobs"
+  ],
+  "title": "PolicyConfig",
+  "type": "object"
+}

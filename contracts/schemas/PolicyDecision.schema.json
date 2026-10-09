@@ -1,0 +1,233 @@
+{
+  "$defs": {
+    "PolicyOutcome": {
+      "enum": [
+        "ACCEPT",
+        "REJECT",
+        "WARN"
+      ],
+      "title": "PolicyOutcome",
+      "type": "string"
+    },
+    "PolicyStage": {
+      "enum": [
+        "INPUT",
+        "QUERY",
+        "TRACK",
+        "QUALITY",
+        "PREFLIGHT",
+        "ALIGN",
+        "COLOR",
+        "RANK",
+        "FUSE",
+        "VALIDATE",
+        "PROVENANCE",
+        "INTEGRITY",
+        "REVIEW",
+        "MODE"
+      ],
+      "title": "PolicyStage",
+      "type": "string"
+    },
+    "ReasonCode": {
+      "description": "Policy/audit reason codes (section 10) plus rule-coded refusal reasons (sections 2, 9).",
+      "enum": [
+        "SOURCE_HASH_VERIFIED",
+        "SOURCE_HASH_MISMATCH",
+        "TRACK_CONFIRMED",
+        "TRACK_NOT_CONFIRMED",
+        "IDENTITY_GEOMETRY_MISMATCH",
+        "DONOR_OBSTRUCTED",
+        "DONOR_NOT_CLEARER",
+        "LIGHTING_OUT_OF_RANGE",
+        "ALIGNMENT_AKAZE_ACCEPTED",
+        "ALIGNMENT_ECC_FALLBACK_ACCEPTED",
+        "ALIGNMENT_FAILED",
+        "BORROW_TILE_ACCEPTED",
+        "KEEP_ORIGINAL_CLEAR",
+        "REVERT_TILE_VALIDATION",
+        "PROVENANCE_COMPLETE",
+        "PROVENANCE_INCOMPLETE",
+        "GENERATED_SEMANTIC_PIXEL",
+        "INTEGRITY_BELOW_MINIMUM",
+        "HUMAN_APPROVED",
+        "HUMAN_VETOED",
+        "QUERY_POLICY_FILTERED",
+        "FIXTURE_MODE_DISCLOSED",
+        "SUBJECT_NOT_RIGID",
+        "TARGET_TOO_SMALL",
+        "TARGET_QUALITY_TOO_LOW",
+        "DECODE_NOT_DETERMINISTIC",
+        "INSUFFICIENT_COMPATIBLE_DONORS",
+        "PHOTOMETRIC_INCOMPATIBLE",
+        "NO_TILE_IMPROVED",
+        "DONOR_OUTSIDE_WINDOW",
+        "DONOR_TRACK_MISMATCH",
+        "GENERATED_INPUT_REJECTED"
+      ],
+      "title": "ReasonCode",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "content_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Content Sha256",
+      "type": "string"
+    },
+    "created_at": {
+      "examples": [
+        "2026-10-09T16:00:00.000000Z"
+      ],
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,6})?Z$",
+      "title": "Created At",
+      "type": "string"
+    },
+    "decision_id": {
+      "examples": [
+        "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+      ],
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "title": "Decision Id",
+      "type": "string"
+    },
+    "observed": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "integer"
+        },
+        {
+          "type": "string"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Observed"
+    },
+    "operator": {
+      "enum": [
+        "<",
+        "<=",
+        ">",
+        ">=",
+        "==",
+        "!=",
+        "in",
+        "none"
+      ],
+      "title": "Operator",
+      "type": "string"
+    },
+    "outcome": {
+      "$ref": "#/$defs/PolicyOutcome"
+    },
+    "policy_key": {
+      "anyOf": [
+        {
+          "maxLength": 80,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Policy Key"
+    },
+    "reason": {
+      "maxLength": 300,
+      "minLength": 1,
+      "title": "Reason",
+      "type": "string"
+    },
+    "rule_code": {
+      "$ref": "#/$defs/ReasonCode"
+    },
+    "run_id": {
+      "examples": [
+        "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+      ],
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "title": "Run Id",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "sequence": {
+      "minimum": 0,
+      "title": "Sequence",
+      "type": "integer"
+    },
+    "stage": {
+      "$ref": "#/$defs/PolicyStage"
+    },
+    "subject_ref": {
+      "maxLength": 120,
+      "minLength": 1,
+      "title": "Subject Ref",
+      "type": "string"
+    },
+    "threshold": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "integer"
+        },
+        {
+          "type": "string"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Threshold"
+    },
+    "units": {
+      "anyOf": [
+        {
+          "maxLength": 32,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Units"
+    }
+  },
+  "required": [
+    "created_at",
+    "content_sha256",
+    "decision_id",
+    "run_id",
+    "sequence",
+    "rule_code",
+    "stage",
+    "subject_ref",
+    "outcome",
+    "reason",
+    "observed",
+    "operator",
+    "threshold",
+    "units"
+  ],
+  "title": "PolicyDecision",
+  "type": "object"
+}

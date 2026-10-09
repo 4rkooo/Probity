@@ -1,0 +1,109 @@
+{
+  "$defs": {
+    "ReviewDecision": {
+      "enum": [
+        "APPROVE",
+        "VETO"
+      ],
+      "title": "ReviewDecision",
+      "type": "string"
+    },
+    "VetoReason": {
+      "enum": [
+        "MISALIGNMENT",
+        "MISIDENTIFIED_SUBJECT",
+        "MISLEADING_APPEARANCE",
+        "INSUFFICIENT_EVIDENCE",
+        "OTHER"
+      ],
+      "title": "VetoReason",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "comment": {
+      "maxLength": 1000,
+      "title": "Comment",
+      "type": "string"
+    },
+    "content_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Content Sha256",
+      "type": "string"
+    },
+    "created_at": {
+      "examples": [
+        "2026-10-09T16:00:00.000000Z"
+      ],
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,6})?Z$",
+      "title": "Created At",
+      "type": "string"
+    },
+    "decision": {
+      "$ref": "#/$defs/ReviewDecision"
+    },
+    "reason_code": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/VetoReason"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "review_id": {
+      "examples": [
+        "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+      ],
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "title": "Review Id",
+      "type": "string"
+    },
+    "reviewed_provenance_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Reviewed Provenance Sha256",
+      "type": "string"
+    },
+    "reviewed_result_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Reviewed Result Sha256",
+      "type": "string"
+    },
+    "reviewer_alias": {
+      "maxLength": 64,
+      "minLength": 1,
+      "title": "Reviewer Alias",
+      "type": "string"
+    },
+    "run_id": {
+      "examples": [
+        "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+      ],
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "title": "Run Id",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "created_at",
+    "content_sha256",
+    "review_id",
+    "run_id",
+    "reviewer_alias",
+    "decision",
+    "reason_code",
+    "comment",
+    "reviewed_result_sha256",
+    "reviewed_provenance_sha256"
+  ],
+  "title": "HumanReview",
+  "type": "object"
+}

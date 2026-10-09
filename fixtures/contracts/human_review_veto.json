@@ -1,0 +1,13 @@
+{
+  "schema_version": "1.0",
+  "created_at": "2026-10-09T16:08:30.000000Z",
+  "content_sha256": "735cbcf8aa4d7f331209b488f634002425a676f1adcbf7dd8989966e1ef9cf2c",
+  "review_id": "01a1216c-5430-7649-b6d3-c1434856e460",
+  "run_id": "01a12169-1fe0-739f-a1f0-04111b204a6b",
+  "reviewer_alias": "analyst-2",
+  "decision": "VETO",
+  "reason_code": "MISALIGNMENT",
+  "comment": "Right-most borrowed tile edge appears offset by one pixel.",
+  "reviewed_result_sha256": "bd9179f6554d0519a32707c81d8fee6103985703b9ff5e629bd8b3dc18de1103",
+  "reviewed_provenance_sha256": "c3108994fd4d2ec64adf6d04edd5b8002fedcb68c803a23285680ae73674f1fb"
+}

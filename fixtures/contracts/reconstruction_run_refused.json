@@ -1,0 +1,47 @@
+{
+  "schema_version": "1.0",
+  "created_at": "2026-10-09T16:06:40.000000Z",
+  "content_sha256": "a94707dc5949091c517b206a9bbd23c01c36f40ab5cb19b8bb4a137670484358",
+  "run_id": "01a1216a-a680-7573-8684-1ce28d7f2408",
+  "case_id": "01a12164-8c00-7bfc-9416-0a1e8674dac6",
+  "video_id": "01a12164-8fe8-7cab-9c96-17404faf2b24",
+  "track_id": "01a12167-9940-7889-9da4-457ed98b35dd",
+  "target_frame_id": "01a12164-8fe8-7cab-9c96-17404faf2b24:f414",
+  "target_pts_us": 13800000,
+  "target_bbox_px": [
+    202,
+    470,
+    278,
+    496
+  ],
+  "state": "REFUSED",
+  "policy_profile": "demo-conservative-v1",
+  "config_sha256": "4b092bf020018373de8fd528f9dd62748017d3e8fafd3f169d7f9d774a6ef28c",
+  "algorithm_version": "trueframe-tile-v1",
+  "iteration_count": 0,
+  "accepted_donor_frame_ids": [
+    "01a12164-8fe8-7cab-9c96-17404faf2b24:f409"
+  ],
+  "result_png_uri": null,
+  "inspection_clip_uri": null,
+  "provenance_uri": null,
+  "provenance": null,
+  "result_png_sha256": null,
+  "provenance_sha256": null,
+  "policy_decision_ids": [
+    "01a1216a-a680-7acf-befd-c8650949661b",
+    "01a1216a-a681-7549-854a-ddf35ef85315",
+    "01a1216a-a682-71e4-af11-77b1daafb0a2",
+    "01a1216a-a683-7581-9398-656eadab2fd7"
+  ],
+  "integrity": null,
+  "refusal_reasons": [
+    "INSUFFICIENT_COMPATIBLE_DONORS"
+  ],
+  "uncertainty": [
+    "No defensible enhancement produced; the original frame is unchanged."
+  ],
+  "mode": "FIXTURE",
+  "started_at": "2026-10-09T16:06:40.000000Z",
+  "finished_at": "2026-10-09T16:06:41.200000Z"
+}

@@ -1,0 +1,149 @@
+{
+  "$defs": {
+    "InferenceMode": {
+      "description": "Disclosed origin of a produced record: live sponsor call or verified fixture cache.",
+      "enum": [
+        "LIVE",
+        "FIXTURE"
+      ],
+      "title": "InferenceMode",
+      "type": "string"
+    },
+    "LineageKind": {
+      "enum": [
+        "SOURCE",
+        "FRAME",
+        "SEGMENT",
+        "THUMBNAIL",
+        "RECONSTRUCTION",
+        "PROVENANCE",
+        "REPORT"
+      ],
+      "title": "LineageKind",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "algorithm_version": {
+      "maxLength": 64,
+      "minLength": 1,
+      "title": "Algorithm Version",
+      "type": "string"
+    },
+    "artifact_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Artifact Sha256",
+      "type": "string"
+    },
+    "artifact_uri": {
+      "maxLength": 400,
+      "minLength": 1,
+      "title": "Artifact Uri",
+      "type": "string"
+    },
+    "config_sha256": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Config Sha256"
+    },
+    "content_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Content Sha256",
+      "type": "string"
+    },
+    "created_at": {
+      "examples": [
+        "2026-10-09T16:00:00.000000Z"
+      ],
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,6})?Z$",
+      "title": "Created At",
+      "type": "string"
+    },
+    "entity_id": {
+      "maxLength": 120,
+      "minLength": 1,
+      "title": "Entity Id",
+      "type": "string"
+    },
+    "frame_ids": {
+      "default": [],
+      "items": {
+        "examples": [
+          "0199a51e-43bf-7aa2-86e1-b2a0bb287492:f417"
+        ],
+        "pattern": "^(?P<video_id>[0-9a-f-]{36}):f(?P<n>0|[1-9]\\d*)$",
+        "type": "string"
+      },
+      "title": "Frame Ids",
+      "type": "array"
+    },
+    "kind": {
+      "$ref": "#/$defs/LineageKind"
+    },
+    "lineage_id": {
+      "examples": [
+        "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+      ],
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "title": "Lineage Id",
+      "type": "string"
+    },
+    "mode": {
+      "$ref": "#/$defs/InferenceMode"
+    },
+    "model_ids": {
+      "default": [],
+      "items": {
+        "maxLength": 200,
+        "minLength": 1,
+        "pattern": "^[A-Za-z0-9._:/@+-]+$",
+        "type": "string"
+      },
+      "title": "Model Ids",
+      "type": "array"
+    },
+    "parent_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Parent Sha256",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "video_id": {
+      "examples": [
+        "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+      ],
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "title": "Video Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "created_at",
+    "content_sha256",
+    "lineage_id",
+    "kind",
+    "entity_id",
+    "video_id",
+    "parent_sha256",
+    "artifact_uri",
+    "artifact_sha256",
+    "algorithm_version",
+    "mode"
+  ],
+  "title": "LineageRecord",
+  "type": "object"
+}

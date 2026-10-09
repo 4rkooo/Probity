@@ -1,0 +1,589 @@
+[
+  {
+    "segment_id": "01a12164-8fe8-7cab-9c96-17404faf2b24:s0000",
+    "video_id": "01a12164-8fe8-7cab-9c96-17404faf2b24",
+    "source_sha256": "9806895754d3af16f50ba66a99514f4b7c1b6659b278fdf7f8260cfd12bf05e5",
+    "time_range": {
+      "start_pts_us": 0,
+      "end_pts_us": 8000000
+    },
+    "model_id": "fixture/cosmos-reason-describe-v1",
+    "prompt_sha256": "cba1e7ac4bf12f6bbfbb11c34d57f7cc3b617bca04f55d322fdbf0b1a61725e5",
+    "raw_output_sha256": "b47e0d45d21d2cb021d3a50d4bf12a49bd7f54329bc78d91d5773b9f04af4651",
+    "summary": "Empty two-lane road under even daylight; static camera; no vehicles or signs visible.",
+    "rigid_subjects": [],
+    "actions": [],
+    "visibility": [
+      {
+        "kind": "CLEAR",
+        "observable_source": null,
+        "confidence": 0.8,
+        "time_range": null
+      }
+    ],
+    "scene_changes": [],
+    "search_terms": [
+      "road",
+      "empty",
+      "static camera"
+    ],
+    "uncertainty": [
+      "Synthetic fixture; descriptions authored to match the generator timeline."
+    ],
+    "confidence": 0.85,
+    "mode": "FIXTURE"
+  },
+  {
+    "segment_id": "01a12164-8fe8-7cab-9c96-17404faf2b24:s0001",
+    "video_id": "01a12164-8fe8-7cab-9c96-17404faf2b24",
+    "source_sha256": "9806895754d3af16f50ba66a99514f4b7c1b6659b278fdf7f8260cfd12bf05e5",
+    "time_range": {
+      "start_pts_us": 6000000,
+      "end_pts_us": 14000000
+    },
+    "model_id": "fixture/cosmos-reason-describe-v1",
+    "prompt_sha256": "cba1e7ac4bf12f6bbfbb11c34d57f7cc3b617bca04f55d322fdbf0b1a61725e5",
+    "raw_output_sha256": "5090aa9e79d3fd3447bdb44a9979d454a895c06dc36ea59808842b850fd80270",
+    "summary": "A blue sedan enters from the left near 00:10.0 moving left-to-right; a white rear plate region is visible but only partly legible at this resolution.",
+    "rigid_subjects": [
+      {
+        "kind": "LICENSE_PLATE",
+        "color": "white",
+        "location": "rear of blue sedan, lower left of vehicle",
+        "approximate_size": "about 76x26 px",
+        "orientation": "fronto-parallel",
+        "legibility": "PARTIAL",
+        "quoted_text": null,
+        "uncertainty": "Dark glyph marks are visible but no character is resolvable.",
+        "has_multiple_clearer_observations": true,
+        "confidence": 0.78,
+        "time_range": {
+          "start_pts_us": 10000000,
+          "end_pts_us": 14000000
+        }
+      }
+    ],
+    "actions": [
+      {
+        "description": "blue sedan moves across frame",
+        "direction": "left-to-right",
+        "confidence": 0.9,
+        "time_range": {
+          "start_pts_us": 10000000,
+          "end_pts_us": 14000000
+        }
+      }
+    ],
+    "visibility": [
+      {
+        "kind": "LOW_RESOLUTION",
+        "observable_source": null,
+        "confidence": 0.8,
+        "time_range": null
+      }
+    ],
+    "scene_changes": [],
+    "search_terms": [
+      "blue sedan",
+      "car",
+      "license plate",
+      "rear plate",
+      "left-to-right"
+    ],
+    "uncertainty": [
+      "Synthetic fixture; descriptions authored to match the generator timeline."
+    ],
+    "confidence": 0.85,
+    "mode": "FIXTURE"
+  },
+  {
+    "segment_id": "01a12164-8fe8-7cab-9c96-17404faf2b24:s0002",
+    "video_id": "01a12164-8fe8-7cab-9c96-17404faf2b24",
+    "source_sha256": "9806895754d3af16f50ba66a99514f4b7c1b6659b278fdf7f8260cfd12bf05e5",
+    "time_range": {
+      "start_pts_us": 12000000,
+      "end_pts_us": 20000000
+    },
+    "model_id": "fixture/cosmos-reason-describe-v1",
+    "prompt_sha256": "cba1e7ac4bf12f6bbfbb11c34d57f7cc3b617bca04f55d322fdbf0b1a61725e5",
+    "raw_output_sha256": "e9d68b35304a606459c231495f46378109e9a23bb648d4f7a022caca2c4bbb98",
+    "summary": "The blue sedan crosses mid-frame left-to-right; its white rear plate is most visible between 00:12 and 00:16 and remains partly legible.",
+    "rigid_subjects": [
+      {
+        "kind": "LICENSE_PLATE",
+        "color": "white",
+        "location": "rear of blue sedan, lower left of vehicle",
+        "approximate_size": "about 76x26 px",
+        "orientation": "fronto-parallel",
+        "legibility": "PARTIAL",
+        "quoted_text": null,
+        "uncertainty": "Dark glyph marks are visible but no character is resolvable.",
+        "has_multiple_clearer_observations": true,
+        "confidence": 0.78,
+        "time_range": {
+          "start_pts_us": 12000000,
+          "end_pts_us": 16000000
+        }
+      }
+    ],
+    "actions": [
+      {
+        "description": "blue sedan moves across frame",
+        "direction": "left-to-right",
+        "confidence": 0.9,
+        "time_range": {
+          "start_pts_us": 12000000,
+          "end_pts_us": 20000000
+        }
+      }
+    ],
+    "visibility": [
+      {
+        "kind": "LOW_RESOLUTION",
+        "observable_source": null,
+        "confidence": 0.8,
+        "time_range": null
+      },
+      {
+        "kind": "COMPRESSION",
+        "observable_source": null,
+        "confidence": 0.8,
+        "time_range": null
+      }
+    ],
+    "scene_changes": [],
+    "search_terms": [
+      "blue sedan",
+      "car",
+      "license plate",
+      "rear plate",
+      "most visible",
+      "left-to-right"
+    ],
+    "uncertainty": [
+      "Synthetic fixture; descriptions authored to match the generator timeline."
+    ],
+    "confidence": 0.85,
+    "mode": "FIXTURE"
+  },
+  {
+    "segment_id": "01a12164-8fe8-7cab-9c96-17404faf2b24:s0003",
+    "video_id": "01a12164-8fe8-7cab-9c96-17404faf2b24",
+    "source_sha256": "9806895754d3af16f50ba66a99514f4b7c1b6659b278fdf7f8260cfd12bf05e5",
+    "time_range": {
+      "start_pts_us": 18000000,
+      "end_pts_us": 26000000
+    },
+    "model_id": "fixture/cosmos-reason-describe-v1",
+    "prompt_sha256": "cba1e7ac4bf12f6bbfbb11c34d57f7cc3b617bca04f55d322fdbf0b1a61725e5",
+    "raw_output_sha256": "7875a8c4c221eff9961649d3fb8a98ba976d97f174e9e7d1f2ccebcd4d329e9d",
+    "summary": "The blue sedan approaches the right edge and exits the frame near 00:22.",
+    "rigid_subjects": [],
+    "actions": [
+      {
+        "description": "blue sedan moves across frame",
+        "direction": "left-to-right",
+        "confidence": 0.9,
+        "time_range": {
+          "start_pts_us": 18000000,
+          "end_pts_us": 22000000
+        }
+      }
+    ],
+    "visibility": [
+      {
+        "kind": "CLEAR",
+        "observable_source": null,
+        "confidence": 0.8,
+        "time_range": null
+      }
+    ],
+    "scene_changes": [],
+    "search_terms": [
+      "blue sedan",
+      "car",
+      "exits right"
+    ],
+    "uncertainty": [
+      "Synthetic fixture; descriptions authored to match the generator timeline."
+    ],
+    "confidence": 0.85,
+    "mode": "FIXTURE"
+  },
+  {
+    "segment_id": "01a12164-8fe8-7cab-9c96-17404faf2b24:s0004",
+    "video_id": "01a12164-8fe8-7cab-9c96-17404faf2b24",
+    "source_sha256": "9806895754d3af16f50ba66a99514f4b7c1b6659b278fdf7f8260cfd12bf05e5",
+    "time_range": {
+      "start_pts_us": 24000000,
+      "end_pts_us": 32000000
+    },
+    "model_id": "fixture/cosmos-reason-describe-v1",
+    "prompt_sha256": "cba1e7ac4bf12f6bbfbb11c34d57f7cc3b617bca04f55d322fdbf0b1a61725e5",
+    "raw_output_sha256": "0e8e509b321536ca5ada254d9888387e37d2bbad4f280f9b86380503896a5ec2",
+    "summary": "Empty road; no vehicles or signs visible.",
+    "rigid_subjects": [],
+    "actions": [],
+    "visibility": [
+      {
+        "kind": "CLEAR",
+        "observable_source": null,
+        "confidence": 0.8,
+        "time_range": null
+      }
+    ],
+    "scene_changes": [],
+    "search_terms": [
+      "road",
+      "empty"
+    ],
+    "uncertainty": [
+      "Synthetic fixture; descriptions authored to match the generator timeline."
+    ],
+    "confidence": 0.85,
+    "mode": "FIXTURE"
+  },
+  {
+    "segment_id": "01a12164-8fe8-7cab-9c96-17404faf2b24:s0005",
+    "video_id": "01a12164-8fe8-7cab-9c96-17404faf2b24",
+    "source_sha256": "9806895754d3af16f50ba66a99514f4b7c1b6659b278fdf7f8260cfd12bf05e5",
+    "time_range": {
+      "start_pts_us": 30000000,
+      "end_pts_us": 38000000
+    },
+    "model_id": "fixture/cosmos-reason-describe-v1",
+    "prompt_sha256": "cba1e7ac4bf12f6bbfbb11c34d57f7cc3b617bca04f55d322fdbf0b1a61725e5",
+    "raw_output_sha256": "20f98c005effaab2c0781cc9180628dc14018f1c4299e797550d53e3ebc53d5d",
+    "summary": "Empty road; no vehicles or signs visible.",
+    "rigid_subjects": [],
+    "actions": [],
+    "visibility": [
+      {
+        "kind": "CLEAR",
+        "observable_source": null,
+        "confidence": 0.8,
+        "time_range": null
+      }
+    ],
+    "scene_changes": [],
+    "search_terms": [
+      "road",
+      "empty"
+    ],
+    "uncertainty": [
+      "Synthetic fixture; descriptions authored to match the generator timeline."
+    ],
+    "confidence": 0.85,
+    "mode": "FIXTURE"
+  },
+  {
+    "segment_id": "01a12164-8fe8-7cab-9c96-17404faf2b24:s0006",
+    "video_id": "01a12164-8fe8-7cab-9c96-17404faf2b24",
+    "source_sha256": "9806895754d3af16f50ba66a99514f4b7c1b6659b278fdf7f8260cfd12bf05e5",
+    "time_range": {
+      "start_pts_us": 36000000,
+      "end_pts_us": 44000000
+    },
+    "model_id": "fixture/cosmos-reason-describe-v1",
+    "prompt_sha256": "cba1e7ac4bf12f6bbfbb11c34d57f7cc3b617bca04f55d322fdbf0b1a61725e5",
+    "raw_output_sha256": "d6bdcb15998f81de25efe40820e76e0344f5c99dcd5b5c4a26c75abef11e7a80",
+    "summary": "A red van enters from the right near 00:40 moving right-to-left; its rear plate area is covered by a gray rectangle.",
+    "rigid_subjects": [],
+    "actions": [],
+    "visibility": [
+      {
+        "kind": "OCCLUSION",
+        "observable_source": null,
+        "confidence": 0.8,
+        "time_range": null
+      }
+    ],
+    "scene_changes": [],
+    "search_terms": [
+      "red van",
+      "truck",
+      "right-to-left",
+      "plate obstructed"
+    ],
+    "uncertainty": [
+      "Synthetic fixture; descriptions authored to match the generator timeline."
+    ],
+    "confidence": 0.85,
+    "mode": "FIXTURE"
+  },
+  {
+    "segment_id": "01a12164-8fe8-7cab-9c96-17404faf2b24:s0007",
+    "video_id": "01a12164-8fe8-7cab-9c96-17404faf2b24",
+    "source_sha256": "9806895754d3af16f50ba66a99514f4b7c1b6659b278fdf7f8260cfd12bf05e5",
+    "time_range": {
+      "start_pts_us": 42000000,
+      "end_pts_us": 50000000
+    },
+    "model_id": "fixture/cosmos-reason-describe-v1",
+    "prompt_sha256": "cba1e7ac4bf12f6bbfbb11c34d57f7cc3b617bca04f55d322fdbf0b1a61725e5",
+    "raw_output_sha256": "db97a19ce08a02ce8daa6c7b4ba3fee09ecf37540725b6fecb165cf88037d97b",
+    "summary": "The red van crosses right-to-left; a gray rectangle occludes the plate region, which is illegible.",
+    "rigid_subjects": [],
+    "actions": [],
+    "visibility": [
+      {
+        "kind": "OCCLUSION",
+        "observable_source": null,
+        "confidence": 0.8,
+        "time_range": null
+      }
+    ],
+    "scene_changes": [],
+    "search_terms": [
+      "red van",
+      "truck",
+      "plate obstructed",
+      "occlusion",
+      "right-to-left"
+    ],
+    "uncertainty": [
+      "Synthetic fixture; descriptions authored to match the generator timeline."
+    ],
+    "confidence": 0.85,
+    "mode": "FIXTURE"
+  },
+  {
+    "segment_id": "01a12164-8fe8-7cab-9c96-17404faf2b24:s0008",
+    "video_id": "01a12164-8fe8-7cab-9c96-17404faf2b24",
+    "source_sha256": "9806895754d3af16f50ba66a99514f4b7c1b6659b278fdf7f8260cfd12bf05e5",
+    "time_range": {
+      "start_pts_us": 48000000,
+      "end_pts_us": 56000000
+    },
+    "model_id": "fixture/cosmos-reason-describe-v1",
+    "prompt_sha256": "cba1e7ac4bf12f6bbfbb11c34d57f7cc3b617bca04f55d322fdbf0b1a61725e5",
+    "raw_output_sha256": "d84ebbbe3ba5680afcbfed1c72565b37d4520cb5e7089605c3b0458b55d94510",
+    "summary": "The red van exits the left edge near 00:52; the road is then empty.",
+    "rigid_subjects": [],
+    "actions": [],
+    "visibility": [
+      {
+        "kind": "OCCLUSION",
+        "observable_source": null,
+        "confidence": 0.8,
+        "time_range": null
+      }
+    ],
+    "scene_changes": [],
+    "search_terms": [
+      "red van",
+      "truck",
+      "exits left"
+    ],
+    "uncertainty": [
+      "Synthetic fixture; descriptions authored to match the generator timeline."
+    ],
+    "confidence": 0.85,
+    "mode": "FIXTURE"
+  },
+  {
+    "segment_id": "01a12164-8fe8-7cab-9c96-17404faf2b24:s0009",
+    "video_id": "01a12164-8fe8-7cab-9c96-17404faf2b24",
+    "source_sha256": "9806895754d3af16f50ba66a99514f4b7c1b6659b278fdf7f8260cfd12bf05e5",
+    "time_range": {
+      "start_pts_us": 54000000,
+      "end_pts_us": 62000000
+    },
+    "model_id": "fixture/cosmos-reason-describe-v1",
+    "prompt_sha256": "cba1e7ac4bf12f6bbfbb11c34d57f7cc3b617bca04f55d322fdbf0b1a61725e5",
+    "raw_output_sha256": "40ac52546dd8e98b4ad4d8a2a54b5abe9c2b1891a4941e8df10f63001ee70440",
+    "summary": "Empty road; a green rectangular sign appears in the upper right near 00:60.",
+    "rigid_subjects": [],
+    "actions": [],
+    "visibility": [
+      {
+        "kind": "CLEAR",
+        "observable_source": null,
+        "confidence": 0.8,
+        "time_range": null
+      }
+    ],
+    "scene_changes": [],
+    "search_terms": [
+      "green sign",
+      "sign",
+      "upper right"
+    ],
+    "uncertainty": [
+      "Synthetic fixture; descriptions authored to match the generator timeline."
+    ],
+    "confidence": 0.85,
+    "mode": "FIXTURE"
+  },
+  {
+    "segment_id": "01a12164-8fe8-7cab-9c96-17404faf2b24:s0010",
+    "video_id": "01a12164-8fe8-7cab-9c96-17404faf2b24",
+    "source_sha256": "9806895754d3af16f50ba66a99514f4b7c1b6659b278fdf7f8260cfd12bf05e5",
+    "time_range": {
+      "start_pts_us": 60000000,
+      "end_pts_us": 68000000
+    },
+    "model_id": "fixture/cosmos-reason-describe-v1",
+    "prompt_sha256": "cba1e7ac4bf12f6bbfbb11c34d57f7cc3b617bca04f55d322fdbf0b1a61725e5",
+    "raw_output_sha256": "418cfdb8a9f2bb1a4e7991542ca539cf8687a61595f7ca4982b364229731e7f7",
+    "summary": "A static green rectangular sign with five white marks is visible in the upper right; the marks are not legible as characters.",
+    "rigid_subjects": [],
+    "actions": [],
+    "visibility": [
+      {
+        "kind": "LOW_RESOLUTION",
+        "observable_source": null,
+        "confidence": 0.8,
+        "time_range": null
+      }
+    ],
+    "scene_changes": [],
+    "search_terms": [
+      "green sign",
+      "sign",
+      "white marks",
+      "static"
+    ],
+    "uncertainty": [
+      "Synthetic fixture; descriptions authored to match the generator timeline."
+    ],
+    "confidence": 0.85,
+    "mode": "FIXTURE"
+  },
+  {
+    "segment_id": "01a12164-8fe8-7cab-9c96-17404faf2b24:s0011",
+    "video_id": "01a12164-8fe8-7cab-9c96-17404faf2b24",
+    "source_sha256": "9806895754d3af16f50ba66a99514f4b7c1b6659b278fdf7f8260cfd12bf05e5",
+    "time_range": {
+      "start_pts_us": 66000000,
+      "end_pts_us": 74000000
+    },
+    "model_id": "fixture/cosmos-reason-describe-v1",
+    "prompt_sha256": "cba1e7ac4bf12f6bbfbb11c34d57f7cc3b617bca04f55d322fdbf0b1a61725e5",
+    "raw_output_sha256": "7af2e78bb10a2255341963eba4b99b2d79164638b77df5d74adbb846087ef0c9",
+    "summary": "The static green sign remains visible in the upper right; no vehicles visible.",
+    "rigid_subjects": [],
+    "actions": [],
+    "visibility": [
+      {
+        "kind": "CLEAR",
+        "observable_source": null,
+        "confidence": 0.8,
+        "time_range": null
+      }
+    ],
+    "scene_changes": [],
+    "search_terms": [
+      "green sign",
+      "sign",
+      "static"
+    ],
+    "uncertainty": [
+      "Synthetic fixture; descriptions authored to match the generator timeline."
+    ],
+    "confidence": 0.85,
+    "mode": "FIXTURE"
+  },
+  {
+    "segment_id": "01a12164-8fe8-7cab-9c96-17404faf2b24:s0012",
+    "video_id": "01a12164-8fe8-7cab-9c96-17404faf2b24",
+    "source_sha256": "9806895754d3af16f50ba66a99514f4b7c1b6659b278fdf7f8260cfd12bf05e5",
+    "time_range": {
+      "start_pts_us": 72000000,
+      "end_pts_us": 80000000
+    },
+    "model_id": "fixture/cosmos-reason-describe-v1",
+    "prompt_sha256": "cba1e7ac4bf12f6bbfbb11c34d57f7cc3b617bca04f55d322fdbf0b1a61725e5",
+    "raw_output_sha256": "f723fc21b582977394568eb7ce7323304ce85a77b3ae762542489f44ee73857d",
+    "summary": "The green sign disappears near 00:75; the scene darkens from about 00:78.",
+    "rigid_subjects": [],
+    "actions": [],
+    "visibility": [
+      {
+        "kind": "DARKNESS",
+        "observable_source": null,
+        "confidence": 0.8,
+        "time_range": null
+      }
+    ],
+    "scene_changes": [],
+    "search_terms": [
+      "green sign",
+      "sign",
+      "lighting change",
+      "darkening"
+    ],
+    "uncertainty": [
+      "Synthetic fixture; descriptions authored to match the generator timeline."
+    ],
+    "confidence": 0.85,
+    "mode": "FIXTURE"
+  },
+  {
+    "segment_id": "01a12164-8fe8-7cab-9c96-17404faf2b24:s0013",
+    "video_id": "01a12164-8fe8-7cab-9c96-17404faf2b24",
+    "source_sha256": "9806895754d3af16f50ba66a99514f4b7c1b6659b278fdf7f8260cfd12bf05e5",
+    "time_range": {
+      "start_pts_us": 78000000,
+      "end_pts_us": 86000000
+    },
+    "model_id": "fixture/cosmos-reason-describe-v1",
+    "prompt_sha256": "cba1e7ac4bf12f6bbfbb11c34d57f7cc3b617bca04f55d322fdbf0b1a61725e5",
+    "raw_output_sha256": "bb7c33b269fc87e9b1e887ce3092b85117649d705239be1a2e048cfaa4b84cab",
+    "summary": "The whole scene is darker between 00:78 and 00:84, reducing visibility; lighting returns to normal afterwards.",
+    "rigid_subjects": [],
+    "actions": [],
+    "visibility": [
+      {
+        "kind": "DARKNESS",
+        "observable_source": null,
+        "confidence": 0.8,
+        "time_range": null
+      }
+    ],
+    "scene_changes": [],
+    "search_terms": [
+      "lighting change",
+      "dark",
+      "low visibility"
+    ],
+    "uncertainty": [
+      "Synthetic fixture; descriptions authored to match the generator timeline."
+    ],
+    "confidence": 0.85,
+    "mode": "FIXTURE"
+  },
+  {
+    "segment_id": "01a12164-8fe8-7cab-9c96-17404faf2b24:s0014",
+    "video_id": "01a12164-8fe8-7cab-9c96-17404faf2b24",
+    "source_sha256": "9806895754d3af16f50ba66a99514f4b7c1b6659b278fdf7f8260cfd12bf05e5",
+    "time_range": {
+      "start_pts_us": 84000000,
+      "end_pts_us": 90000000
+    },
+    "model_id": "fixture/cosmos-reason-describe-v1",
+    "prompt_sha256": "cba1e7ac4bf12f6bbfbb11c34d57f7cc3b617bca04f55d322fdbf0b1a61725e5",
+    "raw_output_sha256": "624da0e09740dbf140547eb4172b77bc6b031b55ef81f15e5720b57efb51eb1f",
+    "summary": "Empty road under normal lighting until the end of the clip.",
+    "rigid_subjects": [],
+    "actions": [],
+    "visibility": [
+      {
+        "kind": "CLEAR",
+        "observable_source": null,
+        "confidence": 0.8,
+        "time_range": null
+      }
+    ],
+    "scene_changes": [],
+    "search_terms": [
+      "road",
+      "empty"
+    ],
+    "uncertainty": [
+      "Synthetic fixture; descriptions authored to match the generator timeline."
+    ],
+    "confidence": 0.85,
+    "mode": "FIXTURE"
+  }
+]

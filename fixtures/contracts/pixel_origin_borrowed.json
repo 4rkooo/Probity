@@ -1,0 +1,26 @@
+{
+  "run_id": "01a12169-1fe0-739f-a1f0-04111b204a6b",
+  "x": 219,
+  "y": 481,
+  "provenance_class": "BORROWED",
+  "source_index": 1,
+  "source_frame_id": "01a12164-8fe8-7cab-9c96-17404faf2b24:f409",
+  "source_pts_us": 13633333,
+  "source_x": 185.0,
+  "source_y": 481.0,
+  "transform_id": "h_409",
+  "alignment_method": "AKAZE_HOMOGRAPHY",
+  "color_gain": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "color_bias": [
+    0.0,
+    0.0,
+    0.0
+  ],
+  "decision_ids": [
+    "01a12169-1fe2-7ff2-8173-3db629221c77"
+  ]
+}
