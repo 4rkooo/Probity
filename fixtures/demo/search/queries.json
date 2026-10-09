@@ -1,0 +1,108 @@
+{
+  "schema_version": "1.0",
+  "source_sha256": "9806895754d3af16f50ba66a99514f4b7c1b6659b278fdf7f8260cfd12bf05e5",
+  "prepared_query": {
+    "query": "Find the blue sedan when its rear plate is most visible",
+    "expected_plan": {
+      "semantic_query": "blue sedan rear license plate most visible car",
+      "objective_terms": [
+        "blue sedan",
+        "rear plate",
+        "most visible"
+      ],
+      "subject_classes": [
+        "car",
+        "license_plate"
+      ],
+      "time_range": null,
+      "needs_clarification": false,
+      "filtered_terms": [],
+      "policy_reason_codes": []
+    },
+    "golden_ranks": [
+      {
+        "ordinal": 2,
+        "segment_suffix": "s0002",
+        "score": 0.6449556169447299,
+        "similarity": 0.48262402606881527,
+        "components": {
+          "cosine": 0.48262402606881527,
+          "lexical_overlap": 1.0,
+          "detection_match": 0.875,
+          "visibility_match": 1.0,
+          "unavailable": []
+        },
+        "start_pts_us": 12000000,
+        "end_pts_us": 20000000,
+        "explanation": "Segment 12.0-20.0 s: The blue sedan crosses mid-frame left-to-right; its white rear plate is most visible between 00:12 and 00:16 and remains partly legible. 9 license_plate detection(s) cited."
+      },
+      {
+        "ordinal": 1,
+        "segment_suffix": "s0001",
+        "score": 0.42374999845018546,
+        "similarity": 0.23076922838490077,
+        "components": {
+          "cosine": 0.23076922838490077,
+          "lexical_overlap": 0.6666666666666666,
+          "detection_match": 0.825,
+          "visibility_match": 1.0,
+          "unavailable": []
+        },
+        "start_pts_us": 6000000,
+        "end_pts_us": 14000000,
+        "explanation": "Segment 6.0-14.0 s: A blue sedan enters from the left near 00:10.0 moving left-to-right; a white rear plate region is visible but only partly legible at this resolution. 5 license_plate detection(s) cited."
+      },
+      {
+        "ordinal": 3,
+        "segment_suffix": "s0003",
+        "score": 0.3424603536922894,
+        "similarity": 0.21147746721890678,
+        "components": {
+          "cosine": 0.21147746721890678,
+          "lexical_overlap": 0.3333333333333333,
+          "detection_match": 0.7,
+          "visibility_match": 1.0,
+          "unavailable": []
+        },
+        "start_pts_us": 18000000,
+        "end_pts_us": 26000000,
+        "explanation": "Segment 18.0-26.0 s: The blue sedan approaches the right edge and exits the frame near 00:22."
+      },
+      {
+        "ordinal": 7,
+        "segment_suffix": "s0007",
+        "score": 0.02325,
+        "similarity": -0.10482848367219184,
+        "components": {
+          "cosine": 0.0,
+          "lexical_overlap": 0.0,
+          "detection_match": 0.155,
+          "visibility_match": 0.0,
+          "unavailable": []
+        },
+        "start_pts_us": 42000000,
+        "end_pts_us": 50000000,
+        "explanation": "Segment 42.0-50.0 s: The red van crosses right-to-left; a gray rectangle occludes the plate region, which is illegible."
+      }
+    ]
+  },
+  "clarification_query": {
+    "query": "Who is the guilty driver and why did they flee?",
+    "expected_plan": {
+      "semantic_query": "",
+      "objective_terms": [],
+      "subject_classes": [],
+      "time_range": null,
+      "needs_clarification": true,
+      "filtered_terms": [
+        "who",
+        "guilty",
+        "driver",
+        "why"
+      ],
+      "policy_reason_codes": [
+        "QUERY_POLICY_FILTERED"
+      ]
+    }
+  }
+}
