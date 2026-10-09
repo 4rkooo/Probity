@@ -9,10 +9,21 @@ from __future__ import annotations
 
 from typing import Annotated, Any
 
-from fastapi import FastAPI, Header, HTTPException, Path, Query, Request, status
+from fastapi import FastAPI, Header, Path, Query, Request, status
 from fastapi.responses import Response
 
 from probity import __version__
+from probity.api import services as svc
+from probity.api.deps import (
+    AppServices,
+    ServicesNotWired,
+    build_default_services,
+    load_fixture_catalog,
+    require_services,
+)
+from probity.api.errors import correlation_id_of, install_exception_handlers
+from probity.api.middleware import CorrelationMiddleware
+from probity.config import get_settings
 from probity.domain.api import (
     CreateCaseRequest,
     ErrorEnvelope,
@@ -41,6 +52,7 @@ from probity.domain.models import (
     Track,
     VideoSegment,
 )
+from probity.domain.policy import load_policy
 
 UUID7_PATTERN = r"^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
 IdPath = Annotated[str, Path(pattern=UUID7_PATTERN)]
@@ -82,14 +94,10 @@ ASSET_RESPONSES: dict[int | str, dict[str, Any]] = {
 }
 
 
-def _todo() -> Any:
-    raise HTTPException(status_code=status.HTTP_501_NOT_IMPLEMENTED, detail="not implemented")
-
-
 def register_routes(app: FastAPI) -> None:
     @app.get("/v1/health", response_model=HealthResponse, tags=["system"])
-    async def health() -> Any:
-        return _todo()
+    async def health(request: Request) -> Any:
+        return await svc.health_with_adapters(request)
 
     @app.post(
         "/v1/cases",
@@ -98,14 +106,25 @@ def register_routes(app: FastAPI) -> None:
         responses=_errors(409),
         tags=["cases"],
     )
-    async def create_case(body: CreateCaseRequest, idempotency_key: IdemHeader) -> Any:
-        return _todo()
+    async def create_case(
+        request: Request, body: CreateCaseRequest, idempotency_key: IdemHeader
+    ) -> Any:
+        services = require_services(request)
+        return await svc.mutate(
+            request,
+            services,
+            key=idempotency_key,
+            case_id=None,
+            body=body,
+            status_code=status.HTTP_201_CREATED,
+            produce=lambda: svc.create_case(services, body),
+        )
 
     @app.get(
         "/v1/cases/{case_id}", response_model=CaseWorkspace, responses=_errors(404), tags=["cases"]
     )
-    async def get_case(case_id: IdPath) -> Any:
-        return _todo()
+    async def get_case(request: Request, case_id: IdPath) -> Any:
+        return svc.get_case(require_services(request), case_id)
 
     @app.post(
         "/v1/cases/{case_id}/videos",
@@ -122,13 +141,21 @@ def register_routes(app: FastAPI) -> None:
         fixture_id: Annotated[str | None, Query(pattern=r"^[a-z0-9][a-z0-9-]{1,63}$")] = None,
         original_name: Annotated[str | None, Query(max_length=255)] = None,
     ) -> Any:
-        return _todo()
+        services = require_services(request)
+        return await svc.create_video(
+            request,
+            services,
+            case_id=case_id,
+            key=idempotency_key,
+            fixture_id=fixture_id,
+            original_name=original_name,
+        )
 
     @app.get(
         "/v1/videos/{video_id}", response_model=SourceVideo, responses=_errors(404), tags=["videos"]
     )
-    async def get_video(video_id: IdPath) -> Any:
-        return _todo()
+    async def get_video(request: Request, video_id: IdPath) -> Any:
+        return svc.get_video(require_services(request), video_id)
 
     @app.get(
         "/v1/videos/{video_id}/segments",
@@ -136,12 +163,12 @@ def register_routes(app: FastAPI) -> None:
         responses=_errors(404),
         tags=["videos"],
     )
-    async def list_segments(video_id: IdPath) -> Any:
-        return _todo()
+    async def list_segments(request: Request, video_id: IdPath) -> Any:
+        return svc.list_segments(require_services(request), video_id)
 
     @app.get("/v1/jobs/{job_id}", response_model=JobView, responses=_errors(404), tags=["jobs"])
-    async def get_job(job_id: IdPath) -> Any:
-        return _todo()
+    async def get_job(request: Request, job_id: IdPath) -> Any:
+        return svc.get_job(require_services(request), job_id)
 
     @app.post(
         "/v1/jobs/{job_id}/cancel",
@@ -150,8 +177,17 @@ def register_routes(app: FastAPI) -> None:
         responses=_errors(404, 409),
         tags=["jobs"],
     )
-    async def cancel_job(job_id: IdPath, idempotency_key: IdemHeader) -> Any:
-        return _todo()
+    async def cancel_job(request: Request, job_id: IdPath, idempotency_key: IdemHeader) -> Any:
+        services = require_services(request)
+        return await svc.mutate(
+            request,
+            services,
+            key=idempotency_key,
+            case_id=None,
+            body=None,
+            status_code=status.HTTP_202_ACCEPTED,
+            produce=lambda: svc.cancel_job(services, job_id),
+        )
 
     @app.post(
         "/v1/videos/{video_id}/searches",
@@ -161,9 +197,18 @@ def register_routes(app: FastAPI) -> None:
         tags=["search"],
     )
     async def create_search(
-        video_id: IdPath, body: SearchCreateRequest, idempotency_key: IdemHeader
+        request: Request, video_id: IdPath, body: SearchCreateRequest, idempotency_key: IdemHeader
     ) -> Any:
-        return _todo()
+        services = require_services(request)
+        return await svc.mutate(
+            request,
+            services,
+            key=idempotency_key,
+            case_id=None,
+            body=body,
+            status_code=status.HTTP_200_OK,
+            produce=lambda: svc.create_search(services, video_id, body, correlation_id_of(request)),
+        )
 
     @app.get(
         "/v1/searches/{search_id}",
@@ -171,8 +216,8 @@ def register_routes(app: FastAPI) -> None:
         responses=_errors(404),
         tags=["search"],
     )
-    async def get_search(search_id: IdPath) -> Any:
-        return _todo()
+    async def get_search(request: Request, search_id: IdPath) -> Any:
+        return svc.get_search(require_services(request), search_id)
 
     @app.post(
         "/v1/videos/{video_id}/tracks",
@@ -182,13 +227,22 @@ def register_routes(app: FastAPI) -> None:
         tags=["tracks"],
     )
     async def create_track(
-        video_id: IdPath, body: TrackCreateRequest, idempotency_key: IdemHeader
+        request: Request, video_id: IdPath, body: TrackCreateRequest, idempotency_key: IdemHeader
     ) -> Any:
-        return _todo()
+        services = require_services(request)
+        return await svc.mutate(
+            request,
+            services,
+            key=idempotency_key,
+            case_id=None,
+            body=body,
+            status_code=status.HTTP_202_ACCEPTED,
+            produce=lambda: svc.create_track(request, services, video_id, body),
+        )
 
     @app.get("/v1/tracks/{track_id}", response_model=Track, responses=_errors(404), tags=["tracks"])
-    async def get_track(track_id: IdPath) -> Any:
-        return _todo()
+    async def get_track(request: Request, track_id: IdPath) -> Any:
+        return svc.get_track(require_services(request), track_id)
 
     @app.post(
         "/v1/reconstructions",
@@ -198,9 +252,18 @@ def register_routes(app: FastAPI) -> None:
         tags=["reconstructions"],
     )
     async def create_reconstruction(
-        body: ReconstructionCreateRequest, idempotency_key: IdemHeader
+        request: Request, body: ReconstructionCreateRequest, idempotency_key: IdemHeader
     ) -> Any:
-        return _todo()
+        services = require_services(request)
+        return await svc.mutate(
+            request,
+            services,
+            key=idempotency_key,
+            case_id=None,
+            body=body,
+            status_code=status.HTTP_202_ACCEPTED,
+            produce=lambda: svc.create_reconstruction(request, services, body),
+        )
 
     @app.get(
         "/v1/reconstructions/{run_id}",
@@ -208,8 +271,8 @@ def register_routes(app: FastAPI) -> None:
         responses=_errors(404),
         tags=["reconstructions"],
     )
-    async def get_reconstruction(run_id: IdPath) -> Any:
-        return _todo()
+    async def get_reconstruction(request: Request, run_id: IdPath) -> Any:
+        return svc.get_reconstruction(require_services(request), run_id)
 
     @app.get(
         "/v1/reconstructions/{run_id}/decisions",
@@ -217,8 +280,8 @@ def register_routes(app: FastAPI) -> None:
         responses=_errors(404),
         tags=["reconstructions"],
     )
-    async def list_decisions(run_id: IdPath) -> Any:
-        return _todo()
+    async def list_decisions(request: Request, run_id: IdPath) -> Any:
+        return svc.list_decisions(require_services(request), run_id)
 
     @app.get(
         "/v1/reconstructions/{run_id}/provenance",
@@ -227,11 +290,12 @@ def register_routes(app: FastAPI) -> None:
         tags=["reconstructions"],
     )
     async def get_pixel_origin(
+        request: Request,
         run_id: IdPath,
         x: Annotated[int, Query(ge=0)],
         y: Annotated[int, Query(ge=0)],
     ) -> Any:
-        return _todo()
+        return svc.get_pixel_origin(require_services(request), run_id, x, y)
 
     @app.post(
         "/v1/reconstructions/{run_id}/reviews",
@@ -241,9 +305,18 @@ def register_routes(app: FastAPI) -> None:
         tags=["reviews"],
     )
     async def create_review(
-        run_id: IdPath, body: ReviewCreateRequest, idempotency_key: IdemHeader
+        request: Request, run_id: IdPath, body: ReviewCreateRequest, idempotency_key: IdemHeader
     ) -> Any:
-        return _todo()
+        services = require_services(request)
+        return await svc.mutate(
+            request,
+            services,
+            key=idempotency_key,
+            case_id=None,
+            body=body,
+            status_code=status.HTTP_201_CREATED,
+            produce=lambda: svc.create_review(services, run_id, body),
+        )
 
     @app.post(
         "/v1/reports",
@@ -252,8 +325,19 @@ def register_routes(app: FastAPI) -> None:
         responses=_errors(404, 409),
         tags=["reports"],
     )
-    async def create_report(body: ReportCreateRequest, idempotency_key: IdemHeader) -> Any:
-        return _todo()
+    async def create_report(
+        request: Request, body: ReportCreateRequest, idempotency_key: IdemHeader
+    ) -> Any:
+        services = require_services(request)
+        return await svc.mutate(
+            request,
+            services,
+            key=idempotency_key,
+            case_id=None,
+            body=body,
+            status_code=status.HTTP_202_ACCEPTED,
+            produce=lambda: svc.create_report(request, services, body),
+        )
 
     @app.get(
         "/v1/reports/{report_id}",
@@ -261,8 +345,8 @@ def register_routes(app: FastAPI) -> None:
         responses=_errors(404),
         tags=["reports"],
     )
-    async def get_report(report_id: IdPath) -> Any:
-        return _todo()
+    async def get_report(request: Request, report_id: IdPath) -> Any:
+        return svc.get_report(require_services(request), report_id)
 
     @app.get(
         "/v1/assets/{asset_id}",
@@ -271,19 +355,43 @@ def register_routes(app: FastAPI) -> None:
         tags=["assets"],
     )
     async def get_asset(
+        request: Request,
         asset_id: IdPath,
         range_header: Annotated[str | None, Header(alias="Range")] = None,
     ) -> Any:
-        return _todo()
+        return svc.get_asset(request, require_services(request), asset_id, range_header)
 
 
-def create_app() -> FastAPI:
+def create_app(services: AppServices | None = None) -> FastAPI:
     app = FastAPI(
         title="Probity API",
         version=__version__,
         description="Research/demo prototype - not for legal conclusions.",
     )
+    settings = get_settings()
+    app.state.settings = settings
+    try:
+        app.state.fixture_catalog = load_fixture_catalog(settings.fixture_manifest)
+    except Exception:
+        app.state.fixture_catalog = None
+    if services is None:
+        try:
+            services = build_default_services()
+        except ServicesNotWired:
+            services = None
+    app.state.services = services
+    if services is not None:
+        app.state.settings = services.settings
+        app.state.fixture_catalog = services.fixture_catalog
+        app.state.policy = services.policy
+    else:
+        try:
+            app.state.policy = load_policy(settings.policy_path)
+        except Exception:
+            app.state.policy = None
+    install_exception_handlers(app)
     register_routes(app)
+    app.add_middleware(CorrelationMiddleware)
     return app
 
 
