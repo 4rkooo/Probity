@@ -10,12 +10,14 @@ from probity.search.plan import (
 )
 from probity.search.rerank import clamp01, collapse_overlaps, rerank_candidates, time_iou
 from probity.search.service import LocalSearchService, SystemClock
+from probity.search.sqlite_store import SqlEvidenceStore
 
 __all__ = [
     "ALLOWED_SUBJECT_CLASSES",
     "RULE_BASED_PLANNER_MODEL_ID",
     "LocalSearchService",
     "RuleBasedPlanner",
+    "SqlEvidenceStore",
     "SystemClock",
     "clamp01",
     "collapse_overlaps",

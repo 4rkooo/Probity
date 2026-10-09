@@ -384,6 +384,7 @@ def create_app(services: AppServices | None = None) -> FastAPI:
         app.state.settings = services.settings
         app.state.fixture_catalog = services.fixture_catalog
         app.state.policy = services.policy
+        app.state.evidence_store = services.evidence_store
     else:
         try:
             app.state.policy = load_policy(settings.policy_path)

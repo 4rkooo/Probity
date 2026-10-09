@@ -20,14 +20,16 @@ from probity.domain.errors import SponsorUnavailable
 from probity.domain.fixtures import FixtureCatalog
 from probity.domain.ids import new_uuid7, utc_now
 from probity.domain.models import AdapterHealth
-from probity.domain.policy import PolicyConfig, load_policy
+from probity.domain.policy import PolicyConfig
 from probity.ports import (
+    EvidenceStore,
     IdempotencyStore,
     JobStore,
     MediaProber,
     Repository,
     SearchService,
     SourceStore,
+    VideoUnderstanding,
 )
 
 
@@ -62,6 +64,8 @@ class AppServices:
     adapter_health: async callable returning current adapter health rows.
     clock: RFC 3339 UTC factory (injectable in tests).
     new_id: lowercase UUIDv7 factory (injectable in tests).
+    understanding: shared Cosmos adapter (fixture, or live wrapped in fallback).
+    evidence_store: shared VAST adapter. Search hydrates it from the repository.
     """
 
     settings: Settings
@@ -77,6 +81,8 @@ class AppServices:
     adapter_health: AdapterHealthProbe
     clock: Clock
     new_id: IdFactory
+    understanding: VideoUnderstanding | None = None
+    evidence_store: EvidenceStore | None = None
 
 
 class ServicesNotWired(SponsorUnavailable):
@@ -91,19 +97,11 @@ def load_fixture_catalog(path: Path) -> FixtureCatalog:
 
 
 def build_default_services() -> AppServices:
-    """Production wiring hook.
+    """Production wiring: SQLite, fixture search, and disabled-by-default live shells."""
 
-    Must not open a database or import live adapters as a side effect of
-    ``from probity.api.main import app``. Until Agent B/C/A implementations are
-    composed here, this raises ``ServicesNotWired`` (HTTP 503 retryable).
-    """
+    from probity.wiring import build_services
 
-    get_settings()
-    load_policy()
-    raise ServicesNotWired(
-        "Default AppServices are not wired; inject via create_app(services=...) "
-        "or implement build_default_services in the coordinator merge"
-    )
+    return build_services(get_settings())
 
 
 def optional_services(request: Request) -> AppServices | None:

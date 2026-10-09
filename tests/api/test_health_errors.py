@@ -21,16 +21,19 @@ def test_health_ok(client: TestClient) -> None:
     assert is_uuid7(response.headers[CORRELATION_HEADER])
 
 
-def test_health_unwired_is_degraded_without_db() -> None:
+def test_default_app_health_reports_the_database() -> None:
     response = TestClient(create_app(), raise_server_exceptions=False).get("/v1/health")
     assert response.status_code == 200
     body = response.json()
-    assert body["database"] == "unavailable"
-    assert body["status"] == "degraded"
+    assert body["database"] == "ok"
+    assert body["status"] in {"ok", "degraded"}
+    assert body["process"] == "api"
 
 
 def test_unwired_mutating_returns_503() -> None:
-    client = TestClient(create_app(), raise_server_exceptions=False)
+    app = create_app()
+    app.state.services = None
+    client = TestClient(app, raise_server_exceptions=False)
     response = client.post(
         "/v1/cases",
         json={"display_name": "Fictional Case"},

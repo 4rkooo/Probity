@@ -30,4 +30,13 @@ fixtures:
 	$(UV) run python scripts/generate_contract_fixtures.py
 
 dev:
-	@echo "make dev is wired after integration (API + worker)."; exit 1
+	@echo "Probity dev: API and worker. Press Ctrl-C to stop both."
+	@port=$$($(UV) run python -c 'from probity.config import get_settings; print(get_settings().api_port)'); \
+	echo "API health: http://127.0.0.1:$$port/v1/health"; \
+	echo "Worker logs JSON lines on stdout. Stop both with Ctrl-C."; \
+	trap 'trap - INT TERM EXIT; echo "Stopping API and worker"; kill 0' INT TERM EXIT; \
+	PROBITY_HANDLER_FACTORY=probity.wiring:handler_factory \
+		$(UV) run uvicorn probity.api.main:app --host 127.0.0.1 --port $$port & \
+	PROBITY_HANDLER_FACTORY=probity.wiring:handler_factory \
+		$(UV) run python -m probity.worker & \
+	wait

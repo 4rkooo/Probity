@@ -245,9 +245,7 @@ class Worker:
                     error_type=type(exc).__name__,
                     latency_ms=_latency_ms(started),
                 )
-                self._fail(
-                    job.job_id, ErrorCode.INTERNAL_ERROR, INTERNAL_MESSAGE, retryable=False
-                )
+                self._fail(job.job_id, ErrorCode.INTERNAL_ERROR, INTERNAL_MESSAGE, retryable=False)
                 return
             try:
                 self._store.complete(job.job_id, self.owner_id, outcome)
@@ -319,8 +317,20 @@ def health_line(worker_id: str, database_url: str, recovered: int) -> str:
     )
 
 
+def _install_default_handlers() -> None:
+    """Register ingest and fixture mocks when the process did not install its own."""
+    if _HANDLER_FACTORY is not None:
+        return
+    if os.environ.get("PROBITY_HANDLER_FACTORY", "").strip():
+        return
+    from probity.wiring import handler_factory
+
+    register_handler_factory(handler_factory)
+
+
 def build_worker(settings: Settings | None = None) -> tuple[Worker, str]:
     settings = settings or get_settings()
+    _install_default_handlers()
     url = settings.resolved_database_url
     run_migrations(url)
     engine = create_engine_for(url)
