@@ -166,7 +166,7 @@ _TEMPLATE = r"""<!DOCTYPE html>
     <canvas class="still" id="cL" width="640" height="360"></canvas>
   </div>
   <div class="panel">
-    <div class="hdr"><span style="color:#38bdf8;">TRUEFRAME RESULT (lossless PNG) + overlay</span><span id="cursor">hover a pixel</span></div>
+    <div class="hdr"><span style="color:#38bdf8;">PROBITY RESULT (lossless PNG) + overlay</span><span id="cursor">hover a pixel</span></div>
     <canvas class="still" id="cR" width="640" height="360"></canvas>
   </div>
 </div>

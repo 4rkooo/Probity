@@ -63,7 +63,7 @@ def generate_deterministic_fallback(facts: ReportFacts) -> ReportNarrative:
         f"Target frame {fact_dict.get('target_frame_id', 'unspecified')} at PTS "
         f"{fact_dict.get('target_pts_us', 'unspecified')} us was processed under policy profile "
         f"'{fact_dict.get('policy_profile', 'demo-conservative-v1')}'. "
-        f"Algorithm version: {fact_dict.get('algorithm_version', 'trueframe-tile-v1')}."
+        f"Algorithm version: {fact_dict.get('algorithm_version', 'probity-tile-v1')}."
     )
     paragraphs.append(p1)
 

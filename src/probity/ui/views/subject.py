@@ -95,7 +95,7 @@ def render_subject_view(client: MockApiClient) -> None:
                 "detector-backed continuity may be reconstructed."
             )
         if st.button(
-            "Run TrueFrame Reconstruction ➔",
+            "Run Probity Reconstruction ➔",
             type="primary",
             width="stretch",
             disabled=not confirmed,
@@ -104,5 +104,5 @@ def render_subject_view(client: MockApiClient) -> None:
             ss["run_outcome"] = None
             ss["recon_tick"] = 0
             ss["recon_done"] = False
-            ss["step"] = "TrueFrame"
+            ss["step"] = "Probity"
             st.rerun()

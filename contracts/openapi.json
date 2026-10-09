@@ -1600,8 +1600,8 @@
             "type": "array"
           },
           "algorithm_version": {
-            "const": "trueframe-tile-v1",
-            "default": "trueframe-tile-v1",
+            "const": "probity-tile-v1",
+            "default": "probity-tile-v1",
             "title": "Algorithm Version",
             "type": "string"
           },

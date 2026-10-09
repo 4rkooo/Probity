@@ -26,7 +26,7 @@ def sample_report_facts() -> ReportFacts:
             ReportFact(key="target_frame_id", value="01a12164-8fe8-7cab-9c96-17404faf2b24:f417", citations=("frame 417",)),
             ReportFact(key="target_pts_us", value=13900000, citations=("13.9s", "13900000")),
             ReportFact(key="policy_profile", value="demo-conservative-v1", citations=()),
-            ReportFact(key="algorithm_version", value="trueframe-tile-v1", citations=()),
+            ReportFact(key="algorithm_version", value="probity-tile-v1", citations=()),
             ReportFact(key="accepted_donor_frame_ids", value="f409, f424", citations=("f409", "f424")),
             ReportFact(key="integrity_score", value=94, citations=("94/100",)),
             ReportFact(key="supported_coverage_pct", value=100.0, citations=("100.0%",)),
@@ -87,7 +87,7 @@ async def test_wandb_fixture_adapter(sample_report_facts: ReportFacts) -> None:
     # Draft report
     narrative = await adapter.draft_report(sample_report_facts)
     assert narrative.source is ExplanationSource.TEMPLATE
-    assert "trueframe-tile-v1" in narrative.paragraphs[0]
+    assert "probity-tile-v1" in narrative.paragraphs[0]
 
 
 @pytest.mark.anyio

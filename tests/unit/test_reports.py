@@ -53,7 +53,7 @@ def test_approved_report_bundle_renders(client: MockApiClient) -> None:
         assert report.source_verified is True
 
         html_text = html_path.read_text()
-        assert "Provity Video Evidence & Provenance Report" in html_text
+        assert "Probity Video Evidence & Provenance Report" in html_text
         assert "RESEARCH / DEMO PROTOTYPE - NOT FOR LEGAL CONCLUSIONS" in html_text
         assert str(run.integrity.score_0_100) in html_text
 

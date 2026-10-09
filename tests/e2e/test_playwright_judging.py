@@ -114,9 +114,9 @@ def test_judging_path_in_browser(app_url: str, browser) -> None:
 
     # 1:40-2:20 subject
     expect(page.get_by_text("Tracking Integrity Gate")).to_be_visible()
-    button("Run TrueFrame Reconstruction ➔").click()
+    button("Run Probity Reconstruction ➔").click()
 
-    # 2:20-4:10 TrueFrame canvas: hover a borrowed pixel, open its source frame
+    # 2:20-4:10 Probity canvas: hover a borrowed pixel, open its source frame
     frame = page.frame_locator("iframe").first
     canvas = frame.locator("#cR")
     expect(canvas).to_be_visible()

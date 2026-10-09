@@ -26,7 +26,7 @@ def test_home_renders_persistent_disclosure(make_app, client) -> None:
 
 
 def test_every_step_renders_with_progress(make_app) -> None:
-    for step in ("Source", "Ingest", "Search", "Subject", "TrueFrame", "Review", "Report"):
+    for step in ("Source", "Ingest", "Search", "Subject", "Probity", "Review", "Report"):
         at = make_app(step).run()
         assert not at.exception, f"Failed on step {step}"
 
@@ -125,20 +125,20 @@ def test_empty_query_disables_search(make_app) -> None:
 
 
 # ---------------------------------------------------------------------------------------------
-# Subject / TrueFrame
+# Subject / Probity
 # ---------------------------------------------------------------------------------------------
 
 
 def test_unconfirmed_track_disables_reconstruction(make_app) -> None:
     at = make_app("Subject").run()
     at.radio[0].set_value(at.radio[0].options[1]).run()
-    run_btn = next(b for b in at.button if "Run TrueFrame" in b.label)
+    run_btn = next(b for b in at.button if "Run Probity" in b.label)
     assert run_btn.disabled
     assert any("track not confirmed" in w.value for w in at.warning)
 
 
 def test_refusal_state(make_app) -> None:
-    at = make_app("TrueFrame", target_frame=414, recon_done=False, run_outcome=None).run()
+    at = make_app("Probity", target_frame=414, recon_done=False, run_outcome=None).run()
     assert not at.exception
     page = texts(at)
     assert "No defensible enhancement produced" in page
@@ -149,14 +149,14 @@ def test_refusal_state(make_app) -> None:
 
 def test_reconstruction_failure_state(make_app, client) -> None:
     client.run_outcome = "FAILED"
-    at = make_app("TrueFrame", recon_done=False, run_outcome=None).run()
+    at = make_app("Probity", recon_done=False, run_outcome=None).run()
     page = texts(at)
     assert "SOURCE_HASH_MISMATCH" in page
     assert "Retryable: no" in page
 
 
 def test_comparison_labels_baseline_and_resolves_pixels(make_app) -> None:
-    at = make_app("TrueFrame").run()
+    at = make_app("Probity").run()
     assert not at.exception
     assert "BASELINE IS NON-EVIDENTIARY" in texts(at)
 

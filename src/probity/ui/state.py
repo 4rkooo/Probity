@@ -12,7 +12,7 @@ from typing import Any
 
 from probity.api.mock_client import MockApiClient
 
-STEPS: tuple[str, ...] = ("Source", "Ingest", "Search", "Subject", "TrueFrame", "Review", "Report")
+STEPS: tuple[str, ...] = ("Source", "Ingest", "Search", "Subject", "Probity", "Review", "Report")
 
 # Seconds between job polls. The design calls for 1 s; the demo uses a shorter cadence
 # and tests set PROBITY_UI_POLL_S=0 so that state transitions run instantly.
@@ -46,19 +46,19 @@ def step_prerequisite(step: str, ss: MutableMapping[str, Any]) -> str | None:
         return "Requires a searchable video: finish ingestion first."
     if step == "Subject" and not ss.get("selected_segment"):
         return "Requires a selected search result."
-    if step == "TrueFrame" and ss.get("target_frame") is None:
+    if step == "Probity" and ss.get("target_frame") is None:
         return "Requires a confirmed subject and chosen target frame."
     if step == "Review" and ss.get("run_outcome") != "SUCCEEDED":
         if ss.get("run_outcome") in ("REFUSED", "FAILED"):
             return "The last reconstruction produced no reviewable artifact."
-        return "Requires a completed TrueFrame reconstruction."
+        return "Requires a completed Probity reconstruction."
     if step == "Report" and ss.get("run_outcome") != "SUCCEEDED":
         return "Requires an approved reconstruction."
     return None
 
 
 def completed_progress(segment_id: str | None = None) -> dict[str, Any]:
-    """Session values representing a finished happy path up to TrueFrame (for tests)."""
+    """Session values representing a finished happy path up to Probity (for tests)."""
     client = get_client()
     return {
         "case_confirmed": True,

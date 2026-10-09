@@ -1,6 +1,6 @@
-"""Provity: Video Evidence & Insight Agent (Streamlit Shell).
+"""Probity: Video Evidence & Insight Agent (Streamlit Shell).
 
-Person 3 implementation: Analyst workflow, TrueFrame provenance inspection,
+Person 3 implementation: Analyst workflow, Probity provenance inspection,
 review gate, and evidence delivery.
 
 Run with ``streamlit run src/probity/ui/Home.py``.
@@ -23,7 +23,7 @@ from probity.ui.views.subject import render_subject_view
 from probity.ui.views.upload import render_upload_view
 
 st.set_page_config(
-    page_title="Provity - Video Evidence Agent",
+    page_title="Probity - Video Evidence Agent",
     page_icon="🛡️",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -53,7 +53,7 @@ with top_cols[0]:
     st.markdown(
         f"""
         <div style="background:#0f172a; color:#f8fafc; border-radius:8px; padding:10px 14px; display:flex; flex-wrap:wrap; gap:16px; align-items:center; font-size:12px;">
-          <div style="font-size:14px; font-weight:700;">🛡️ Provity
+          <div style="font-size:14px; font-weight:700;">🛡️ Probity
             <span style="font-weight:400; color:#94a3b8;">| {html.escape(client.case.display_name)}</span></div>
           <div style="font-family:monospace; color:#cbd5e1;">SHA-256 <strong style="color:#38bdf8;">{sha[:12]}…{sha[-8:]}</strong>
             {'' if source_ok else '<strong style="color:#f87171;"> MISMATCH</strong>'}</div>
@@ -140,7 +140,7 @@ VIEWS = {
     "Ingest": render_ingest_view,
     "Search": render_search_view,
     "Subject": render_subject_view,
-    "TrueFrame": render_comparison_view,
+    "Probity": render_comparison_view,
     "Review": render_review_view,
     "Report": render_report_view,
 }

@@ -22,7 +22,7 @@ def client() -> MockApiClient:
 
 @pytest.fixture
 def make_app(client: MockApiClient) -> Callable[..., AppTest]:
-    """Build an AppTest at ``step``; ``progress=True`` seeds a finished path up to TrueFrame."""
+    """Build an AppTest at ``step``; ``progress=True`` seeds a finished path up to Probity."""
 
     def _make(step: str, *, progress: bool = True, **state: Any) -> AppTest:
         at = AppTest.from_file(str(HOME_PATH), default_timeout=60)

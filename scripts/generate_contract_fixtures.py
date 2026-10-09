@@ -2,7 +2,7 @@
 
 Deterministic: fixed IDs, fixed timestamps, and boxes measured from the committed demo clip.
 Reconstruction artifacts here are CONTRACT MOCKS (pixel copies with recorded translations), not
-TrueFrame output; they exist so the UI/report/provenance consumers can build independently.
+Probity output; they exist so the UI/report/provenance consumers can build independently.
 
 Usage: uv run python scripts/generate_contract_fixtures.py
 """
@@ -1040,7 +1040,7 @@ def main() -> None:
         integrity=integrity,
         uncertainty=(
             "Result may remain blurry where no compatible donor was clearer.",
-            "Contract mock artifact: pixels copied by recorded translation, not TrueFrame output.",
+            "Contract mock artifact: pixels copied by recorded translation, not Probity output.",
             "Verified cached inference (fixture mode).",
         ),
         mode=InferenceMode.FIXTURE,

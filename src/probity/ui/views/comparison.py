@@ -1,4 +1,4 @@
-"""Screen 5: TrueFrame Reconstruction & Provenance Comparison View."""
+"""Screen 5: Probity Reconstruction & Provenance Comparison View."""
 
 from __future__ import annotations
 
@@ -105,7 +105,7 @@ def _pixel_inspector(client: MockApiClient, run: ReconstructionRun) -> None:
 
 def render_comparison_view(client: MockApiClient) -> None:
     ss = st.session_state
-    st.subheader("5. TrueFrame Reconstruction & Provenance Comparison")
+    st.subheader("5. Probity Reconstruction & Provenance Comparison")
 
     target_frame = ss.get("target_frame", 417)
     outcome = client.outcome_for_target(int(target_frame))
@@ -197,7 +197,7 @@ def render_comparison_view(client: MockApiClient) -> None:
                 res_crop = img.crop((x1 - 12, y1 - 12, x2 + 12, y2 + 12))
                 st.image(
                     res_crop.resize((res_crop.width * 4, res_crop.height * 4), Image.Resampling.NEAREST),
-                    caption="Probity TrueFrame result (4x nearest-neighbour view, every pixel traced)",
+                    caption="Probity result (4x nearest-neighbour view, every pixel traced)",
                 )
         with b2:
             st.image(

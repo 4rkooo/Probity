@@ -92,7 +92,7 @@ def refusal_panel(reasons: Sequence[str], decisions: Sequence[PolicyDecision] = 
         f"""
         <div style="background:{AMBER_BG}; color:{AMBER_FG}; border-left:6px solid {AMBER_EDGE}; padding:16px; border-radius:6px; margin-bottom:16px;">
           <h3 style="margin:0 0 8px 0; color:{AMBER_FG};">No defensible enhancement produced</h3>
-          <div style="font-size:13px;">TrueFrame refused to alter the target frame. The original source frame is shown unchanged.</div>
+          <div style="font-size:13px;">Probity refused to alter the target frame. The original source frame is shown unchanged.</div>
           <div style="font-size:12px; margin-top:8px; font-weight:700;">Refusal reasons</div>
           <ul style="margin:4px 0 0 18px; font-size:12px;">{reason_items}</ul>
           {f'<div style="font-size:12px; margin-top:8px; font-weight:700;">Rejected evidence</div><ul style="margin:4px 0 0 18px; font-size:12px;">{decision_items}</ul>' if decision_items else ''}

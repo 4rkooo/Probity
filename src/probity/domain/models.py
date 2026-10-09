@@ -952,7 +952,7 @@ class ReconstructionRun(Record):
     state: ReconstructionState
     policy_profile: Literal["demo-conservative-v1"] = "demo-conservative-v1"
     config_sha256: Sha256Hex
-    algorithm_version: Literal["trueframe-tile-v1"] = "trueframe-tile-v1"
+    algorithm_version: Literal["probity-tile-v1"] = "probity-tile-v1"
     iteration_count: Annotated[int, Field(ge=0, le=2)]
     accepted_donor_frame_ids: Annotated[tuple[FrameId, ...], Field(max_length=5)]
     result_png_uri: AssetUri | None = None

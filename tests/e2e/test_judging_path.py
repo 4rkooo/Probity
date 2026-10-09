@@ -1,6 +1,6 @@
 """Five-minute judging path driven through the UI with clicks only (AppTest, no browser).
 
-Mirrors the design's judging script: case -> ingest -> search -> subject -> TrueFrame ->
+Mirrors the design's judging script: case -> ingest -> search -> subject -> Probity ->
 review -> export, ending with a re-verified evidence bundle. The browser version lives
 in ``test_playwright_judging.py``.
 """
@@ -47,9 +47,9 @@ def test_five_minute_judging_path() -> None:
     # 1:40-2:20 confirmed track and target frame
     page = texts(at)
     assert "f417" in page and "CONFIRMED" in page
-    click(at, "Run TrueFrame Reconstruction")
+    click(at, "Run Probity Reconstruction")
 
-    # 2:20-4:10 TrueFrame, provenance, baseline
+    # 2:20-4:10 Probity, provenance, baseline
     assert at.session_state["run_outcome"] == "SUCCEEDED"
     assert "BASELINE IS NON-EVIDENTIARY" in texts(at)
     at.number_input(key="inspect_x").set_value(230).run()
