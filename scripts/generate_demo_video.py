@@ -2,6 +2,9 @@
 
 Scene timeline (seconds):
   10-22  blue sedan crosses left-to-right; white rear plate with dark glyph bars
+  13.67-14.13  focus hunt (frames 410-424): stacked Gaussian blur peaking at frame 417,
+         the reconstruction target; frames 367-409 and 425-477 keep a sharp, fully
+         visible plate (detector-backed donors within +/-2 s)
   40-52  red van crosses right-to-left; its plate is covered by a gray occluding bar
   60-75  static green sign with glyph bars, upper right
   78-84  scene darkens (lighting change)
@@ -16,6 +19,8 @@ import sys
 from pathlib import Path
 
 W, H, FPS, DURATION = 1280, 720, 30, 90
+# (sigma, first_frame, last_frame); stacked Gaussians add in quadrature (peak ~3.35 px at 417).
+FOCUS_HUNT = ((1.2, 410, 424), (1.2, 413, 421), (1.6, 415, 419), (2.4, 417, 417))
 
 
 def box(x: str, y: str, w: int, h: int, color: str, enable: str) -> str:
@@ -65,7 +70,12 @@ def filters() -> str:
             f"{van}[van]",
             "[bg][sedan]overlay=x='-300+(t-10)*130':y=390:eval=frame:enable='between(t,10,22)'[a]",
             "[a][van]overlay=x='1300-(t-40)*135':y=380:eval=frame:enable='between(t,40,52)'[b]",
-            "[b]eq=brightness=-0.35:enable='between(t,78,84)',format=yuv420p[out]",
+            "[b]eq=brightness=-0.35:enable='between(t,78,84)',"
+            + ",".join(
+                f"gblur=sigma={sigma}:enable='between(n,{first},{last})'"
+                for sigma, first, last in FOCUS_HUNT
+            )
+            + ",format=yuv420p[out]",
         ]
     )
 

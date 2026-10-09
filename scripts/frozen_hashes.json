@@ -1,6 +1,6 @@
 {
   "files": {
-    "config/policy.demo.yaml": "3f80c1fd27b382c49161012f5996b6bda0f5bd94abb897d5a5f64ede11d8ae43",
+    "config/policy.demo.yaml": "58ce3f962d59e5da12661064145e4e4b0c01a4b2d1b13110ef936ed31d79c151",
     "contracts/openapi.json": "c56bf1cb7f441ab08cf4a4a8a84e4320a6a5436cb1fda16cbe10c046fe16a013",
     "contracts/schemas/AdapterHealth.schema.json": "a1ba3fddcfeb467d568504388adf3482b32a611a076a88c9375190f2fd3ed9ba",
     "contracts/schemas/AssetRef.schema.json": "7e8e485076758ecaa511cde3881e8cdd0fa8750f2d5ac9d7a740e5f8476dcf42",
@@ -16,7 +16,7 @@
     "contracts/schemas/LineageRecord.schema.json": "5b8d72277eef23bd433002883182a309a2a29751d20811d0a316b5935b0188e4",
     "contracts/schemas/PixelOrigin.schema.json": "396bcb5724603700d12b3a1636d3a834f8d7f0ad2d5bb5e4967a1125aa757d9f",
     "contracts/schemas/PixelProvenance.schema.json": "afecb96a91bce4bb4b67da09c22d886412e607ae04ae5646ddf230f73f454a4e",
-    "contracts/schemas/PolicyConfig.schema.json": "00a0110d87b2d283d30f975842eadb4188ad3385fe4ab420bebe8bde4f9527c0",
+    "contracts/schemas/PolicyConfig.schema.json": "3de0c46a33323b39c1baf759961e7effc04b97c15ac4ee9dbdce2a96fd9f93b7",
     "contracts/schemas/PolicyDecision.schema.json": "8294c937cef5597668ead999b16260f6c82bc0b6bdc8cee3582f6e5a5348474c",
     "contracts/schemas/ReconstructionRun.schema.json": "aa1998565670b9e0a5ae00bbb7ea7a3ce07a2ead377fd5444fdbe8b91a0a9a69",
     "contracts/schemas/SearchEvidence.schema.json": "59a8574185152207b770408e6f79d0dd4079fc9f7109546b566c3c4500890130",
@@ -26,7 +26,7 @@
     "contracts/schemas/VideoSegment.schema.json": "d436258d1a17b90e0da845d27a072e599ec8a85019086f67ab52250c801be5fb",
     "fixtures/schema/catalog.schema.json": "d2024034679f697e12bffb3a7de72722ffedb68a6e39d39f7cab09964c8ce2bc",
     "fixtures/schema/manifest.schema.json": "a05e1c0da32ef7f346bb0de68731d494b062f0a8f172985af8dfeb1f992b109c",
-    "pyproject.toml": "78728441534c1e773bc3e289d9b02ff7bea2e91660b6d50d6117d464206c39a4",
+    "pyproject.toml": "2d69d209e4c8fc17a6412b3f5b974785c8690a3971c254b3a57768dadb2c1faa",
     "scripts/check_lane.py": "f1774be3996c97d6be40d066e2bfebeca83eda7b4d652144e5176fba2fecbc38",
     "scripts/lanes.json": "0e94b28e77cad2cd127742023943d6c79ebc453a017dc835b91ad15e28504d85",
     "src/probity/domain/enums.py": "828afb2bb22cfaf4d8d10a4b10e52c7879ef21432cc13a964d3d922bab90492a",
@@ -36,7 +36,7 @@
     "src/probity/reconstruction/types.py": "065774eb4b03cce64056336f9726b6f613dbd25a5d977af8e8177a29d9e2c1bc",
     "tests/unit/reconstruction/conftest.py": "54b1afbfac0892761351d4b7704efeb392f4920a9c9c21bc59194bc54dfebbdc",
     "tests/unit/reconstruction/test_guards.py": "303f466226f3ee46f66a80f5d5f9baaec6b0049392f731ae4df0c2d3dfee6c71",
-    "uv.lock": "5fdfe2daa56ac658c877913282562fdab1c59191c66d1b898c2fcffa90877b97"
+    "uv.lock": "6ce3fd92ecb0b3fa0feec33d776f0850b8a2db6188ce4814ef49669d79938f38"
   },
   "normalization": "SHA-256; text files hashed with CRLF normalized to LF (see scripts/check_lane.py)",
   "signatures": {

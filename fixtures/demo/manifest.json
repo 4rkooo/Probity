@@ -15,7 +15,7 @@
         "synthetic": true,
         "generator": "scripts/generate_demo_video.py"
       },
-      "policy_config_sha256": "4b092bf020018373de8fd528f9dd62748017d3e8fafd3f169d7f9d774a6ef28c",
+      "policy_config_sha256": "43dbd6f0b7103433eee95eb040de93b592f332a6de4b2cc55dd4602b3f988855",
       "ingestion_prompt_sha256": "cba1e7ac4bf12f6bbfbb11c34d57f7cc3b617bca04f55d322fdbf0b1a61725e5",
       "models": [
         {
