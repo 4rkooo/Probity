@@ -48,7 +48,7 @@ jobs = [JobView.model_validate(j) for j in json.load(open("fixtures/contracts/jo
 - Reconstruction: `reconstruction_run_{succeeded,refused,failed}.json`, `policy_decisions_*.json`,
   `pixel_provenance.json`, `pixel_origin_borrowed.json`. `artifacts/result.png` and
   `artifacts/provenance.npz` (`class`, `source_index`, `source_x`, `source_y`) are **contract
-  mocks** (translation copies), not TrueFrame output.
+  mocks** (translation copies), not Probity output.
 - Review/report: `human_review_{approve,veto}.json`, `evidence_report.json`.
 - Jobs: `job_views.json` covers every `JobState` (including PARTIAL, REFUSED, CANCELLED, and
   WORKER_INTERRUPTED and SPONSOR_TIMEOUT failures).

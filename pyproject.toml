@@ -20,7 +20,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-# Person 2 (tracking / TrueFrame) and Person 3 (UI / reports) runtimes.
+# Person 2 (tracking / Probity) and Person 3 (UI / reports) runtimes.
 recon = ["opencv-python-headless>=4.10,<5", "scikit-image>=0.24,<0.25"]
 ui = ["streamlit>=1.38,<2", "jinja2>=3.1,<4"]
 
