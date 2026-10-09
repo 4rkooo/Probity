@@ -11,7 +11,7 @@ from fastapi import Request
 from fastapi.responses import Response
 
 from probity import __version__
-from probity.api.assets import build_asset_response, repo_root, resolve_asset_file
+from probity.api.assets import build_asset_response, resolve_asset_file
 from probity.api.deps import AppServices, optional_services
 from probity.api.errors import correlation_id_of
 from probity.api.idempotency import (
@@ -71,6 +71,7 @@ from probity.domain.models import (
     Track,
     VideoSegment,
 )
+from probity.media.hashing import sha256_file
 from probity.ports import (
     IngestPayload,
     JobSpec,
@@ -404,9 +405,8 @@ def list_decisions(services: AppServices, run_id: str) -> list[PolicyDecision]:
 
 
 def _npz_path(services: AppServices, provenance: PixelProvenance) -> Path:
-    contract = repo_root(services) / "fixtures/contracts/artifacts/provenance.npz"
     try:
-        derived = resolve_asset_file(
+        path = resolve_asset_file(
             services,
             AssetRef(
                 asset_id=services.new_id(),
@@ -420,13 +420,14 @@ def _npz_path(services: AppServices, provenance: PixelProvenance) -> Path:
                 created_at=services.clock(),
             ),
         )
-        if derived.is_file():
-            return derived
-    except (SourcePathViolation, ValueError, NotFound):
-        pass
-    if contract.is_file():
-        return contract
-    raise NotFound("Provenance artifact is not available.")
+    except (SourcePathViolation, ValueError, NotFound) as exc:
+        raise NotFound("Provenance artifact is not available.") from exc
+    if not path.is_file():
+        raise NotFound("Provenance artifact is not available.")
+    digest, _byte_length = sha256_file(path)
+    if digest != provenance.artifact_sha256:
+        raise ArtifactHashConflict("Provenance artifact hash does not match the run.")
+    return path
 
 
 def get_pixel_origin(services: AppServices, run_id: str, x: int, y: int) -> PixelOrigin:

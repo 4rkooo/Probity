@@ -285,7 +285,7 @@ async def test_disabled_health() -> None:
         )
 
 
-async def test_auto_forced_failure_falls_back_without_mutation() -> None:
+async def test_auto_forced_failure_raises_without_mutation() -> None:
     fixture, video, query = await _indexed_store()
     live = LiveVastEvidenceStore(
         enabled=True,
@@ -303,11 +303,10 @@ async def test_auto_forced_failure_falls_back_without_mutation() -> None:
         subject_classes=("car", "license_plate"),
     )
     before = snapshot_value(request)
-    rows = await wrapped.search(request)
+    with pytest.raises(SponsorTimeout):
+        await wrapped.search(request)
     assert snapshot_value(request) == before
-    expected = await fixture.search(request)
-    assert [row.segment.segment_id for row in rows] == [row.segment.segment_id for row in expected]
-    assert wrapped.mode is AdapterMode.FIXTURE
+    assert wrapped.mode is AdapterMode.LIVE
 
 
 class _HealthOnceTransport:
@@ -368,7 +367,7 @@ async def test_auto_health_resolves_once_and_live_write_does_not_continue_on_fix
     assert wrapped.mode is AdapterMode.LIVE
 
 
-async def test_auto_uncommitted_write_replays_same_request_on_fixture() -> None:
+async def test_auto_uncommitted_write_does_not_replay_on_fixture() -> None:
     video = _source_video()
     transport = _HealthOnceTransport(succeed_writes=0)
     fixture = _CallLogStore()
@@ -380,13 +379,15 @@ async def test_auto_uncommitted_write_replays_same_request_on_fixture() -> None:
         sleep=SleepLog(),
     )
     wrapped = FallbackEvidenceStore(live, fixture, OperatingMode.AUTO)
-    stored = await wrapped.put_source(video, "ignored.mp4")
-    assert stored == video.storage_uri
-    assert fixture.calls == ["put_source"]
-    assert wrapped.mode is AdapterMode.FIXTURE
-    assert transport.health_calls == 1
-    again = await wrapped.put_source(video, "ignored.mp4")
-    assert again == video.storage_uri
-    assert fixture.calls == ["put_source", "put_source"]
+    with pytest.raises(SponsorTimeout):
+        await wrapped.put_source(video, "ignored.mp4")
+    assert fixture.calls == []
+    assert wrapped.mode is AdapterMode.LIVE
     assert transport.health_calls == 1
     assert transport.writes == 1
+    with pytest.raises(SponsorTimeout):
+        await wrapped.put_source(video, "ignored.mp4")
+    assert fixture.calls == []
+    assert transport.health_calls == 1
+    assert transport.writes == 2
+    assert wrapped.mode is AdapterMode.LIVE

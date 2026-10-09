@@ -277,6 +277,24 @@ class SqlJobStore:
             )
         return True
 
+    def abandon_lease(self, job_id: str, owner: str) -> None:
+        """Expire the lease of a RUNNING job this owner still holds. State stays RUNNING."""
+
+        now = self._clock()
+        expired_us = to_epoch_us(now) - 1
+        with write_transaction(self._engine) as conn:
+            row = conn.execute(select(jobs).where(jobs.c.job_id == job_id)).first()
+            if row is None or row.lease_owner != owner:
+                return
+            view = _load_view(row.view)
+            if view.state is not JobState.RUNNING:
+                return
+            conn.execute(
+                update(jobs)
+                .where(jobs.c.job_id == job_id)
+                .values(lease_expires_us=expired_us, updated_at=format_utc(now))
+            )
+
     def report_progress(
         self, job_id: str, owner: str, stage: JobStage, completed: int, total: int
     ) -> JobView:
@@ -356,9 +374,7 @@ class SqlJobStore:
                 lease_expires_us=None,
             )
 
-    def mark_cancelled(
-        self, job_id: str, owner: str, partial: PartialCoverage | None
-    ) -> JobView:
+    def mark_cancelled(self, job_id: str, owner: str, partial: PartialCoverage | None) -> JobView:
         now = format_utc(self._clock())
         with write_transaction(self._engine) as conn:
             view, row = self._load(conn, job_id)

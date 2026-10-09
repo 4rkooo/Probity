@@ -153,8 +153,8 @@ class IngestHandler:
                     segment, embedding = await self._commit_segment(
                         video, window, manifest, path, segment_id, ctx, len(committed), total
                     )
-                    committed.append(segment)
                     await self._evidence.upsert_segments((segment,), (embedding,))
+                    committed.append(segment)
                 except JobCancelled:
                     raise
                 except _SPONSOR as exc:

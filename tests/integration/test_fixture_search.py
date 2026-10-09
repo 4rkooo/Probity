@@ -15,6 +15,7 @@ from probity.adapters.fixture.vast import FixtureEvidenceStore
 from probity.adapters.live.cosmos import LiveCosmosUnderstanding
 from probity.adapters.live.vast import LiveVastEvidenceStore
 from probity.domain.enums import AdapterMode, InferenceMode, OperatingMode, SearchStatus
+from probity.domain.errors import SponsorTimeout
 from probity.domain.ids import parse_segment_id
 from probity.domain.models import Embedding, SourceVideo, VideoSegment
 from probity.domain.policy import default_policy
@@ -179,7 +180,7 @@ async def test_search_records_live_mode_when_retrieval_stays_live() -> None:
     assert evidence.embedding_model_id == "live/cosmos-embed-v1"
 
 
-async def test_auto_timeout_fallback_is_disclosed_as_fixture() -> None:
+async def test_auto_timeout_after_healthy_live_stays_live() -> None:
     cosmos_transport = _TimeoutTransport()
     vast_transport = _TimeoutTransport()
     understanding = FallbackVideoUnderstanding(
@@ -207,17 +208,16 @@ async def test_auto_timeout_fallback_is_disclosed_as_fixture() -> None:
     assert understanding.mode is AdapterMode.DEGRADED
     assert store.mode is AdapterMode.DEGRADED
     service = LocalSearchService(understanding, store, default_policy())
-    evidence = await service.search(
-        _video(),
-        SearchQuery(query=QUERIES["prepared_query"]["query"]),
-        CORRELATION_OK,
-    )
-    assert evidence.mode is InferenceMode.FIXTURE
-    assert understanding.mode is AdapterMode.FIXTURE
-    assert store.mode is AdapterMode.FIXTURE
+    with pytest.raises(SponsorTimeout):
+        await service.search(
+            _video(),
+            SearchQuery(query=QUERIES["prepared_query"]["query"]),
+            CORRELATION_OK,
+        )
+    assert understanding.mode is AdapterMode.LIVE
+    assert store.mode is AdapterMode.DEGRADED
     assert cosmos_transport.health_calls == 1
-    assert vast_transport.health_calls == 1
-    assert evidence.status is SearchStatus.NO_RESULTS
+    assert vast_transport.health_calls == 0
 
 
 class _StuckDegraded:

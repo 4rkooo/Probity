@@ -19,9 +19,9 @@ REPLAY_HEADER = "Idempotent-Replay"
 
 
 def request_route(request: Request) -> str:
-    route = request.scope.get("route")
-    path = getattr(route, "path", None) or request.url.path
-    return f"{request.method} {path}"
+    """Concrete path, not the route template, so each resource has its own key scope."""
+
+    return f"{request.method} {request.url.path}"
 
 
 def fingerprint(

@@ -187,7 +187,7 @@ async def test_disabled_health_and_calls() -> None:
         await live.embed_query("blue sedan")
 
 
-async def test_auto_forced_failure_falls_back_without_mutation() -> None:
+async def test_auto_forced_failure_raises_without_mutation() -> None:
     fixture = _fixture()
     sleeper = SleepLog()
     live = LiveCosmosUnderstanding(
@@ -201,12 +201,11 @@ async def test_auto_forced_failure_falls_back_without_mutation() -> None:
     clip = _clip(1)
     before = snapshot_value(clip)
     prompt = COSMOS_INGESTION_PROMPT
-    result = await wrapped.describe(clip, prompt)
+    with pytest.raises(SponsorTimeout):
+        await wrapped.describe(clip, prompt)
     assert snapshot_value(clip) == before
-    expected = await fixture.describe(clip, prompt)
-    assert result == expected
     assert sleeper.delays == [2.0, 5.0]
-    assert wrapped.mode is AdapterMode.FIXTURE
+    assert wrapped.mode is AdapterMode.LIVE
 
 
 async def test_live_mode_never_falls_back() -> None:
@@ -246,12 +245,14 @@ async def test_auto_health_resolves_once() -> None:
         sleep=SleepLog(),
     )
     wrapped = FallbackVideoUnderstanding(live, _fixture(), OperatingMode.AUTO)
-    await wrapped.describe(_clip(1), COSMOS_INGESTION_PROMPT)
-    assert wrapped.mode is AdapterMode.FIXTURE
+    with pytest.raises(SponsorTimeout):
+        await wrapped.describe(_clip(1), COSMOS_INGESTION_PROMPT)
+    assert wrapped.mode is AdapterMode.LIVE
     assert transport.health_calls == 1
     other_after_first = transport.other_calls
     assert other_after_first == 3
-    await wrapped.embed_query("blue sedan rear plate")
+    with pytest.raises(SponsorTimeout):
+        await wrapped.embed_query("blue sedan rear plate")
     assert transport.health_calls == 1
-    assert transport.other_calls == other_after_first
-    assert wrapped.mode is AdapterMode.FIXTURE
+    assert transport.other_calls == other_after_first * 2
+    assert wrapped.mode is AdapterMode.LIVE

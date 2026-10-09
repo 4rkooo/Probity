@@ -254,8 +254,23 @@ def _claimed(video: SourceVideo) -> ClaimedJob:
     )
 
 
+class _FailSecondUpsert(FixtureEvidenceStore):
+    def __init__(self) -> None:
+        super().__init__()
+        self.upserts = 0
+
+    async def upsert_segments(self, segments, embeddings) -> None:  # noqa: ANN001
+        self.upserts += 1
+        if self.upserts > 1:
+            raise RuntimeError("index write failed")
+        await super().upsert_segments(segments, embeddings)
+
+
 def _handler(
-    tmp_path: Path, video: SourceVideo, fail: BaseException
+    tmp_path: Path,
+    video: SourceVideo,
+    fail: BaseException,
+    evidence_store: FixtureEvidenceStore | None = None,
 ) -> tuple[IngestHandler, SqlRepository]:
     repository = SqlRepository(_engine(tmp_path))
     stored = video.revise(ingest_state=IngestState.STORED, indexed_range=None)
@@ -287,7 +302,7 @@ def _handler(
         segmenter=_Segmenter(windows),
         thumbnails=_Thumbs(),
         understanding=_Understanding(fail),
-        evidence_store=FixtureEvidenceStore(),
+        evidence_store=evidence_store or FixtureEvidenceStore(),
         new_id=new_uuid7,
     )
     return handler, repository
@@ -308,6 +323,23 @@ async def test_failed_segment_keeps_committed_rows_as_partial(tmp_path: Path) ->
     assert segments[0].start_pts_us == 0
     assert saved.ingest_state is IngestState.PARTIAL
     assert saved.indexed_range is not None
+
+
+@pytest.mark.anyio
+async def test_index_failure_does_not_claim_uncommitted_segment(tmp_path: Path) -> None:
+    video = SourceVideo.model_validate_json((CONTRACTS / "source_video.json").read_text())
+    evidence = _FailSecondUpsert()
+    handler, _repository = _handler(
+        tmp_path, video, ValidationFailed("unused"), evidence_store=evidence
+    )
+    outcome = await handler.run(_claimed(video), _Clock())
+    assert outcome.state is JobState.PARTIAL
+    assert outcome.partial is not None
+    failed_id = f"{video.video_id}:s0001"
+    assert failed_id in outcome.partial.failed_segment_ids
+    assert failed_id not in outcome.partial.committed_segment_ids
+    assert len(outcome.partial.committed_segment_ids) == 1
+    assert len(outcome.partial.indexed_ranges) == 1
 
 
 @pytest.mark.anyio

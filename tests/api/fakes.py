@@ -344,6 +344,11 @@ class FakeJobStore:
         with self._lock:
             return self._leases.get(job_id) == owner
 
+    def abandon_lease(self, job_id: str, owner: str) -> None:
+        with self._lock:
+            if self._leases.get(job_id) == owner:
+                self._leases.pop(job_id, None)
+
     def report_progress(
         self, job_id: str, owner: str, stage: JobStage, completed: int, total: int
     ) -> JobView:

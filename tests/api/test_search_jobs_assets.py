@@ -34,6 +34,41 @@ def _searchable(services: AppServices, video_id: str) -> None:
     )
 
 
+def test_same_idempotency_key_cancels_each_job(client: TestClient) -> None:
+    case_id = _create_case(client)
+    first_upload = client.post(
+        f"/v1/cases/{case_id}/videos",
+        params={"fixture_id": "demo-plate-90s"},
+        headers={**key("vid-a"), "Content-Type": "application/octet-stream"},
+        content=b"",
+    )
+    second_upload = client.post(
+        f"/v1/cases/{case_id}/videos",
+        params={"fixture_id": "demo-plate-90s"},
+        headers={**key("vid-b"), "Content-Type": "application/octet-stream"},
+        content=b"",
+    )
+    assert first_upload.status_code == 202, first_upload.text
+    assert second_upload.status_code == 202, second_upload.text
+    job_a = first_upload.json()["job_id"]
+    job_b = second_upload.json()["job_id"]
+
+    first = client.post(f"/v1/jobs/{job_a}/cancel", headers=key("same-cancel-key"))
+    second = client.post(f"/v1/jobs/{job_b}/cancel", headers=key("same-cancel-key"))
+    assert first.status_code == 202, first.text
+    assert second.status_code == 202, second.text
+    assert first.headers.get("Idempotent-Replay") is None
+    assert second.headers.get("Idempotent-Replay") is None
+    assert first.json()["job_id"] == job_a
+    assert second.json()["job_id"] == job_b
+    assert client.get(f"/v1/jobs/{job_b}").json()["state"] == "CANCELLING"
+
+    replay = client.post(f"/v1/jobs/{job_a}/cancel", headers=key("same-cancel-key"))
+    assert replay.status_code == 202
+    assert replay.headers.get("Idempotent-Replay") == "true"
+    assert replay.json()["job_id"] == job_a
+
+
 def test_get_job_and_cancel(client: TestClient, services: AppServices) -> None:
     _video_id, job_id = _stored_video(client, services)
     fetched = client.get(f"/v1/jobs/{job_id}")

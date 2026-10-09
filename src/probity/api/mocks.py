@@ -197,12 +197,14 @@ class ReconstructMockHandler:
         clock: Callable[[], str],
         new_id: Callable[..., str],
         policy: PolicyConfig,
+        data_dir: Path,
     ) -> None:
         self.repository = repository
         self.fixture_root = fixture_root
         self.clock = clock
         self.new_id = new_id
         self.policy = policy
+        self.data_dir = data_dir
 
     async def run(self, claimed: ClaimedJob, ctx: JobContext) -> JobOutcome:
         assert isinstance(claimed.payload, ReconstructPayload)
@@ -248,6 +250,9 @@ class ReconstructMockHandler:
             self.repository.put_provenance(provenance)
             result_path = contracts / "artifacts" / "result.png"
             npz_path = contracts / "artifacts" / "provenance.npz"
+            stored_npz = self.data_dir / provenance.class_map_uri
+            stored_npz.parent.mkdir(parents=True, exist_ok=True)
+            stored_npz.write_bytes(npz_path.read_bytes())
             now = self.clock()
             self.repository.put_asset(
                 AssetRef(
@@ -408,6 +413,7 @@ def mock_handlers(
             clock=clock,
             new_id=new_id,
             policy=policy,
+            data_dir=settings.data_dir,
         ),
         JobKind.REPORT: ReportMockHandler(
             repository=repository,

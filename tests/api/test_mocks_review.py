@@ -121,6 +121,18 @@ def test_reconstruction_gates_and_provenance(
     oob = client.get(f"/v1/reconstructions/{run_id}/provenance", params={"x": 5000, "y": 0})
     assert oob.status_code == 422
 
+    provenance = services.repository.get_provenance(run_id)
+    npz = services.settings.data_dir / provenance.class_map_uri
+    npz.write_bytes(b"not-the-provenance-map")
+    mismatch = client.get(f"/v1/reconstructions/{run_id}/provenance", params={"x": 219, "y": 481})
+    assert mismatch.status_code == 409
+    assert mismatch.json()["error"]["code"] == "ARTIFACT_HASH_CONFLICT"
+
+    npz.unlink()
+    missing = client.get(f"/v1/reconstructions/{run_id}/provenance", params={"x": 219, "y": 481})
+    assert missing.status_code == 404
+    assert missing.json()["error"]["code"] == "NOT_FOUND"
+
 
 def test_review_and_report_gates(client: TestClient, services: AppServices, handlers) -> None:
     video_id, _ = _stored_video(client, services)

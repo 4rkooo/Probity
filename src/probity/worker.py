@@ -30,6 +30,10 @@ _HANDLER_FACTORY: HandlerFactory | None = None
 INTERNAL_MESSAGE = "Internal error"
 
 
+class WorkerStopped(Exception):
+    """Process shutdown. The in-flight job stays RUNNING until lease recovery."""
+
+
 def register_handler_factory(factory: HandlerFactory) -> None:
     """Install the factory used by ``python -m probity.worker`` and ``load_handlers``."""
     global _HANDLER_FACTORY
@@ -93,11 +97,13 @@ class _Cancel:
         self._stopping = stopping
 
     def is_cancelled(self) -> bool:
-        return self._stopping() or self._store.is_cancel_requested(self._job_id)
+        return self._store.is_cancel_requested(self._job_id)
 
     def checkpoint(self) -> None:
         if self.is_cancelled():
             raise JobCancelled("job cancellation requested")
+        if self._stopping():
+            raise WorkerStopped("worker is stopping")
 
 
 class WorkerJobContext:
@@ -151,10 +157,6 @@ class Worker:
 
     def request_stop(self) -> None:
         self._stop.set()
-        job_id = self._current_job_id
-        if job_id is not None:
-            with suppress(Exception):
-                self._store.request_cancel(job_id)
 
     def _stopping(self) -> bool:
         return self._stop.is_set()
@@ -195,6 +197,7 @@ class Worker:
         ctx = WorkerJobContext(self._store, job.job_id, self.owner_id, self._stopping)
         handler = self._handlers.get(job.kind)
         renew_task = asyncio.create_task(self._renew_loop(job.job_id))
+        abandon = False
         try:
             if handler is None:
                 json_log(
@@ -218,6 +221,16 @@ class Worker:
                     job_id=job.job_id,
                     correlation_id=job.correlation_id,
                     error_code=ErrorCode.CANCELLED.value,
+                    latency_ms=_latency_ms(started),
+                )
+                return
+            except WorkerStopped:
+                abandon = True
+                json_log(
+                    self._logger,
+                    "job.lease_abandoned",
+                    job_id=job.job_id,
+                    correlation_id=job.correlation_id,
                     latency_ms=_latency_ms(started),
                 )
                 return
@@ -272,6 +285,8 @@ class Worker:
             renew_task.cancel()
             with suppress(asyncio.CancelledError):
                 await renew_task
+            if abandon:
+                self._store.abandon_lease(job.job_id, self.owner_id)
             self._current_job_id = None
 
     async def _renew_loop(self, job_id: str) -> None:

@@ -98,3 +98,28 @@ def test_running_cancel_at_checkpoint_keeps_partial(tmp_path: Path) -> None:
     assert done.state is JobState.CANCELLED
     assert done.partial is not None
     assert len(done.partial.committed_segment_ids) == 1
+
+
+def test_request_stop_abandons_lease_for_recovery(tmp_path: Path) -> None:
+    store = SqlJobStore(_engine(tmp_path), lease_seconds=30)
+    spec = _spec()
+    store.create(spec)
+    handler = _GatedHandler()
+    worker = Worker(store, [handler], "worker-1", lease_seconds=30, poll_seconds=0.01)
+
+    async def _run() -> None:
+        task = asyncio.create_task(worker.run())
+        await asyncio.wait_for(handler.started.wait(), timeout=5)
+        worker.request_stop()
+        handler.release.set()
+        await asyncio.wait_for(task, timeout=5)
+
+    asyncio.run(_run())
+    running = store.get(spec.job_id)
+    assert running.state is JobState.RUNNING
+    assert worker.recover() == 1
+    interrupted = store.get(spec.job_id)
+    assert interrupted.state is JobState.FAILED
+    assert interrupted.error is not None
+    assert interrupted.error.code.value == "WORKER_INTERRUPTED"
+    assert interrupted.error.retryable is True
