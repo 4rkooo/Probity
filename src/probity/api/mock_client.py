@@ -23,6 +23,7 @@ from probity.adapters.fixture.wandb import WandbFixtureAdapter
 from probity.adapters.fixture.weave import WeaveFixtureAdapter
 from probity.domain.enums import (
     ExplanationSource,
+    IngestState,
     JobKind,
     JobStage,
     JobState,
@@ -41,6 +42,7 @@ from probity.domain.models import (
     PolicyDecision,
     ReconstructionRun,
     SearchEvidence,
+    SearchPlan,
     SourceVideo,
     TimeRangeUs,
     Track,
@@ -49,6 +51,7 @@ from probity.domain.models import (
 from probity.ports import QueryPlanRequest, ReportFact, ReportFacts, ReportNarrative
 from probity.reports.gate import approval_blockers, export_blockers
 from probity.reports.validator import validate_or_fallback_narrative
+from probity.ui.custom_clip import build_custom_segments, rank_custom_segments
 
 IngestOutcome = Literal["SUCCEEDED", "PARTIAL", "FAILED", "SPONSOR_TIMEOUT"]
 RunOutcome = Literal["SUCCEEDED", "REFUSED", "FAILED"]
@@ -111,6 +114,9 @@ class MockApiClient:
         self.hallucinate_narrative = False
         self._artifact_revision = 0
         self.run_succeeded = self._run_succeeded_canonical
+        self.source_video = self._canonical_source
+        self.segments = list(self._canonical_segments)
+        self._custom_source_path = None
 
     def _load_fixtures(self) -> None:
         def load(name: str) -> str:
@@ -149,6 +155,9 @@ class MockApiClient:
 
         npz_path = self.artifacts_dir / "provenance.npz"
         self._npz_data = dict(np.load(npz_path)) if npz_path.exists() else None
+        self._canonical_source = self.source_video
+        self._canonical_segments = list(self.segments)
+        self._custom_source_path: Path | None = None
 
     # -----------------------------------------------------------------------------------------
     # Case management
@@ -170,7 +179,43 @@ class MockApiClient:
     def get_video(self, video_id: str | None = None) -> SourceVideo:
         return self.source_video
 
+    def using_custom_source(self) -> bool:
+        return self._custom_source_path is not None
+
+    def use_bundled_source(self) -> None:
+        """Point playback and search back at the synthetic sedan clip."""
+        self.source_video = self._canonical_source
+        self.segments = list(self._canonical_segments)
+        self._custom_source_path = None
+
+    def use_custom_source(self, path: Path) -> None:
+        """Hash a user MP4 and index the known Flake screen recording."""
+        sha = _sha256_file(path)
+        video = self._canonical_source.revise(
+            original_name=path.name,
+            sha256=sha,
+            byte_length=path.stat().st_size,
+            width_px=1440,
+            height_px=900,
+            duration_us=59_900_000,
+            frame_count=1797,
+            has_audio=True,
+            time_base="1/30000",
+            nominal_fps="30/1",
+            storage_uri=f"source/sha256/{sha[:2]}/{sha}/original.mp4",
+            probe_sha256=hashlib.sha256(f"probe:{path.name}:{sha}".encode()).hexdigest(),
+            ingest_state=IngestState.SEARCHABLE,
+            indexed_range=TimeRangeUs(start_pts_us=0, end_pts_us=59_900_000),
+            license_note="User-supplied screen recording. Not the synthetic plate clip.",
+            fixture_id=None,
+        )
+        self.source_video = video
+        self.segments = build_custom_segments(video.video_id, sha)
+        self._custom_source_path = path
+
     def source_path(self) -> Path:
+        if self._custom_source_path is not None:
+            return self._custom_source_path
         return self.demo_source_dir / self.source_video.original_name
 
     def verify_source(self) -> tuple[bool, str]:
@@ -270,6 +315,9 @@ class MockApiClient:
                 )
             )
         )
+        if self._custom_source_path is not None:
+            return self._search_custom(cleaned, plan, max_results)
+
         with self.trace.span(
             "search.plan",
             {
@@ -323,6 +371,31 @@ class MockApiClient:
             results=tuple(results),
             indexed_range=indexed_range or self.search_evidence.indexed_range,
             correlation_id=self.correlation_id,
+        )
+
+    def _search_custom(self, query: str, plan: SearchPlan, max_results: int) -> SearchEvidence:
+        candidates, results = rank_custom_segments(query, self.segments, self.source_video.sha256)
+        results = results[:max_results]
+        with self.trace.span(
+            "search.plan",
+            {
+                "correlation_id": self.correlation_id,
+                "query_sha256": hashlib.sha256(query.encode()).hexdigest(),
+                "result_count": len(results),
+                "mode": "CUSTOM_CLIP",
+            },
+        ):
+            pass
+        return self.search_evidence.revise(
+            query=query,
+            query_plan=plan.model_copy(update={"time_range": None}),
+            video_id=self.source_video.video_id,
+            status=SearchStatus.OK if results else SearchStatus.NO_RESULTS,
+            results=results,
+            candidates=candidates,
+            indexed_range=TimeRangeUs(start_pts_us=0, end_pts_us=self.source_video.duration_us),
+            correlation_id=self.correlation_id,
+            embedding_model_id="fixture/cosmos-embed-v1",
         )
 
     # -----------------------------------------------------------------------------------------

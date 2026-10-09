@@ -8,6 +8,26 @@ from probity.api.mock_client import MockApiClient
 from probity.domain.enums import TrackState
 from probity.domain.ids import parse_frame_id
 
+
+def _render_custom_subject(client: MockApiClient) -> None:
+    """Playback for a user clip. Plate tracking belongs to the synthetic sedan fixture."""
+    ss = st.session_state
+    seek_us = int(ss.get("seek_us") or 0)
+    selected = str(ss.get("selected_segment") or "")
+    match = next((segment for segment in client.list_segments() if segment.segment_id == selected), None)
+    st.video(str(client.source_path()), start_time=int(seek_us // 1_000_000))
+    if match is not None and match.description:
+        shown = match.description.replace("$", r"\$")
+        st.info(
+            f"**Segment {match.ordinal}** · {match.start_pts_us / 1e6:.1f}s–{match.end_pts_us / 1e6:.1f}s  \n"
+            f"{shown}"
+        )
+    st.warning(
+        "This recording is a screen capture, not the synthetic sedan clip. "
+        "There is no license-plate track to reconstruct. Search results above are the evidence."
+    )
+
+
 SUBJECT_OPTIONS = (
     "Detected LICENSE_PLATE box (YOLO detection at seed frame)",
     "Analyst-drawn rigid ROI (requires detector-backed continuity)",
@@ -17,6 +37,9 @@ SUBJECT_OPTIONS = (
 def render_subject_view(client: MockApiClient) -> None:
     ss = st.session_state
     st.subheader("4. Tracked-Subject Confirmation & Target Frame Selection")
+    if client.using_custom_source():
+        _render_custom_subject(client)
+        return
 
     subject_choice = st.radio("Subject", SUBJECT_OPTIONS, index=0, horizontal=True)
     track = client.get_track(confirmed=subject_choice == SUBJECT_OPTIONS[0])

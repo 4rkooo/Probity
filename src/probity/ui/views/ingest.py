@@ -82,7 +82,13 @@ def render_ingest_view(client: MockApiClient) -> None:
 
     state = ss.get("ingest_state")
     if state is None:
-        st.markdown("The bundled clip is stored and hashed. Start ingestion to index it for search.")
+        if client.using_custom_source():
+            st.markdown(
+                f"`{client.source_video.original_name}` is hashed. "
+                "Start ingestion to search the 8 indexed segments from this recording."
+            )
+        else:
+            st.markdown("The bundled clip is stored and hashed. Start ingestion to index it for search.")
         if st.button("▶ Start Ingestion", type="primary"):
             _restart(client)
             st.rerun()
@@ -189,7 +195,11 @@ def render_ingest_view(client: MockApiClient) -> None:
         rng_text = (
             f"{job.partial.indexed_ranges[0].start_pts_us / 1e6:.1f}s - {job.partial.indexed_ranges[0].end_pts_us / 1e6:.1f}s"
             if job.partial
-            else ("0.0s - 90.0s" if state == "SUCCEEDED" else "none")
+            else (
+                f"0.0s - {client.source_video.duration_us / 1e6:.1f}s"
+                if state == "SUCCEEDED"
+                else "none"
+            )
         )
         st.markdown(
             f"""

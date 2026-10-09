@@ -16,6 +16,11 @@ EXAMPLES = (
     "Find vehicle moving left to right",
     "Find the fleeing stolen car",
 )
+CUSTOM_EXAMPLES = (
+    "Find the Taco Tuesday proposal and RSVPs",
+    "Find the beach weekend booking receipt",
+    "Find the risk table after Sam bails",
+)
 
 
 def _indexed_range(client: MockApiClient) -> TimeRangeUs | None:
@@ -33,16 +38,23 @@ def render_search_view(client: MockApiClient) -> None:
     if covered is not None:
         partial_bar(covered.start_pts_us, covered.end_pts_us, client.source_video.duration_us)
 
-    st.caption("Use observable terms (object, color, direction, visibility). Intent and identity terms are filtered.")
-    ex_cols = st.columns(len(EXAMPLES))
-    for i, example in enumerate(EXAMPLES):
+    examples = CUSTOM_EXAMPLES if client.using_custom_source() else EXAMPLES
+    if client.using_custom_source():
+        st.caption(
+            f"Searching `{client.source_video.original_name}` "
+            f"({client.source_video.duration_us / 1e6:.1f}s). Ask about what is on screen."
+        )
+    else:
+        st.caption("Use observable terms (object, color, direction, visibility). Intent and identity terms are filtered.")
+    ex_cols = st.columns(len(examples))
+    for i, example in enumerate(examples):
         with ex_cols[i]:
             if st.button(f"Example {i + 1}: '{example}'", key=f"example_{i}", width="stretch"):
                 ss["query_input"] = example
 
     query_text = st.text_input(
         "Natural-Language Query",
-        value=ss.get("query_input", EXAMPLES[0]),
+        value=ss.get("query_input", examples[0]),
         placeholder="e.g. Find the blue sedan when its rear plate is most visible",
     )
     if st.button("🔎 Search", type="primary", disabled=not query_text.strip()):
