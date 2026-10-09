@@ -1,0 +1,16 @@
+{
+  "fixture_id": "plate_single_donor_v1",
+  "synth_version": "probity-synth-v1",
+  "case_id": "01a1219b-7a80-7a9f-b620-e377e716a3a2",
+  "video_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b",
+  "track_id": "01a1219b-7a81-72fd-afa9-8d979a332bd4",
+  "source_sha256": "83c29872964a19a2b58d936bc032778d0dbfd9e5af0768ac06affe1069976cd0",
+  "target_frame_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b:f37",
+  "target_bbox_px": [
+    86,
+    111,
+    306,
+    183
+  ],
+  "config_sha256": "4b092bf020018373de8fd528f9dd62748017d3e8fafd3f169d7f9d774a6ef28c"
+}

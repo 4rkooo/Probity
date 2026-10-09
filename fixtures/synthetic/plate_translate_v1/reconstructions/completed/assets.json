@@ -1,0 +1,35 @@
+[
+  {
+    "asset_id": "01a121a4-a5c4-79a8-a590-a63e738ff7e3",
+    "case_id": "01a1219b-7a80-71a9-89ee-ba5341bea516",
+    "kind": "RESULT_PNG",
+    "storage_uri": "fixtures/synthetic/plate_translate_v1/reconstructions/completed/result.png",
+    "media_type": "image/png",
+    "byte_length": 20547,
+    "sha256": "6ef111ad29f61ab5d922de29f9b0f63bfc34400fe8f72e154cd04b0fcc481c0f",
+    "non_evidentiary": false,
+    "created_at": "2026-10-09T17:10:00.201000Z"
+  },
+  {
+    "asset_id": "01a121a4-a5c4-7dd3-896f-4b8206cd22d5",
+    "case_id": "01a1219b-7a80-71a9-89ee-ba5341bea516",
+    "kind": "PROVENANCE_NPZ",
+    "storage_uri": "fixtures/synthetic/plate_translate_v1/reconstructions/completed/provenance.npz",
+    "media_type": "application/x-npz",
+    "byte_length": 9402,
+    "sha256": "c01b01b7c3c12ba81404e35aef3f53ca625ae9305400732dc5c58af9753810ee",
+    "non_evidentiary": false,
+    "created_at": "2026-10-09T17:10:00.201000Z"
+  },
+  {
+    "asset_id": "01a121a4-a5c4-7bb0-8eb8-57c11f7d7f52",
+    "case_id": "01a1219b-7a80-71a9-89ee-ba5341bea516",
+    "kind": "PROVENANCE_LUT",
+    "storage_uri": "fixtures/synthetic/plate_translate_v1/reconstructions/completed/provenance.json",
+    "media_type": "application/json",
+    "byte_length": 10308,
+    "sha256": "29f62cad93af73bf3894a403bd98b817bc915f54c880d4c770caaaa23a584c3f",
+    "non_evidentiary": false,
+    "created_at": "2026-10-09T17:10:00.201000Z"
+  }
+]
