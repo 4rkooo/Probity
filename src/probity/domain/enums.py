@@ -1,0 +1,385 @@
+"""Frozen enumerations: states, stages, modes, reason codes, and API error codes.
+
+Contract-frozen at schema_version 1.0. Adding or renaming a member requires interface review.
+"""
+
+from __future__ import annotations
+
+from enum import IntEnum, StrEnum
+
+
+class OperatingMode(StrEnum):
+    """Configured process mode (PROBITY_MODE)."""
+
+    AUTO = "AUTO"
+    LIVE = "LIVE"
+    FIXTURE = "FIXTURE"
+
+
+class AdapterMode(StrEnum):
+    """Mode an adapter resolved to at startup health check."""
+
+    LIVE = "LIVE"
+    DEGRADED = "DEGRADED"
+    FIXTURE = "FIXTURE"
+    DISABLED = "DISABLED"
+
+
+class InferenceMode(StrEnum):
+    """Disclosed origin of a produced record: live sponsor call or verified fixture cache."""
+
+    LIVE = "LIVE"
+    FIXTURE = "FIXTURE"
+
+
+class HealthStatus(StrEnum):
+    OK = "OK"
+    DEGRADED = "DEGRADED"
+    UNAVAILABLE = "UNAVAILABLE"
+    DISABLED = "DISABLED"
+
+
+class CasePurpose(StrEnum):
+    DEMO_RESEARCH = "DEMO_RESEARCH"
+
+
+class CaseStatus(StrEnum):
+    ACTIVE = "ACTIVE"
+    QUARANTINED = "QUARANTINED"
+    ARCHIVED = "ARCHIVED"
+
+
+class IngestState(StrEnum):
+    """SourceVideo lifecycle."""
+
+    STORED = "STORED"
+    INDEXING = "INDEXING"
+    SEARCHABLE = "SEARCHABLE"
+    PARTIAL = "PARTIAL"
+    FAILED = "FAILED"
+    CANCELLED = "CANCELLED"
+    QUARANTINED = "QUARANTINED"
+
+
+class IndexState(StrEnum):
+    """VideoSegment lifecycle."""
+
+    PENDING = "PENDING"
+    DESCRIBED = "DESCRIBED"
+    EMBEDDED = "EMBEDDED"
+    INDEXED = "INDEXED"
+    FAILED = "FAILED"
+
+
+class JobKind(StrEnum):
+    INGEST = "INGEST"
+    TRACK = "TRACK"
+    RECONSTRUCT = "RECONSTRUCT"
+    REPORT = "REPORT"
+
+
+class JobState(StrEnum):
+    CREATED = "CREATED"
+    QUEUED = "QUEUED"
+    RUNNING = "RUNNING"
+    SUCCEEDED = "SUCCEEDED"
+    PARTIAL = "PARTIAL"
+    REFUSED = "REFUSED"
+    FAILED = "FAILED"
+    CANCELLING = "CANCELLING"
+    CANCELLED = "CANCELLED"
+
+
+TERMINAL_JOB_STATES: frozenset[JobState] = frozenset(
+    {
+        JobState.SUCCEEDED,
+        JobState.PARTIAL,
+        JobState.REFUSED,
+        JobState.FAILED,
+        JobState.CANCELLED,
+    }
+)
+
+# Section 7 state machine. The only legal transitions.
+ALLOWED_JOB_TRANSITIONS: dict[JobState, frozenset[JobState]] = {
+    JobState.CREATED: frozenset({JobState.QUEUED}),
+    JobState.QUEUED: frozenset({JobState.RUNNING, JobState.CANCELLING}),
+    JobState.RUNNING: frozenset(
+        {
+            JobState.SUCCEEDED,
+            JobState.PARTIAL,
+            JobState.REFUSED,
+            JobState.FAILED,
+            JobState.CANCELLING,
+        }
+    ),
+    JobState.CANCELLING: frozenset({JobState.CANCELLED}),
+    JobState.SUCCEEDED: frozenset(),
+    JobState.PARTIAL: frozenset(),
+    JobState.REFUSED: frozenset(),
+    JobState.FAILED: frozenset(),
+    JobState.CANCELLED: frozenset(),
+}
+
+
+class JobStage(StrEnum):
+    VALIDATE = "VALIDATE"
+    HASH = "HASH"
+    EXTRACT = "EXTRACT"
+    DESCRIBE = "DESCRIBE"
+    EMBED = "EMBED"
+    DETECT = "DETECT"
+    INDEX = "INDEX"
+    TRACK = "TRACK"
+    ALIGN = "ALIGN"
+    FUSE = "FUSE"
+    REPORT = "REPORT"
+
+
+class SubjectType(StrEnum):
+    LICENSE_PLATE = "LICENSE_PLATE"
+    SIGN = "SIGN"
+    RIGID_ROI = "RIGID_ROI"
+
+
+class ObservationSource(StrEnum):
+    DETECTOR = "DETECTOR"
+    ANALYST_ROI = "ANALYST_ROI"
+    CSRT_BRIDGE = "CSRT_BRIDGE"
+
+
+class TrackState(StrEnum):
+    PENDING = "PENDING"
+    CONFIRMED = "CONFIRMED"
+    NOT_CONFIRMED = "NOT_CONFIRMED"
+
+
+class ReconstructionState(StrEnum):
+    QUEUED = "QUEUED"
+    RUNNING = "RUNNING"
+    SUCCEEDED = "SUCCEEDED"
+    REFUSED = "REFUSED"
+    FAILED = "FAILED"
+    CANCELLED = "CANCELLED"
+
+
+class ProvenanceClass(IntEnum):
+    """Encoded in provenance.npz class:uint8[H,W]."""
+
+    ORIGINAL = 0
+    BORROWED = 1
+    GENERATED_BLEND = 2
+
+
+class SourceRole(StrEnum):
+    TARGET = "TARGET"
+    DONOR = "DONOR"
+
+
+class Interpolation(StrEnum):
+    IDENTITY = "IDENTITY"
+    LANCZOS4 = "LANCZOS4"
+
+
+class AlignmentMethod(StrEnum):
+    IDENTITY = "IDENTITY"
+    AKAZE_HOMOGRAPHY = "AKAZE_HOMOGRAPHY"
+    ECC_AFFINE = "ECC_AFFINE"
+
+
+class PolicyOutcome(StrEnum):
+    ACCEPT = "ACCEPT"
+    REJECT = "REJECT"
+    WARN = "WARN"
+
+
+class PolicyStage(StrEnum):
+    INPUT = "INPUT"
+    QUERY = "QUERY"
+    TRACK = "TRACK"
+    QUALITY = "QUALITY"
+    PREFLIGHT = "PREFLIGHT"
+    ALIGN = "ALIGN"
+    COLOR = "COLOR"
+    RANK = "RANK"
+    FUSE = "FUSE"
+    VALIDATE = "VALIDATE"
+    PROVENANCE = "PROVENANCE"
+    INTEGRITY = "INTEGRITY"
+    REVIEW = "REVIEW"
+    MODE = "MODE"
+
+
+class ReasonCode(StrEnum):
+    """Policy/audit reason codes (section 10) plus rule-coded refusal reasons (sections 2, 9)."""
+
+    SOURCE_HASH_VERIFIED = "SOURCE_HASH_VERIFIED"
+    SOURCE_HASH_MISMATCH = "SOURCE_HASH_MISMATCH"
+    TRACK_CONFIRMED = "TRACK_CONFIRMED"
+    TRACK_NOT_CONFIRMED = "TRACK_NOT_CONFIRMED"
+    IDENTITY_GEOMETRY_MISMATCH = "IDENTITY_GEOMETRY_MISMATCH"
+    DONOR_OBSTRUCTED = "DONOR_OBSTRUCTED"
+    DONOR_NOT_CLEARER = "DONOR_NOT_CLEARER"
+    LIGHTING_OUT_OF_RANGE = "LIGHTING_OUT_OF_RANGE"
+    ALIGNMENT_AKAZE_ACCEPTED = "ALIGNMENT_AKAZE_ACCEPTED"
+    ALIGNMENT_ECC_FALLBACK_ACCEPTED = "ALIGNMENT_ECC_FALLBACK_ACCEPTED"
+    ALIGNMENT_FAILED = "ALIGNMENT_FAILED"
+    BORROW_TILE_ACCEPTED = "BORROW_TILE_ACCEPTED"
+    KEEP_ORIGINAL_CLEAR = "KEEP_ORIGINAL_CLEAR"
+    REVERT_TILE_VALIDATION = "REVERT_TILE_VALIDATION"
+    PROVENANCE_COMPLETE = "PROVENANCE_COMPLETE"
+    PROVENANCE_INCOMPLETE = "PROVENANCE_INCOMPLETE"
+    GENERATED_SEMANTIC_PIXEL = "GENERATED_SEMANTIC_PIXEL"
+    INTEGRITY_BELOW_MINIMUM = "INTEGRITY_BELOW_MINIMUM"
+    HUMAN_APPROVED = "HUMAN_APPROVED"
+    HUMAN_VETOED = "HUMAN_VETOED"
+    QUERY_POLICY_FILTERED = "QUERY_POLICY_FILTERED"
+    FIXTURE_MODE_DISCLOSED = "FIXTURE_MODE_DISCLOSED"
+    # Refusal reasons named in sections 2 and 9.
+    SUBJECT_NOT_RIGID = "SUBJECT_NOT_RIGID"
+    TARGET_TOO_SMALL = "TARGET_TOO_SMALL"
+    TARGET_QUALITY_TOO_LOW = "TARGET_QUALITY_TOO_LOW"
+    DECODE_NOT_DETERMINISTIC = "DECODE_NOT_DETERMINISTIC"
+    INSUFFICIENT_COMPATIBLE_DONORS = "INSUFFICIENT_COMPATIBLE_DONORS"
+    PHOTOMETRIC_INCOMPATIBLE = "PHOTOMETRIC_INCOMPATIBLE"
+    NO_TILE_IMPROVED = "NO_TILE_IMPROVED"
+    DONOR_OUTSIDE_WINDOW = "DONOR_OUTSIDE_WINDOW"
+    DONOR_TRACK_MISMATCH = "DONOR_TRACK_MISMATCH"
+    GENERATED_INPUT_REJECTED = "GENERATED_INPUT_REJECTED"
+
+
+class ReviewDecision(StrEnum):
+    APPROVE = "APPROVE"
+    VETO = "VETO"
+
+
+class VetoReason(StrEnum):
+    MISALIGNMENT = "MISALIGNMENT"
+    MISIDENTIFIED_SUBJECT = "MISIDENTIFIED_SUBJECT"
+    MISLEADING_APPEARANCE = "MISLEADING_APPEARANCE"
+    INSUFFICIENT_EVIDENCE = "INSUFFICIENT_EVIDENCE"
+    OTHER = "OTHER"
+
+
+class Legibility(StrEnum):
+    CLEAR = "CLEAR"
+    PARTIAL = "PARTIAL"
+    ILLEGIBLE = "ILLEGIBLE"
+
+
+class RigidSubjectKind(StrEnum):
+    LICENSE_PLATE = "LICENSE_PLATE"
+    SIGN = "SIGN"
+    OTHER_RIGID = "OTHER_RIGID"
+
+
+class VisibilityKind(StrEnum):
+    CLEAR = "CLEAR"
+    OCCLUSION = "OCCLUSION"
+    MOTION_BLUR = "MOTION_BLUR"
+    FOCUS_BLUR = "FOCUS_BLUR"
+    COMPRESSION = "COMPRESSION"
+    LOW_RESOLUTION = "LOW_RESOLUTION"
+    GLARE = "GLARE"
+    DARKNESS = "DARKNESS"
+    UNKNOWN = "UNKNOWN"
+
+
+class SearchStatus(StrEnum):
+    OK = "OK"
+    NO_RESULTS = "NO_RESULTS"
+    NEEDS_CLARIFICATION = "NEEDS_CLARIFICATION"
+
+
+class ExplanationSource(StrEnum):
+    REASONER = "REASONER"
+    TEMPLATE = "TEMPLATE"
+
+
+class AssetKind(StrEnum):
+    SOURCE_VIDEO = "SOURCE_VIDEO"
+    THUMBNAIL = "THUMBNAIL"
+    FRAME_PNG = "FRAME_PNG"
+    RESULT_PNG = "RESULT_PNG"
+    PROVENANCE_NPZ = "PROVENANCE_NPZ"
+    PROVENANCE_LUT = "PROVENANCE_LUT"
+    PROVENANCE_PREVIEW = "PROVENANCE_PREVIEW"
+    INSPECTION_CLIP = "INSPECTION_CLIP"
+    BASELINE = "BASELINE"
+    REPORT_HTML = "REPORT_HTML"
+    REPORT_JSON = "REPORT_JSON"
+    REPORT_BUNDLE = "REPORT_BUNDLE"
+
+
+class LineageKind(StrEnum):
+    SOURCE = "SOURCE"
+    FRAME = "FRAME"
+    SEGMENT = "SEGMENT"
+    THUMBNAIL = "THUMBNAIL"
+    RECONSTRUCTION = "RECONSTRUCTION"
+    PROVENANCE = "PROVENANCE"
+    REPORT = "REPORT"
+
+
+class ErrorCode(StrEnum):
+    """Normalized API/job error codes (section 7)."""
+
+    VALIDATION_FAILED = "VALIDATION_FAILED"
+    IDEMPOTENCY_KEY_REQUIRED = "IDEMPOTENCY_KEY_REQUIRED"
+    IDEMPOTENCY_CONFLICT = "IDEMPOTENCY_CONFLICT"
+    NOT_FOUND = "NOT_FOUND"
+    INVALID_STATE_TRANSITION = "INVALID_STATE_TRANSITION"
+    ARTIFACT_HASH_CONFLICT = "ARTIFACT_HASH_CONFLICT"
+    REVIEW_REQUIRED = "REVIEW_REQUIRED"
+    SOURCE_HASH_MISMATCH = "SOURCE_HASH_MISMATCH"
+    PAYLOAD_TOO_LARGE = "PAYLOAD_TOO_LARGE"
+    UNSUPPORTED_MEDIA = "UNSUPPORTED_MEDIA"
+    MEDIA_PROBE_TIMEOUT = "MEDIA_PROBE_TIMEOUT"
+    NON_MONOTONIC_TIMESTAMPS = "NON_MONOTONIC_TIMESTAMPS"
+    QUERY_NEEDS_CLARIFICATION = "QUERY_NEEDS_CLARIFICATION"
+    VIDEO_NOT_SEARCHABLE = "VIDEO_NOT_SEARCHABLE"
+    SPONSOR_TIMEOUT = "SPONSOR_TIMEOUT"
+    SPONSOR_UNAVAILABLE = "SPONSOR_UNAVAILABLE"
+    SPONSOR_MALFORMED_RESPONSE = "SPONSOR_MALFORMED_RESPONSE"
+    FIXTURE_NOT_FOUND = "FIXTURE_NOT_FOUND"
+    FIXTURE_MANIFEST_INVALID = "FIXTURE_MANIFEST_INVALID"
+    WORKER_INTERRUPTED = "WORKER_INTERRUPTED"
+    CANCELLED = "CANCELLED"
+    INSUFFICIENT_COMPATIBLE_DONORS = "INSUFFICIENT_COMPATIBLE_DONORS"
+    INTERNAL_ERROR = "INTERNAL_ERROR"
+
+
+ERROR_HTTP_STATUS: dict[ErrorCode, int] = {
+    ErrorCode.VALIDATION_FAILED: 422,
+    ErrorCode.IDEMPOTENCY_KEY_REQUIRED: 422,
+    ErrorCode.QUERY_NEEDS_CLARIFICATION: 422,
+    ErrorCode.NOT_FOUND: 404,
+    ErrorCode.FIXTURE_NOT_FOUND: 404,
+    ErrorCode.IDEMPOTENCY_CONFLICT: 409,
+    ErrorCode.INVALID_STATE_TRANSITION: 409,
+    ErrorCode.ARTIFACT_HASH_CONFLICT: 409,
+    ErrorCode.REVIEW_REQUIRED: 409,
+    ErrorCode.SOURCE_HASH_MISMATCH: 409,
+    ErrorCode.VIDEO_NOT_SEARCHABLE: 409,
+    ErrorCode.INSUFFICIENT_COMPATIBLE_DONORS: 409,
+    ErrorCode.PAYLOAD_TOO_LARGE: 413,
+    ErrorCode.UNSUPPORTED_MEDIA: 415,
+    ErrorCode.NON_MONOTONIC_TIMESTAMPS: 415,
+    ErrorCode.MEDIA_PROBE_TIMEOUT: 415,
+    ErrorCode.SPONSOR_TIMEOUT: 503,
+    ErrorCode.SPONSOR_UNAVAILABLE: 503,
+    ErrorCode.SPONSOR_MALFORMED_RESPONSE: 503,
+    ErrorCode.FIXTURE_MANIFEST_INVALID: 500,
+    ErrorCode.WORKER_INTERRUPTED: 500,
+    ErrorCode.CANCELLED: 409,
+    ErrorCode.INTERNAL_ERROR: 500,
+}
+
+RETRYABLE_ERROR_CODES: frozenset[ErrorCode] = frozenset(
+    {
+        ErrorCode.SPONSOR_TIMEOUT,
+        ErrorCode.SPONSOR_UNAVAILABLE,
+        ErrorCode.SPONSOR_MALFORMED_RESPONSE,
+        ErrorCode.WORKER_INTERRUPTED,
+    }
+)

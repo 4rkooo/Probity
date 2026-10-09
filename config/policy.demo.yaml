@@ -1,0 +1,138 @@
+# Probity demo policy profile. Every numeric gate in section 9 lives here.
+# Changing any value changes config_sha256 and invalidates prior approvals.
+profile: demo-conservative-v1
+schema_version: "1.0"
+
+video:
+  max_duration_s: 600
+  max_bytes: 262144000
+  max_width: 1920
+  max_height: 1080
+  probe_timeout_s: 10
+  allowed_codecs: [h264, hevc]
+
+segment:
+  duration_s: 8
+  overlap_s: 2
+  min_final_duration_s: 4
+  thumbnail_width_px: 480
+
+detect:
+  max_sample_fps: 15
+
+track:
+  window_radius_s: 2.0
+  min_detector_observations: 5
+  min_mean_confidence: 0.55
+  max_bridge_gap_frames: 3
+  min_iou_for_association: 0.30
+  max_center_step_diag: 0.25
+  box_scale_ratio_min: 0.67
+  box_scale_ratio_max: 1.50
+  max_aspect_change: 0.20
+  min_hsv_hist_correlation: 0.80
+  max_competing_box_iou: 0.25
+
+crop:
+  alignment_context_expand: 0.15
+
+quality:
+  resize_long_edge_px: 160
+  laplacian_variance_normalizer: 300
+  subject_size_normalizer_px: 160
+  black_luma_8bit: 10
+  white_luma_8bit: 245
+  max_clipped_fraction: 0.30
+  pose_aspect_ratio_limit: 1.50
+  analyst_seed_confidence: 0.50
+
+target:
+  min_width_px: 48
+  min_height_px: 20
+  min_quality: 0.15
+
+donor:
+  min_quality: 0.55
+  min_quality_gain: 0.10
+  max_occluded_fraction: 0.15
+  max_exposure_delta_stops: 0.75
+  temporal_decay_s: 2.0
+  max_count: 5
+  min_count: 2
+
+akaze:
+  min_keypoints: 20
+  ratio_test: 0.75
+  min_good_matches: 12
+
+ransac:
+  reprojection_threshold_px: 2.0
+
+alignment:
+  min_inlier_ratio: 0.65
+  max_median_reprojection_px: 2.0
+  min_valid_coverage: 0.85
+  max_corner_outside_fraction: 0.10
+
+ecc:
+  max_iterations: 50
+  epsilon: 0.00001
+  min_correlation: 0.92
+
+color:
+  gain_min: 0.80
+  gain_max: 1.25
+  bias_min_8bit: -20
+  bias_max_8bit: 20
+  max_context_gradient_8bit: 32
+  min_context_samples: 100
+  max_mean_abs_residual_8bit: 18
+
+fusion:
+  tile_px: 8
+  keep_original_sharpness: 0.45
+  min_sharpness_improvement: 0.15
+  sharpness_ratio_epsilon: 0.05
+  required_valid_tile_coverage: 1.00
+
+validation:
+  max_boundary_discontinuity_8bit: 24
+
+iteration:
+  max_passes: 2
+  convergence_changed_fraction: 0.01
+
+integrity:
+  min_score: 70
+  required_provenance_coverage: 1.00
+  max_semantic_generated_fraction: 0.00
+
+search:
+  top_k: 12
+  max_results: 5
+  overlap_collapse_time_iou: 0.6
+  weights:
+    cosine: 0.65
+    lexical_overlap: 0.15
+    detection_match: 0.15
+    visibility_match: 0.05
+  disallowed_terms:
+    identity: [identity, identify, who, name, face, faces, person, people, owner, driver, suspect, biometric]
+    legal: [guilt, guilty, crime, criminal, illegal, legal, lawful, unlawful, evidence of, convict, arrest]
+    intent: [intent, intends, intention, motive, why, deliberately, purpose, planning, suspicious]
+
+adapters:
+  health_budget_s: 2.0
+  read_retry_delays_s: [2, 5]
+  timeouts_s:
+    vast: 30
+    wandb: 45
+    cosmos_per_segment: 90
+    yolo_per_window: 120
+
+idempotency:
+  ttl_hours: 24
+
+jobs:
+  lease_seconds: 30
+  lease_renew_seconds: 10

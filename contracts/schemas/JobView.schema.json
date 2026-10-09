@@ -1,0 +1,408 @@
+{
+  "$defs": {
+    "ErrorCode": {
+      "description": "Normalized API/job error codes (section 7).",
+      "enum": [
+        "VALIDATION_FAILED",
+        "IDEMPOTENCY_KEY_REQUIRED",
+        "IDEMPOTENCY_CONFLICT",
+        "NOT_FOUND",
+        "INVALID_STATE_TRANSITION",
+        "ARTIFACT_HASH_CONFLICT",
+        "REVIEW_REQUIRED",
+        "SOURCE_HASH_MISMATCH",
+        "PAYLOAD_TOO_LARGE",
+        "UNSUPPORTED_MEDIA",
+        "MEDIA_PROBE_TIMEOUT",
+        "NON_MONOTONIC_TIMESTAMPS",
+        "QUERY_NEEDS_CLARIFICATION",
+        "VIDEO_NOT_SEARCHABLE",
+        "SPONSOR_TIMEOUT",
+        "SPONSOR_UNAVAILABLE",
+        "SPONSOR_MALFORMED_RESPONSE",
+        "FIXTURE_NOT_FOUND",
+        "FIXTURE_MANIFEST_INVALID",
+        "WORKER_INTERRUPTED",
+        "CANCELLED",
+        "INSUFFICIENT_COMPATIBLE_DONORS",
+        "INTERNAL_ERROR"
+      ],
+      "title": "ErrorCode",
+      "type": "string"
+    },
+    "InferenceMode": {
+      "description": "Disclosed origin of a produced record: live sponsor call or verified fixture cache.",
+      "enum": [
+        "LIVE",
+        "FIXTURE"
+      ],
+      "title": "InferenceMode",
+      "type": "string"
+    },
+    "JobError": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "$ref": "#/$defs/ErrorCode"
+        },
+        "message": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        },
+        "retryable": {
+          "title": "Retryable",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "code",
+        "message",
+        "retryable"
+      ],
+      "title": "JobError",
+      "type": "object"
+    },
+    "JobKind": {
+      "enum": [
+        "INGEST",
+        "TRACK",
+        "RECONSTRUCT",
+        "REPORT"
+      ],
+      "title": "JobKind",
+      "type": "string"
+    },
+    "JobStage": {
+      "enum": [
+        "VALIDATE",
+        "HASH",
+        "EXTRACT",
+        "DESCRIBE",
+        "EMBED",
+        "DETECT",
+        "INDEX",
+        "TRACK",
+        "ALIGN",
+        "FUSE",
+        "REPORT"
+      ],
+      "title": "JobStage",
+      "type": "string"
+    },
+    "JobState": {
+      "enum": [
+        "CREATED",
+        "QUEUED",
+        "RUNNING",
+        "SUCCEEDED",
+        "PARTIAL",
+        "REFUSED",
+        "FAILED",
+        "CANCELLING",
+        "CANCELLED"
+      ],
+      "title": "JobState",
+      "type": "string"
+    },
+    "PartialCoverage": {
+      "additionalProperties": false,
+      "properties": {
+        "committed_segment_ids": {
+          "items": {
+            "examples": [
+              "0199a51e-43bf-7aa2-86e1-b2a0bb287492:s0004"
+            ],
+            "pattern": "^(?P<video_id>[0-9a-f-]{36}):s(?P<n>\\d{4,})$",
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Committed Segment Ids",
+          "type": "array"
+        },
+        "failed_segment_ids": {
+          "default": [],
+          "items": {
+            "examples": [
+              "0199a51e-43bf-7aa2-86e1-b2a0bb287492:s0004"
+            ],
+            "pattern": "^(?P<video_id>[0-9a-f-]{36}):s(?P<n>\\d{4,})$",
+            "type": "string"
+          },
+          "title": "Failed Segment Ids",
+          "type": "array"
+        },
+        "indexed_ranges": {
+          "items": {
+            "$ref": "#/$defs/TimeRangeUs"
+          },
+          "minItems": 1,
+          "title": "Indexed Ranges",
+          "type": "array"
+        }
+      },
+      "required": [
+        "committed_segment_ids",
+        "indexed_ranges"
+      ],
+      "title": "PartialCoverage",
+      "type": "object"
+    },
+    "ReasonCode": {
+      "description": "Policy/audit reason codes (section 10) plus rule-coded refusal reasons (sections 2, 9).",
+      "enum": [
+        "SOURCE_HASH_VERIFIED",
+        "SOURCE_HASH_MISMATCH",
+        "TRACK_CONFIRMED",
+        "TRACK_NOT_CONFIRMED",
+        "IDENTITY_GEOMETRY_MISMATCH",
+        "DONOR_OBSTRUCTED",
+        "DONOR_NOT_CLEARER",
+        "LIGHTING_OUT_OF_RANGE",
+        "ALIGNMENT_AKAZE_ACCEPTED",
+        "ALIGNMENT_ECC_FALLBACK_ACCEPTED",
+        "ALIGNMENT_FAILED",
+        "BORROW_TILE_ACCEPTED",
+        "KEEP_ORIGINAL_CLEAR",
+        "REVERT_TILE_VALIDATION",
+        "PROVENANCE_COMPLETE",
+        "PROVENANCE_INCOMPLETE",
+        "GENERATED_SEMANTIC_PIXEL",
+        "INTEGRITY_BELOW_MINIMUM",
+        "HUMAN_APPROVED",
+        "HUMAN_VETOED",
+        "QUERY_POLICY_FILTERED",
+        "FIXTURE_MODE_DISCLOSED",
+        "SUBJECT_NOT_RIGID",
+        "TARGET_TOO_SMALL",
+        "TARGET_QUALITY_TOO_LOW",
+        "DECODE_NOT_DETERMINISTIC",
+        "INSUFFICIENT_COMPATIBLE_DONORS",
+        "PHOTOMETRIC_INCOMPATIBLE",
+        "NO_TILE_IMPROVED",
+        "DONOR_OUTSIDE_WINDOW",
+        "DONOR_TRACK_MISMATCH",
+        "GENERATED_INPUT_REJECTED"
+      ],
+      "title": "ReasonCode",
+      "type": "string"
+    },
+    "TimeRangeUs": {
+      "additionalProperties": false,
+      "properties": {
+        "end_pts_us": {
+          "description": "Presentation timestamp in integer microseconds",
+          "minimum": 0,
+          "title": "End Pts Us",
+          "type": "integer"
+        },
+        "start_pts_us": {
+          "description": "Presentation timestamp in integer microseconds",
+          "minimum": 0,
+          "title": "Start Pts Us",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "start_pts_us",
+        "end_pts_us"
+      ],
+      "title": "TimeRangeUs",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "attempt": {
+      "default": 1,
+      "exclusiveMinimum": 0,
+      "title": "Attempt",
+      "type": "integer"
+    },
+    "cancel_requested_at": {
+      "anyOf": [
+        {
+          "examples": [
+            "2026-10-09T16:00:00.000000Z"
+          ],
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,6})?Z$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Cancel Requested At"
+    },
+    "case_id": {
+      "examples": [
+        "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+      ],
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "title": "Case Id",
+      "type": "string"
+    },
+    "completed_units": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Completed Units",
+      "type": "integer"
+    },
+    "content_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Content Sha256",
+      "type": "string"
+    },
+    "correlation_id": {
+      "examples": [
+        "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+      ],
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "title": "Correlation Id",
+      "type": "string"
+    },
+    "created_at": {
+      "examples": [
+        "2026-10-09T16:00:00.000000Z"
+      ],
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,6})?Z$",
+      "title": "Created At",
+      "type": "string"
+    },
+    "error": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/JobError"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "finished_at": {
+      "anyOf": [
+        {
+          "examples": [
+            "2026-10-09T16:00:00.000000Z"
+          ],
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,6})?Z$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Finished At"
+    },
+    "job_id": {
+      "examples": [
+        "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+      ],
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "title": "Job Id",
+      "type": "string"
+    },
+    "kind": {
+      "$ref": "#/$defs/JobKind"
+    },
+    "mode": {
+      "$ref": "#/$defs/InferenceMode"
+    },
+    "partial": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/PartialCoverage"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "refusal_reasons": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/ReasonCode"
+      },
+      "title": "Refusal Reasons",
+      "type": "array"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "stage": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/JobStage"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "started_at": {
+      "anyOf": [
+        {
+          "examples": [
+            "2026-10-09T16:00:00.000000Z"
+          ],
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,6})?Z$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Started At"
+    },
+    "state": {
+      "$ref": "#/$defs/JobState"
+    },
+    "subject_id": {
+      "description": "video_id | track_id | run_id | report_id by kind",
+      "examples": [
+        "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+      ],
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "title": "Subject Id",
+      "type": "string"
+    },
+    "total_units": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Total Units",
+      "type": "integer"
+    },
+    "updated_at": {
+      "examples": [
+        "2026-10-09T16:00:00.000000Z"
+      ],
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,6})?Z$",
+      "title": "Updated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "created_at",
+    "content_sha256",
+    "job_id",
+    "kind",
+    "case_id",
+    "subject_id",
+    "state",
+    "mode",
+    "correlation_id",
+    "updated_at"
+  ],
+  "title": "JobView",
+  "type": "object"
+}

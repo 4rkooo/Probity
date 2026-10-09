@@ -1,0 +1,11 @@
+{
+  "schema_version": "1.0",
+  "created_at": "2026-10-09T16:00:00.000000Z",
+  "content_sha256": "a915fc6788afde18f00cecae19e1c6928f29c3c2952c959ce04baf36b0f39ce1",
+  "case_id": "01a12164-8c00-7bfc-9416-0a1e8674dac6",
+  "display_name": "Fictional Case 0420 (demo)",
+  "purpose": "DEMO_RESEARCH",
+  "mode": "AUTO",
+  "owner_alias": "analyst-1",
+  "status": "ACTIVE"
+}

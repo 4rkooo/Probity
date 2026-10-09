@@ -1,0 +1,91 @@
+{
+  "$defs": {
+    "AssetKind": {
+      "enum": [
+        "SOURCE_VIDEO",
+        "THUMBNAIL",
+        "FRAME_PNG",
+        "RESULT_PNG",
+        "PROVENANCE_NPZ",
+        "PROVENANCE_LUT",
+        "PROVENANCE_PREVIEW",
+        "INSPECTION_CLIP",
+        "BASELINE",
+        "REPORT_HTML",
+        "REPORT_JSON",
+        "REPORT_BUNDLE"
+      ],
+      "title": "AssetKind",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Registered servable artifact. ``non_evidentiary`` assets are never reconstruction input.",
+  "properties": {
+    "asset_id": {
+      "examples": [
+        "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+      ],
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "title": "Asset Id",
+      "type": "string"
+    },
+    "byte_length": {
+      "minimum": 0,
+      "title": "Byte Length",
+      "type": "integer"
+    },
+    "case_id": {
+      "examples": [
+        "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+      ],
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "title": "Case Id",
+      "type": "string"
+    },
+    "created_at": {
+      "examples": [
+        "2026-10-09T16:00:00.000000Z"
+      ],
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,6})?Z$",
+      "title": "Created At",
+      "type": "string"
+    },
+    "kind": {
+      "$ref": "#/$defs/AssetKind"
+    },
+    "media_type": {
+      "pattern": "^[a-z]+/[a-z0-9.+-]+$",
+      "title": "Media Type",
+      "type": "string"
+    },
+    "non_evidentiary": {
+      "title": "Non Evidentiary",
+      "type": "boolean"
+    },
+    "sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Sha256",
+      "type": "string"
+    },
+    "storage_uri": {
+      "maxLength": 400,
+      "minLength": 1,
+      "title": "Storage Uri",
+      "type": "string"
+    }
+  },
+  "required": [
+    "asset_id",
+    "case_id",
+    "kind",
+    "storage_uri",
+    "media_type",
+    "byte_length",
+    "sha256",
+    "non_evidentiary",
+    "created_at"
+  ],
+  "title": "AssetRef",
+  "type": "object"
+}

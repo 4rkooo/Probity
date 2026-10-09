@@ -1,0 +1,64 @@
+{
+  "$defs": {
+    "InferenceMode": {
+      "description": "Disclosed origin of a produced record: live sponsor call or verified fixture cache.",
+      "enum": [
+        "LIVE",
+        "FIXTURE"
+      ],
+      "title": "InferenceMode",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "dimension": {
+      "exclusiveMinimum": 0,
+      "title": "Dimension",
+      "type": "integer"
+    },
+    "embedding_ref": {
+      "maxLength": 200,
+      "minLength": 1,
+      "title": "Embedding Ref",
+      "type": "string"
+    },
+    "input_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Input Sha256",
+      "type": "string"
+    },
+    "mode": {
+      "$ref": "#/$defs/InferenceMode"
+    },
+    "model_id": {
+      "maxLength": 200,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9._:/@+-]+$",
+      "title": "Model Id",
+      "type": "string"
+    },
+    "normalized": {
+      "title": "Normalized",
+      "type": "boolean"
+    },
+    "vector": {
+      "items": {
+        "type": "number"
+      },
+      "title": "Vector",
+      "type": "array"
+    }
+  },
+  "required": [
+    "embedding_ref",
+    "model_id",
+    "dimension",
+    "vector",
+    "normalized",
+    "input_sha256",
+    "mode"
+  ],
+  "title": "Embedding",
+  "type": "object"
+}

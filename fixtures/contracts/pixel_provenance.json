@@ -1,0 +1,120 @@
+{
+  "schema_version": "1.0",
+  "created_at": "2026-10-09T16:05:10.000000Z",
+  "content_sha256": "7d3c4da5e3b7873ab106bb98ee7190bd19fff9c285ef646b90f352d7b7e70da9",
+  "run_id": "01a12169-1fe0-739f-a1f0-04111b204a6b",
+  "width_px": 1280,
+  "height_px": 720,
+  "tile_size_px": 8,
+  "subject_bbox_px": [
+    216,
+    470,
+    292,
+    496
+  ],
+  "class_map_uri": "derived/01a12164-8fe8-7cab-9c96-17404faf2b24/reconstruction/01a12169-1fe0-739f-a1f0-04111b204a6b/provenance.npz",
+  "source_index_uri": "derived/01a12164-8fe8-7cab-9c96-17404faf2b24/reconstruction/01a12169-1fe0-739f-a1f0-04111b204a6b/provenance.npz",
+  "source_xy_uri": "derived/01a12164-8fe8-7cab-9c96-17404faf2b24/reconstruction/01a12169-1fe0-739f-a1f0-04111b204a6b/provenance.npz",
+  "source_lut": [
+    {
+      "index": 0,
+      "frame_id": "01a12164-8fe8-7cab-9c96-17404faf2b24:f417",
+      "frame_number": 417,
+      "pts_us": 13900000,
+      "role": "TARGET",
+      "transform_id": null,
+      "alignment_method": "IDENTITY",
+      "matrix": null,
+      "interpolation": "IDENTITY",
+      "color_gain": null,
+      "color_bias": null,
+      "decision_ids": []
+    },
+    {
+      "index": 1,
+      "frame_id": "01a12164-8fe8-7cab-9c96-17404faf2b24:f409",
+      "frame_number": 409,
+      "pts_us": 13633333,
+      "role": "DONOR",
+      "transform_id": "h_409",
+      "alignment_method": "AKAZE_HOMOGRAPHY",
+      "matrix": [
+        1.0,
+        0.0,
+        34.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "interpolation": "LANCZOS4",
+      "color_gain": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "color_bias": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "decision_ids": [
+        "01a12169-1fe2-7ff2-8173-3db629221c77"
+      ]
+    },
+    {
+      "index": 2,
+      "frame_id": "01a12164-8fe8-7cab-9c96-17404faf2b24:f424",
+      "frame_number": 424,
+      "pts_us": 14133333,
+      "role": "DONOR",
+      "transform_id": "h_424",
+      "alignment_method": "AKAZE_HOMOGRAPHY",
+      "matrix": [
+        1.0,
+        0.0,
+        -30.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "interpolation": "LANCZOS4",
+      "color_gain": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "color_bias": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "decision_ids": [
+        "01a12169-1fe3-7656-9f39-f523fd5b09b4"
+      ]
+    }
+  ],
+  "coverage_counts": {
+    "ORIGINAL": 921024,
+    "BORROWED": 576,
+    "GENERATED_BLEND": 0
+  },
+  "coverage_pct": {
+    "ORIGINAL": 99.9375,
+    "BORROWED": 0.0625,
+    "GENERATED_BLEND": 0.0
+  },
+  "subject_coverage_pct": {
+    "ORIGINAL": 70.8502,
+    "BORROWED": 29.1498,
+    "GENERATED_BLEND": 0.0
+  },
+  "coverage_complete": true,
+  "encoding_version": "npz-pixel-v1",
+  "artifact_sha256": "c3108994fd4d2ec64adf6d04edd5b8002fedcb68c803a23285680ae73674f1fb"
+}

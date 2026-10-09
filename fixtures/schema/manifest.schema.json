@@ -1,0 +1,234 @@
+{
+  "$defs": {
+    "FixtureFile": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": [
+            "segments_jsonl",
+            "descriptions_jsonl",
+            "embeddings_npy",
+            "embedding_refs_json",
+            "detections_jsonl",
+            "tracks_json",
+            "search_plans_json",
+            "expected_ranks_json",
+            "thumbnail",
+            "frame_png",
+            "reconstruction_json",
+            "provenance_npz",
+            "other"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "path": {
+          "description": "Relative to fixtures/demo/",
+          "pattern": "^[A-Za-z0-9._/-]+$",
+          "title": "Path",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path",
+        "sha256",
+        "kind"
+      ],
+      "title": "FixtureFile",
+      "type": "object"
+    },
+    "FixtureModelRef": {
+      "additionalProperties": false,
+      "properties": {
+        "embedding_dimension": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Embedding Dimension"
+        },
+        "model_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9._:/@+-]+$",
+          "title": "Model Id",
+          "type": "string"
+        },
+        "model_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Model Sha256"
+        },
+        "role": {
+          "enum": [
+            "cosmos_describe",
+            "cosmos_embed",
+            "yolo_detect",
+            "bytetrack",
+            "wandb_plan",
+            "wandb_explain"
+          ],
+          "title": "Role",
+          "type": "string"
+        }
+      },
+      "required": [
+        "role",
+        "model_id"
+      ],
+      "title": "FixtureModelRef",
+      "type": "object"
+    },
+    "FixtureSource": {
+      "additionalProperties": false,
+      "properties": {
+        "byte_length": {
+          "exclusiveMinimum": 0,
+          "title": "Byte Length",
+          "type": "integer"
+        },
+        "duration_us": {
+          "exclusiveMinimum": 0,
+          "title": "Duration Us",
+          "type": "integer"
+        },
+        "generator": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Generator"
+        },
+        "license_note": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "License Note",
+          "type": "string"
+        },
+        "path": {
+          "description": "Relative to fixtures/demo/",
+          "pattern": "^[A-Za-z0-9._/-]+$",
+          "title": "Path",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        },
+        "synthetic": {
+          "title": "Synthetic",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "path",
+        "sha256",
+        "byte_length",
+        "duration_us",
+        "license_note",
+        "synthetic"
+      ],
+      "title": "FixtureSource",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "created_at": {
+      "examples": [
+        "2026-10-09T16:00:00.000000Z"
+      ],
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,6})?Z$",
+      "title": "Created At",
+      "type": "string"
+    },
+    "display_name": {
+      "maxLength": 120,
+      "minLength": 1,
+      "title": "Display Name",
+      "type": "string"
+    },
+    "files": {
+      "items": {
+        "$ref": "#/$defs/FixtureFile"
+      },
+      "title": "Files",
+      "type": "array"
+    },
+    "fixture_id": {
+      "pattern": "^[a-z0-9][a-z0-9-]{1,63}$",
+      "title": "Fixture Id",
+      "type": "string"
+    },
+    "ingestion_prompt_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Ingestion Prompt Sha256",
+      "type": "string"
+    },
+    "manifest_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Manifest Version",
+      "type": "string"
+    },
+    "models": {
+      "items": {
+        "$ref": "#/$defs/FixtureModelRef"
+      },
+      "title": "Models",
+      "type": "array"
+    },
+    "policy_config_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Policy Config Sha256",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "source": {
+      "$ref": "#/$defs/FixtureSource"
+    }
+  },
+  "required": [
+    "fixture_id",
+    "display_name",
+    "source",
+    "policy_config_sha256",
+    "ingestion_prompt_sha256",
+    "models",
+    "files",
+    "created_at"
+  ],
+  "title": "FixtureManifest",
+  "type": "object"
+}

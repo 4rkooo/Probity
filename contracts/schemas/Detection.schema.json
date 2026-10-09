@@ -1,0 +1,176 @@
+{
+  "$defs": {
+    "InferenceMode": {
+      "description": "Disclosed origin of a produced record: live sponsor call or verified fixture cache.",
+      "enum": [
+        "LIVE",
+        "FIXTURE"
+      ],
+      "title": "InferenceMode",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "bbox_norm": {
+      "maxItems": 4,
+      "minItems": 4,
+      "prefixItems": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "number"
+        }
+      ],
+      "title": "Bbox Norm",
+      "type": "array"
+    },
+    "bbox_px": {
+      "maxItems": 4,
+      "minItems": 4,
+      "prefixItems": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "integer"
+        },
+        {
+          "type": "integer"
+        },
+        {
+          "type": "integer"
+        }
+      ],
+      "title": "Bbox Px",
+      "type": "array"
+    },
+    "class_id": {
+      "minimum": 0,
+      "title": "Class Id",
+      "type": "integer"
+    },
+    "class_name": {
+      "maxLength": 64,
+      "minLength": 1,
+      "title": "Class Name",
+      "type": "string"
+    },
+    "confidence": {
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "title": "Confidence",
+      "type": "number"
+    },
+    "content_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Content Sha256",
+      "type": "string"
+    },
+    "created_at": {
+      "examples": [
+        "2026-10-09T16:00:00.000000Z"
+      ],
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,6})?Z$",
+      "title": "Created At",
+      "type": "string"
+    },
+    "detection_id": {
+      "examples": [
+        "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+      ],
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "title": "Detection Id",
+      "type": "string"
+    },
+    "frame_id": {
+      "examples": [
+        "0199a51e-43bf-7aa2-86e1-b2a0bb287492:f417"
+      ],
+      "pattern": "^(?P<video_id>[0-9a-f-]{36}):f(?P<n>0|[1-9]\\d*)$",
+      "title": "Frame Id",
+      "type": "string"
+    },
+    "inference_mode": {
+      "$ref": "#/$defs/InferenceMode"
+    },
+    "model_id": {
+      "maxLength": 200,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9._:/@+-]+$",
+      "title": "Model Id",
+      "type": "string"
+    },
+    "model_sha256": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Model Sha256"
+    },
+    "occlusion_score": {
+      "anyOf": [
+        {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Occlusion Score"
+    },
+    "pts_us": {
+      "description": "Presentation timestamp in integer microseconds",
+      "minimum": 0,
+      "title": "Pts Us",
+      "type": "integer"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "video_id": {
+      "examples": [
+        "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+      ],
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "title": "Video Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "created_at",
+    "content_sha256",
+    "detection_id",
+    "video_id",
+    "frame_id",
+    "pts_us",
+    "model_id",
+    "model_sha256",
+    "class_id",
+    "class_name",
+    "confidence",
+    "bbox_px",
+    "bbox_norm",
+    "inference_mode"
+  ],
+  "title": "Detection",
+  "type": "object"
+}

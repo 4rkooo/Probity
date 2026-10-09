@@ -6,7 +6,7 @@ Product claim: a research/demo prototype with an auditable design, not a forensi
 
 ## 1. Executive decision
 
-Probity will be a Python application with a Streamlit analyst UI, a FastAPI application service, and one persisted background worker, packaged as one repository and run as three local processes. The MVP accepts an MP4 of at most 10 minutes, preserves and hashes the original, indexes 8-second overlapping segments, retrieves moments from grounded Cosmos descriptions and embeddings, and uses YOLOv8 plus ByteTrack to maintain a selected rigid text-bearing subject over a short window. TrueFrame reconstructs one selected target-frame crop by selecting real pixels in 8x8 tiles from at most five compatible frames in that confirmed track; AKAZE feature matching plus RANSAC homography is the primary alignment and ECC affine alignment is the sole bounded fallback. Every output pixel receives a provenance label and, when borrowed, a source frame, timestamp, transform, and policy-decision lineage; the default MVP performs no generative fill in semantic regions. VAST AI OS is the canonical live data and search layer, Cosmos and YOLO run on CoreWeave GPU infrastructure, W&B-hosted inference plans and explains queries from structured evidence, and W&B Weave traces safe metadata and evaluations. The same typed interfaces also have a fixture-backed adapter containing one preprocessed licensed or synthetic video, so a live-service failure changes only a visible mode badge, not the product flow. The demo proves search-to-evidence-to-human-review-to-report, while full-video enhancement, faces or people, legal conclusions, scientific validation, per-pixel manual editing, training a restoration model, and courtroom deployment are explicitly deferred.
+Probity will be a Python application with a Streamlit analyst UI, a FastAPI application service, and one persisted background worker, packaged as one repository and run as three local processes. The MVP accepts an MP4 of at most 10 minutes, preserves and hashes the original, indexes 8-second overlapping segments, retrieves moments from grounded Cosmos descriptions and embeddings, and uses YOLOv8 plus ByteTrack to maintain a selected rigid text-bearing subject over a short window. Probity reconstructs one selected target-frame crop by selecting real pixels in 8x8 tiles from at most five compatible frames in that confirmed track; AKAZE feature matching plus RANSAC homography is the primary alignment and ECC affine alignment is the sole bounded fallback. Every output pixel receives a provenance label and, when borrowed, a source frame, timestamp, transform, and policy-decision lineage; the default MVP performs no generative fill in semantic regions. VAST AI OS is the canonical live data and search layer, Cosmos and YOLO run on CoreWeave GPU infrastructure, W&B-hosted inference plans and explains queries from structured evidence, and W&B Weave traces safe metadata and evaluations. The same typed interfaces also have a fixture-backed adapter containing one preprocessed licensed or synthetic video, so a live-service failure changes only a visible mode badge, not the product flow. The demo proves search-to-evidence-to-human-review-to-report, while full-video enhancement, faces or people, legal conclusions, scientific validation, per-pixel manual editing, training a restoration model, and courtroom deployment are explicitly deferred.
 
 ### Assumptions and source reconciliation
 
@@ -56,7 +56,7 @@ Probity returns an inspectable `REFUSED` run rather than an image when the selec
 3. The analyst asks an objective query such as "Find the blue sedan when the rear plate is most visible." W&B-hosted inference converts the query into a constrained structured plan; VAST retrieval returns segments; deterministic reranking combines vector, keyword, object, and time evidence.
 4. Search cards show thumbnails, timestamp ranges, descriptions, detected-object badges, and confidence. Selecting a card seeks the source player to the cited time.
 5. The analyst clicks a detected plate/sign box or draws a rigid ROI. Probity confirms a short track, displays accepted/rejected observations, and asks the analyst to choose the target frame.
-6. TrueFrame ranks donors, aligns accepted observations, preserves sufficiently clear target tiles, borrows only improved tiles, and produces the result, provenance map, integrity score, uncertainty, and policy log.
+6. Probity ranks donors, aligns accepted observations, preserves sufficiently clear target tiles, borrows only improved tiles, and produces the result, provenance map, integrity score, uncertainty, and policy log.
 7. The analyst compares source and derived views in synchronized players, moves a provenance-overlay cursor to reveal source frame/time for any borrowed pixel, and opens rejected donors to understand why they were excluded.
 8. The analyst approves or vetoes the whole reconstruction. On approval, Probity re-hashes the original and exports a concise HTML/JSON evidence report plus referenced PNG assets; on veto, export remains disabled.
 
@@ -68,7 +68,7 @@ Probity returns an inspectable `REFUSED` run rather than an image when the selec
 | 0:30-1:00 | Start ingestion | Cached descriptions/embeddings/detections load; job-state transitions live | Same stage timeline used by the live adapters, VAST/Cosmos/YOLO attribution |
 | 1:00-1:40 | Ask the prepared natural-language query | Query planning and retrieval live if healthy; cached plan/retrieval fixture otherwise | Timestamped top results, thumbnails, evidence IDs, retrieved structured facts |
 | 1:40-2:20 | Open the best result and select the plate/sign box | UI action live; nearby track either computed live or loaded through the tracker adapter | Boxes, track ID, exact frame/PTS, accepted/rejected observations |
-| 2:20-3:15 | Run TrueFrame | Live CPU reconstruction over stored frames; a stored run is available only for recovery | Side-by-side result, tile provenance overlay, donor source-on-hover, refusal-safe policy log |
+| 2:20-3:15 | Run Probity | Live CPU reconstruction over stored frames; a stored run is available only for recovery | Side-by-side result, tile provenance overlay, donor source-on-hover, refusal-safe policy log |
 | 3:15-4:10 | Compare provenance and the conventional upscaler | Comparison assets precomputed; overlay interaction live | Original/borrowed/generated percentages, integrity explanation, "baseline is non-evidentiary" label |
 | 4:10-4:40 | Approve | Live | Reviewer action, timestamp, review record; export becomes enabled |
 | 4:40-5:00 | Export report and point to sponsor trace | Report rendering live; Weave trace live or cached trace summary | Re-verified source hash, lineage, timestamps, provenance, uncertainty, approval state |
@@ -93,7 +93,7 @@ flowchart LR
     API --> Q[W and B inference protocol]
     API --> V[VAST data and search protocol]
     W --> V
-    W --> R[TrueFrame reconstructor]
+    W --> R[Probity reconstructor]
     R --> D[(Derived asset store)]
     F --> S[(Immutable source store)]
     C --> LIVE[CoreWeave GPU live adapters]
@@ -116,7 +116,7 @@ sequenceDiagram
     participant Worker
     participant Sponsors as VAST/Cosmos/YOLO/CoreWeave
     participant Agent as W&B inference
-    participant TF as TrueFrame
+    participant TF as Probity
     participant Store as Source/derived stores
 
     Analyst->>UI: Upload or select MP4
@@ -161,7 +161,7 @@ sequenceDiagram
 | Detection/tracking adapter | YOLO inference and ByteTrack continuity | YOLO on CoreWeave GPU; fixture parity locally |
 | W&B inference adapter | Query-plan JSON, grounded result explanation, comparison narrative, draft report text | W&B-hosted inference; never reads arbitrary raw video |
 | Weave adapter | Safe traces, latency, model request/response hashes, evaluation rows | W&B Weave observability |
-| TrueFrame | Deterministic gating, alignment, color normalization, tile selection, provenance and integrity | Python/OpenCV CPU MVP; optional GPU execution after demo works |
+| Probity | Deterministic gating, alignment, color normalization, tile selection, provenance and integrity | Python/OpenCV CPU MVP; optional GPU execution after demo works |
 | Fixture adapters | Manifest-verified cache implementing the live protocols | Reliability path, explicitly disclosed |
 
 ### Process and deployment topology
@@ -228,7 +228,7 @@ probity/
     adapters/live/{vast,cosmos,yolo,wandb,weave}.py
     adapters/fixture/{vast,cosmos,yolo,wandb,weave}.py
     ui/Home.py
-    ui/pages/{Search,TrueFrame,Review}.py
+    ui/pages/{Search,Probity,Review}.py
     ui/components/provenance_canvas/
   fixtures/demo/
     manifest.json               # source/model/config/schema hashes
@@ -295,7 +295,7 @@ make dev
   "target_pts_us": 13913947,
   "target_bbox_px": [812, 514, 936, 558],
   "state": "SUCCEEDED",
-  "algorithm_version": "trueframe-tile-v1",
+  "algorithm_version": "probity-tile-v1",
   "config_sha256": "8f783c...d921",
   "iteration_count": 2,
   "accepted_donor_frame_ids": [
@@ -442,7 +442,7 @@ POST /v1/reconstructions
 {
   "error": {
     "code": "INSUFFICIENT_COMPATIBLE_DONORS",
-    "message": "TrueFrame refused to alter the target because fewer than two donors passed alignment and obstruction gates.",
+    "message": "Probity refused to alter the target because fewer than two donors passed alignment and obstruction gates.",
     "retryable": false,
     "correlation_id": "0199a521-0198-78ce-9c3f-a56d531fca77",
     "details": {"accepted": 1, "required": 2, "policy_decision_ids": ["..."]}
@@ -506,7 +506,7 @@ Each segment index entry contains `segment_id`, `video_id`, source SHA-256, star
 5. W&B inference receives only the query, plan, and retrieved structured records and writes one concise explanation per result. A validator requires every timestamp, object, and confidence in the prose to appear in the supplied evidence; otherwise a deterministic template replaces it.
 6. Persist the search, plan, candidate scores, final ranks, evidence IDs, model IDs, latency, and mode. A result card always links back to exact segment PTS and visible source media.
 
-## 9. Tracking and TrueFrame reconstruction
+## 9. Tracking and Probity reconstruction
 
 ### Quality and compatibility measures
 
@@ -543,7 +543,7 @@ After alignment, `A_i = 0.40*inlier_ratio + 0.30*(1 - clip(reprojection_error/2)
 ### Pseudocode
 
 ```python
-def trueframe(req, cfg, cancel):
+def probity(req, cfg, cancel):
     assert sha256(req.source_path) == req.source_sha256
     frames = decode_exact_pts(req.source_path, req.target_pts_us, radius_s=2.0, max_fps=15)
     track = confirm_bytetrack(frames, req.seed, bridge="CSRT", max_gap=3)
@@ -715,7 +715,7 @@ Use only synthetic, licensed, or public-domain footage. Bind the API to localhos
 
 ### Persistent shell
 
-The top bar always shows case name, source hash prefix with a copy action, current `LIVE`/`DEGRADED`/`VERIFIED CACHE` mode, video ingest state, and the text **Research/demo prototype - not for legal conclusions**. The left stepper is `Source -> Search -> Subject -> TrueFrame -> Review -> Report`; inaccessible steps explain their prerequisite instead of disappearing.
+The top bar always shows case name, source hash prefix with a copy action, current `LIVE`/`DEGRADED`/`VERIFIED CACHE` mode, video ingest state, and the text **Research/demo prototype - not for legal conclusions**. The left stepper is `Source -> Search -> Subject -> Probity -> Review -> Report`; inaccessible steps explain their prerequisite instead of disappearing.
 
 ### Screens and components
 
@@ -725,7 +725,7 @@ The top bar always shows case name, source hash prefix with a copy action, curre
 | Ingestion progress | Stage stepper, completed/total segments, elapsed time, cancel, sponsor attribution, indexed time range | Poll every second while visible; `PARTIAL` permits search only over labeled covered time |
 | Search | Query box with objective-example text, search button, plan disclosure, ranked cards with thumbnail, exact timestamps, score components, description, detection badges | Empty query is disabled; no results suggests observable terms; unsafe inference terms are visibly filtered |
 | Tracked-subject selection | Source player, frame-step controls, boxes with class/confidence, draw-ROI tool, track timeline, accepted/rejected frame strip | Only plate/sign or explicitly rigid ROI allowed; confirmation failures explain the rule and disable reconstruction |
-| TrueFrame comparison | Synchronized original and recompressed-preview players, lossless target/result zoom, provenance overlay/legend, pixel inspector, donor gallery | Play/pause/seek is mirrored; selected PTS stays visible; preview's recompression warning cannot be hidden |
+| Probity comparison | Synchronized original and recompressed-preview players, lossless target/result zoom, provenance overlay/legend, pixel inspector, donor gallery | Play/pause/seek is mirrored; selected PTS stays visible; preview's recompression warning cannot be hidden |
 | Integrity and policy | Integrity number plus component bars, provenance percentages, uncertainty callout, ordered policy-decision table with filters | Never use green/red alone; score tooltip says it is not accuracy/admissibility |
 | Review | Exact result/provenance hash prefixes, required inspection checkbox, approve and veto controls, veto reason/comment | Approval disabled for `REFUSED`, score <70, incomplete provenance, generated semantic pixels, or hash mismatch |
 | Report | Structured preview, included-artifact manifest, source re-verification, export button | Disabled until current hashes are approved; successful export shows report/bundle hash and mode |
@@ -746,7 +746,7 @@ The UI does not display inferred plate text unless supplied as explicit evaluati
 
 ### Tracing and logs
 
-One UUIDv7 `correlation_id` flows from browser request through job, adapters, reconstruction, review, and report. Weave records these span names: `ingest.validate`, `ingest.hash`, `ingest.segment`, `cosmos.describe`, `cosmos.embed`, `yolo.detect`, `vast.index`, `search.plan`, `vast.search`, `search.rerank`, `wandb.explain`, `track.confirm`, `trueframe.quality`, `trueframe.align`, `trueframe.color`, `trueframe.fuse`, `trueframe.provenance_validate`, `review.record`, and `report.render`.
+One UUIDv7 `correlation_id` flows from browser request through job, adapters, reconstruction, review, and report. Weave records these span names: `ingest.validate`, `ingest.hash`, `ingest.segment`, `cosmos.describe`, `cosmos.embed`, `yolo.detect`, `vast.index`, `search.plan`, `vast.search`, `search.rerank`, `wandb.explain`, `track.confirm`, `probity.quality`, `probity.align`, `probity.color`, `probity.fuse`, `probity.provenance_validate`, `review.record`, and `report.render`.
 
 Safe span attributes are IDs, source-hash prefix, media dimensions/duration, segment/frame counts, model/config identifiers, mode, reason codes, score components, token counts, and latency. Model input/output bodies are disabled by default; for the synthetic demo only, validated structured request/response JSON may be logged after removing filenames, free-text notes, URLs, and any image bytes. Query text is stored in the case audit database but Weave receives a salted query hash plus controlled plan fields. Structured local logs are JSON with UTC time, level, component, correlation/job/run IDs, event, latency, mode, and sanitized error code.
 
@@ -756,7 +756,7 @@ The demo dashboard shows stage p50/p95 latency, job success/partial/refusal/fail
 
 Create four synthetic ground-truth clips: fronto-parallel plate translation, perspective/scale change, controlled lighting change, and partial obstruction. Render known text/sign graphics at high resolution, animate them, then produce degraded H.264 versions with known blur/downsampling/compression while retaining the clean target frames. Add one licensed natural plate/sign clip without clean ground truth to test refusal and usability. Each clip has two objective search queries, labeled relevant segments, track boxes, obstruction masks, and acceptable donor identities. Dataset and generator seeds are versioned.
 
-For each eligible synthetic target compare: (A) unchanged decoded source crop, (B) a conventional pretrained Real-ESRGAN x4plus output labeled **non-evidentiary baseline**, and (C) Probity TrueFrame. The baseline never enters the donor pool and its model hash/license are recorded. Run the reconstruction on three nearby targets per synthetic clip solely for temporal-consistency evaluation.
+For each eligible synthetic target compare: (A) unchanged decoded source crop, (B) a conventional pretrained Real-ESRGAN x4plus output labeled **non-evidentiary baseline**, and (C) Probity. The baseline never enters the donor pool and its model hash/license are recorded. Run the reconstruction on three nearby targets per synthetic clip solely for temporal-consistency evaluation.
 
 | Metric | Definition and interpretation |
 |---|---|
@@ -783,16 +783,16 @@ At the end of hour 1, merge `domain/models.py`, `domain/enums.py`, `ports.py`, t
 | Owner | Workstream and sponsor visibility | Owned modules and deliverables | Frozen inputs and outputs | Independent mock/fixture |
 |---|---|---|---|---|
 | Person 1 | Platform, ingestion, search; VAST + Cosmos + CoreWeave integration | Domain models, SQLite/jobs, FFmpeg probe/hash/PTS, FastAPI, VAST/Cosmos live and fixture adapters, deterministic rerank | In: MP4/fixture selector, query. Out: `SourceVideo`, `VideoSegment[]`, `SearchEvidence`, job API | 90-second MP4, fixed `segments.jsonl`, embeddings matrix, expected ranked IDs |
-| Person 2 | Tracking and TrueFrame; YOLO + CoreWeave integration | YOLO/ByteTrack live and fixture adapters, quality/gates, AKAZE/ECC, color fit, tile fusion, provenance, integrity, evaluation generator | In: `TrackRequest`, exact frames, config. Out: `Track`, `ReconstructionResult`, policy rows, immutable artifacts | Golden PNG frame window, detections/tracks JSON, expected accepts/rejects, synthetic ground truth |
+| Person 2 | Tracking and Probity; YOLO + CoreWeave integration | YOLO/ByteTrack live and fixture adapters, quality/gates, AKAZE/ECC, color fit, tile fusion, provenance, integrity, evaluation generator | In: `TrackRequest`, exact frames, config. Out: `Track`, `ReconstructionResult`, policy rows, immutable artifacts | Golden PNG frame window, detections/tracks JSON, expected accepts/rejects, synthetic ground truth |
 | Person 3 | Analyst workflow and evidence delivery; W&B inference + Weave | Streamlit screens, synchronized/provenance component, W&B reasoner live/fixture adapter, Weave trace sink, review gate, HTML/JSON report, UI/E2E tests | In: OpenAPI/domain objects. Out: user actions, `HumanReview`, `EvidenceReport`, safe traces | Mock API server with queued/succeeded/refused jobs, completed run/provenance NPZ, report facts |
 
 Cursor is the common development tool for all three: repository-aware edits, test generation, and merge review. It is credited in the demo architecture slide, never represented as a runtime service.
 
 ### Critical path and integration contracts
 
-The critical path is **frozen schemas -> fixture ingestion/search -> fixture track -> live TrueFrame -> UI review -> report -> sponsor adapters**. Sponsor adapters are deliberately off the critical path until the fixture vertical slice works. Person 1 commits contract fixtures in hour 1; Person 2 and Person 3 consume them immediately. Person 2 publishes one completed and one refused `ReconstructionRun` by hour 3, allowing Person 3 to finish the review page before live reconstruction is ready. No handoff is allowed to block another person for more than one hour: if an artifact is late, the recorded golden fixture remains the contract authority.
+The critical path is **frozen schemas -> fixture ingestion/search -> fixture track -> live Probity -> UI review -> report -> sponsor adapters**. Sponsor adapters are deliberately off the critical path until the fixture vertical slice works. Person 1 commits contract fixtures in hour 1; Person 2 and Person 3 consume them immediately. Person 2 publishes one completed and one refused `ReconstructionRun` by hour 3, allowing Person 3 to finish the review page before live reconstruction is ready. No handoff is allowed to block another person for more than one hour: if an artifact is late, the recorded golden fixture remains the contract authority.
 
-Merge order is: (1) domain/config/OpenAPI, (2) job/media and all fixture adapters, (3) TrueFrame core, (4) UI/review/report, (5) live sponsor adapters individually behind feature flags, (6) demo fixture and E2E lock. A failing live adapter is not merged into the default `AUTO` path unless the fixture contract test still passes.
+Merge order is: (1) domain/config/OpenAPI, (2) job/media and all fixture adapters, (3) Probity core, (4) UI/review/report, (5) live sponsor adapters individually behind feature flags, (6) demo fixture and E2E lock. A failing live adapter is not merged into the default `AUTO` path unless the fixture contract test still passes.
 
 ### Hour-by-hour task board
 
@@ -857,7 +857,7 @@ May be deferred after the hackathon: exhaustive codec/fuzz testing, multi-browse
 | Rank | Risk | Likelihood / impact | Trigger | Concrete mitigation and recovery |
 |---:|---|---|---|---|
 | 1 | Sponsor credential/API mismatch | High / High | Health check fails or official SDK differs from assumptions | Keep vendor code behind ports; run fixture contracts; show verified-cache badge; preserve sponsor attribution from precomputed artifacts, never invent calls |
-| 2 | GPU queue/model call is slow | High / High | Cosmos >90 s/segment or YOLO >120 s/window | Cancel after timeout; retry budget only; continue with manifest-verified cache; do local deterministic TrueFrame live |
+| 2 | GPU queue/model call is slow | High / High | Cosmos >90 s/segment or YOLO >120 s/window | Cancel after timeout; retry budget only; continue with manifest-verified cache; do local deterministic Probity live |
 | 3 | Detector misses the small plate/sign | Medium / High | No >=0.55 track or fewer than 5 detections | Use bundled licensed checkpoint; choose known sample; permit analyst ROI only with tracked continuity; otherwise demonstrate honest refusal |
 | 4 | Alignment/reconstruction refuses demo target | Medium / High | Fewer than 2 donors or integrity <70 | Preflight several targets before judging; keep refusal example; move to the prepared valid target, never loosen gates during demo |
 | 5 | Unsupported/corrupt codec | Medium / Medium | ffprobe/decode validation fails | Reject clearly; offer the bundled compliant MP4; optional pre-demo copy conversion creates a new derived input with its own hash and disclosure, never replaces upload |
@@ -876,9 +876,9 @@ Cut in this order when a deadline trigger is reached; proceed to the next cut on
 3. Remove arbitrary upload from the judging script and use only the disclosed bundled MP4; keep upload code behind an "experimental" toggle.
 4. Disable live W&B explanation/report prose and use deterministic evidence templates; keep query planning from a cached valid plan.
 5. Disable live Cosmos segment processing and load its cached, model-attributed descriptions/embeddings through the same protocol.
-6. Disable live YOLO/CoreWeave execution and load detections/tracks through the same protocol; keep target selection and TrueFrame computation live.
+6. Disable live YOLO/CoreWeave execution and load detections/tracks through the same protocol; keep target selection and Probity computation live.
 7. Replace synchronized moving preview with exact lossless target/result stills plus original source seek if the browser component is unstable.
-8. Last-resort core: one verified sample, one cached search result, one cached confirmed track, live deterministic TrueFrame, provenance inspection, human approval/veto, and report export.
+8. Last-resort core: one verified sample, one cached search result, one cached confirmed track, live deterministic Probity, provenance inspection, human approval/veto, and report export.
 
 Never cut source hash verification, same-track enforcement, obstruction/alignment gates, 100% provenance, uncertainty/refusal, generated-pixel isolation, mode disclosure, or approval-before-export.
 

@@ -1,0 +1,162 @@
+{
+  "$defs": {
+    "AlignmentMethod": {
+      "enum": [
+        "IDENTITY",
+        "AKAZE_HOMOGRAPHY",
+        "ECC_AFFINE"
+      ],
+      "title": "AlignmentMethod",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "alignment_method": {
+      "$ref": "#/$defs/AlignmentMethod"
+    },
+    "color_bias": {
+      "anyOf": [
+        {
+          "maxItems": 3,
+          "minItems": 3,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Color Bias"
+    },
+    "color_gain": {
+      "anyOf": [
+        {
+          "maxItems": 3,
+          "minItems": 3,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Color Gain"
+    },
+    "decision_ids": {
+      "default": [],
+      "items": {
+        "examples": [
+          "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+        ],
+        "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+        "type": "string"
+      },
+      "title": "Decision Ids",
+      "type": "array"
+    },
+    "provenance_class": {
+      "enum": [
+        "ORIGINAL",
+        "BORROWED",
+        "GENERATED_BLEND"
+      ],
+      "title": "Provenance Class",
+      "type": "string"
+    },
+    "run_id": {
+      "examples": [
+        "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+      ],
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "title": "Run Id",
+      "type": "string"
+    },
+    "source_frame_id": {
+      "examples": [
+        "0199a51e-43bf-7aa2-86e1-b2a0bb287492:f417"
+      ],
+      "pattern": "^(?P<video_id>[0-9a-f-]{36}):f(?P<n>0|[1-9]\\d*)$",
+      "title": "Source Frame Id",
+      "type": "string"
+    },
+    "source_index": {
+      "minimum": 0,
+      "title": "Source Index",
+      "type": "integer"
+    },
+    "source_pts_us": {
+      "description": "Presentation timestamp in integer microseconds",
+      "minimum": 0,
+      "title": "Source Pts Us",
+      "type": "integer"
+    },
+    "source_x": {
+      "title": "Source X",
+      "type": "number"
+    },
+    "source_y": {
+      "title": "Source Y",
+      "type": "number"
+    },
+    "transform_id": {
+      "anyOf": [
+        {
+          "maxLength": 64,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Transform Id"
+    },
+    "x": {
+      "minimum": 0,
+      "title": "X",
+      "type": "integer"
+    },
+    "y": {
+      "minimum": 0,
+      "title": "Y",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "run_id",
+    "x",
+    "y",
+    "provenance_class",
+    "source_index",
+    "source_frame_id",
+    "source_pts_us",
+    "source_x",
+    "source_y",
+    "transform_id",
+    "alignment_method"
+  ],
+  "title": "PixelOrigin",
+  "type": "object"
+}

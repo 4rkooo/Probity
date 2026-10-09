@@ -1,0 +1,362 @@
+{
+  "$defs": {
+    "AlignmentMethod": {
+      "enum": [
+        "IDENTITY",
+        "AKAZE_HOMOGRAPHY",
+        "ECC_AFFINE"
+      ],
+      "title": "AlignmentMethod",
+      "type": "string"
+    },
+    "CoverageCounts": {
+      "additionalProperties": false,
+      "properties": {
+        "BORROWED": {
+          "minimum": 0,
+          "title": "Borrowed",
+          "type": "integer"
+        },
+        "GENERATED_BLEND": {
+          "minimum": 0,
+          "title": "Generated Blend",
+          "type": "integer"
+        },
+        "ORIGINAL": {
+          "minimum": 0,
+          "title": "Original",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "ORIGINAL",
+        "BORROWED",
+        "GENERATED_BLEND"
+      ],
+      "title": "CoverageCounts",
+      "type": "object"
+    },
+    "CoveragePct": {
+      "additionalProperties": false,
+      "properties": {
+        "BORROWED": {
+          "maximum": 100.0,
+          "minimum": 0.0,
+          "title": "Borrowed",
+          "type": "number"
+        },
+        "GENERATED_BLEND": {
+          "maximum": 100.0,
+          "minimum": 0.0,
+          "title": "Generated Blend",
+          "type": "number"
+        },
+        "ORIGINAL": {
+          "maximum": 100.0,
+          "minimum": 0.0,
+          "title": "Original",
+          "type": "number"
+        }
+      },
+      "required": [
+        "ORIGINAL",
+        "BORROWED",
+        "GENERATED_BLEND"
+      ],
+      "title": "CoveragePct",
+      "type": "object"
+    },
+    "Interpolation": {
+      "enum": [
+        "IDENTITY",
+        "LANCZOS4"
+      ],
+      "title": "Interpolation",
+      "type": "string"
+    },
+    "SourceLutEntry": {
+      "additionalProperties": false,
+      "properties": {
+        "alignment_method": {
+          "$ref": "#/$defs/AlignmentMethod"
+        },
+        "color_bias": {
+          "anyOf": [
+            {
+              "maxItems": 3,
+              "minItems": 3,
+              "prefixItems": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                }
+              ],
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Color Bias"
+        },
+        "color_gain": {
+          "anyOf": [
+            {
+              "maxItems": 3,
+              "minItems": 3,
+              "prefixItems": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                }
+              ],
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Color Gain"
+        },
+        "decision_ids": {
+          "default": [],
+          "items": {
+            "examples": [
+              "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+            ],
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "type": "string"
+          },
+          "title": "Decision Ids",
+          "type": "array"
+        },
+        "frame_id": {
+          "examples": [
+            "0199a51e-43bf-7aa2-86e1-b2a0bb287492:f417"
+          ],
+          "pattern": "^(?P<video_id>[0-9a-f-]{36}):f(?P<n>0|[1-9]\\d*)$",
+          "title": "Frame Id",
+          "type": "string"
+        },
+        "frame_number": {
+          "minimum": 0,
+          "title": "Frame Number",
+          "type": "integer"
+        },
+        "index": {
+          "minimum": 0,
+          "title": "Index",
+          "type": "integer"
+        },
+        "interpolation": {
+          "$ref": "#/$defs/Interpolation"
+        },
+        "matrix": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "number"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Row-major 3x3 homography (9) or 2x3 affine (6), donor->target",
+          "title": "Matrix"
+        },
+        "pts_us": {
+          "description": "Presentation timestamp in integer microseconds",
+          "minimum": 0,
+          "title": "Pts Us",
+          "type": "integer"
+        },
+        "role": {
+          "$ref": "#/$defs/SourceRole"
+        },
+        "transform_id": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Transform Id"
+        }
+      },
+      "required": [
+        "index",
+        "frame_id",
+        "frame_number",
+        "pts_us",
+        "role",
+        "alignment_method",
+        "interpolation"
+      ],
+      "title": "SourceLutEntry",
+      "type": "object"
+    },
+    "SourceRole": {
+      "enum": [
+        "TARGET",
+        "DONOR"
+      ],
+      "title": "SourceRole",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Authority is provenance.npz (class/source_index/source_x/source_y arrays) plus source_lut.\n\n``coverage_counts``/``coverage_pct`` cover the full output frame (sum = width*height);\n``subject_coverage_pct`` covers only ``subject_bbox_px``.",
+  "properties": {
+    "artifact_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Artifact Sha256",
+      "type": "string"
+    },
+    "class_map_uri": {
+      "description": "derived/{video_id}/{kind}/{entity_id}/{file}; never beneath source/",
+      "pattern": "^derived/[0-9a-f-]{36}/[a-z_]+/[A-Za-z0-9:._-]+/[A-Za-z0-9._-]+$",
+      "title": "Class Map Uri",
+      "type": "string"
+    },
+    "content_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Content Sha256",
+      "type": "string"
+    },
+    "coverage_complete": {
+      "title": "Coverage Complete",
+      "type": "boolean"
+    },
+    "coverage_counts": {
+      "$ref": "#/$defs/CoverageCounts"
+    },
+    "coverage_pct": {
+      "$ref": "#/$defs/CoveragePct"
+    },
+    "created_at": {
+      "examples": [
+        "2026-10-09T16:00:00.000000Z"
+      ],
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,6})?Z$",
+      "title": "Created At",
+      "type": "string"
+    },
+    "encoding_version": {
+      "const": "npz-pixel-v1",
+      "default": "npz-pixel-v1",
+      "title": "Encoding Version",
+      "type": "string"
+    },
+    "height_px": {
+      "exclusiveMinimum": 0,
+      "title": "Height Px",
+      "type": "integer"
+    },
+    "run_id": {
+      "examples": [
+        "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+      ],
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "title": "Run Id",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "source_index_uri": {
+      "description": "derived/{video_id}/{kind}/{entity_id}/{file}; never beneath source/",
+      "pattern": "^derived/[0-9a-f-]{36}/[a-z_]+/[A-Za-z0-9:._-]+/[A-Za-z0-9._-]+$",
+      "title": "Source Index Uri",
+      "type": "string"
+    },
+    "source_lut": {
+      "items": {
+        "$ref": "#/$defs/SourceLutEntry"
+      },
+      "minItems": 1,
+      "title": "Source Lut",
+      "type": "array"
+    },
+    "source_xy_uri": {
+      "description": "derived/{video_id}/{kind}/{entity_id}/{file}; never beneath source/",
+      "pattern": "^derived/[0-9a-f-]{36}/[a-z_]+/[A-Za-z0-9:._-]+/[A-Za-z0-9._-]+$",
+      "title": "Source Xy Uri",
+      "type": "string"
+    },
+    "subject_bbox_px": {
+      "maxItems": 4,
+      "minItems": 4,
+      "prefixItems": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "integer"
+        },
+        {
+          "type": "integer"
+        },
+        {
+          "type": "integer"
+        }
+      ],
+      "title": "Subject Bbox Px",
+      "type": "array"
+    },
+    "subject_coverage_pct": {
+      "$ref": "#/$defs/CoveragePct"
+    },
+    "tile_size_px": {
+      "const": 8,
+      "default": 8,
+      "title": "Tile Size Px",
+      "type": "integer"
+    },
+    "width_px": {
+      "exclusiveMinimum": 0,
+      "title": "Width Px",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "created_at",
+    "content_sha256",
+    "run_id",
+    "width_px",
+    "height_px",
+    "subject_bbox_px",
+    "class_map_uri",
+    "source_index_uri",
+    "source_xy_uri",
+    "source_lut",
+    "coverage_counts",
+    "coverage_pct",
+    "subject_coverage_pct",
+    "coverage_complete",
+    "artifact_sha256"
+  ],
+  "title": "PixelProvenance",
+  "type": "object"
+}

@@ -1,0 +1,364 @@
+{
+  "$defs": {
+    "InferenceMode": {
+      "description": "Disclosed origin of a produced record: live sponsor call or verified fixture cache.",
+      "enum": [
+        "LIVE",
+        "FIXTURE"
+      ],
+      "title": "InferenceMode",
+      "type": "string"
+    },
+    "ObservationSource": {
+      "enum": [
+        "DETECTOR",
+        "ANALYST_ROI",
+        "CSRT_BRIDGE"
+      ],
+      "title": "ObservationSource",
+      "type": "string"
+    },
+    "ReasonCode": {
+      "description": "Policy/audit reason codes (section 10) plus rule-coded refusal reasons (sections 2, 9).",
+      "enum": [
+        "SOURCE_HASH_VERIFIED",
+        "SOURCE_HASH_MISMATCH",
+        "TRACK_CONFIRMED",
+        "TRACK_NOT_CONFIRMED",
+        "IDENTITY_GEOMETRY_MISMATCH",
+        "DONOR_OBSTRUCTED",
+        "DONOR_NOT_CLEARER",
+        "LIGHTING_OUT_OF_RANGE",
+        "ALIGNMENT_AKAZE_ACCEPTED",
+        "ALIGNMENT_ECC_FALLBACK_ACCEPTED",
+        "ALIGNMENT_FAILED",
+        "BORROW_TILE_ACCEPTED",
+        "KEEP_ORIGINAL_CLEAR",
+        "REVERT_TILE_VALIDATION",
+        "PROVENANCE_COMPLETE",
+        "PROVENANCE_INCOMPLETE",
+        "GENERATED_SEMANTIC_PIXEL",
+        "INTEGRITY_BELOW_MINIMUM",
+        "HUMAN_APPROVED",
+        "HUMAN_VETOED",
+        "QUERY_POLICY_FILTERED",
+        "FIXTURE_MODE_DISCLOSED",
+        "SUBJECT_NOT_RIGID",
+        "TARGET_TOO_SMALL",
+        "TARGET_QUALITY_TOO_LOW",
+        "DECODE_NOT_DETERMINISTIC",
+        "INSUFFICIENT_COMPATIBLE_DONORS",
+        "PHOTOMETRIC_INCOMPATIBLE",
+        "NO_TILE_IMPROVED",
+        "DONOR_OUTSIDE_WINDOW",
+        "DONOR_TRACK_MISMATCH",
+        "GENERATED_INPUT_REJECTED"
+      ],
+      "title": "ReasonCode",
+      "type": "string"
+    },
+    "SubjectType": {
+      "enum": [
+        "LICENSE_PLATE",
+        "SIGN",
+        "RIGID_ROI"
+      ],
+      "title": "SubjectType",
+      "type": "string"
+    },
+    "TrackObservation": {
+      "additionalProperties": false,
+      "properties": {
+        "accepted": {
+          "title": "Accepted",
+          "type": "boolean"
+        },
+        "bbox_px": {
+          "maxItems": 4,
+          "minItems": 4,
+          "prefixItems": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "integer"
+            }
+          ],
+          "title": "Bbox Px",
+          "type": "array"
+        },
+        "confidence": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "detection_id": {
+          "anyOf": [
+            {
+              "examples": [
+                "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+              ],
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Detection Id"
+        },
+        "frame_id": {
+          "examples": [
+            "0199a51e-43bf-7aa2-86e1-b2a0bb287492:f417"
+          ],
+          "pattern": "^(?P<video_id>[0-9a-f-]{36}):f(?P<n>0|[1-9]\\d*)$",
+          "title": "Frame Id",
+          "type": "string"
+        },
+        "pts_us": {
+          "description": "Presentation timestamp in integer microseconds",
+          "minimum": 0,
+          "title": "Pts Us",
+          "type": "integer"
+        },
+        "reason_code": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ReasonCode"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "source": {
+          "$ref": "#/$defs/ObservationSource"
+        }
+      },
+      "required": [
+        "frame_id",
+        "pts_us",
+        "bbox_px",
+        "source",
+        "detection_id",
+        "confidence",
+        "accepted"
+      ],
+      "title": "TrackObservation",
+      "type": "object"
+    },
+    "TrackState": {
+      "enum": [
+        "PENDING",
+        "CONFIRMED",
+        "NOT_CONFIRMED"
+      ],
+      "title": "TrackState",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "case_id": {
+      "examples": [
+        "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+      ],
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "title": "Case Id",
+      "type": "string"
+    },
+    "confirmed": {
+      "title": "Confirmed",
+      "type": "boolean"
+    },
+    "content_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Content Sha256",
+      "type": "string"
+    },
+    "continuity_score": {
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "title": "Continuity Score",
+      "type": "number"
+    },
+    "created_at": {
+      "examples": [
+        "2026-10-09T16:00:00.000000Z"
+      ],
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,6})?Z$",
+      "title": "Created At",
+      "type": "string"
+    },
+    "detector_model_id": {
+      "anyOf": [
+        {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9._:/@+-]+$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Detector Model Id"
+    },
+    "detector_observation_count": {
+      "minimum": 0,
+      "title": "Detector Observation Count",
+      "type": "integer"
+    },
+    "mean_confidence": {
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "title": "Mean Confidence",
+      "type": "number"
+    },
+    "mode": {
+      "$ref": "#/$defs/InferenceMode"
+    },
+    "observations": {
+      "items": {
+        "$ref": "#/$defs/TrackObservation"
+      },
+      "title": "Observations",
+      "type": "array"
+    },
+    "reason_codes": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/ReasonCode"
+      },
+      "title": "Reason Codes",
+      "type": "array"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "seed_bbox_px": {
+      "maxItems": 4,
+      "minItems": 4,
+      "prefixItems": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "integer"
+        },
+        {
+          "type": "integer"
+        },
+        {
+          "type": "integer"
+        }
+      ],
+      "title": "Seed Bbox Px",
+      "type": "array"
+    },
+    "seed_detection_id": {
+      "anyOf": [
+        {
+          "examples": [
+            "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+          ],
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Seed Detection Id"
+    },
+    "seed_frame_id": {
+      "examples": [
+        "0199a51e-43bf-7aa2-86e1-b2a0bb287492:f417"
+      ],
+      "pattern": "^(?P<video_id>[0-9a-f-]{36}):f(?P<n>0|[1-9]\\d*)$",
+      "title": "Seed Frame Id",
+      "type": "string"
+    },
+    "state": {
+      "$ref": "#/$defs/TrackState"
+    },
+    "subject_type": {
+      "$ref": "#/$defs/SubjectType"
+    },
+    "track_id": {
+      "examples": [
+        "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+      ],
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "title": "Track Id",
+      "type": "string"
+    },
+    "tracker": {
+      "const": "bytetrack",
+      "default": "bytetrack",
+      "title": "Tracker",
+      "type": "string"
+    },
+    "tracker_version": {
+      "maxLength": 64,
+      "minLength": 1,
+      "title": "Tracker Version",
+      "type": "string"
+    },
+    "video_id": {
+      "examples": [
+        "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+      ],
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "title": "Video Id",
+      "type": "string"
+    },
+    "window_end_us": {
+      "description": "Presentation timestamp in integer microseconds",
+      "minimum": 0,
+      "title": "Window End Us",
+      "type": "integer"
+    },
+    "window_start_us": {
+      "description": "Presentation timestamp in integer microseconds",
+      "minimum": 0,
+      "title": "Window Start Us",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "created_at",
+    "content_sha256",
+    "track_id",
+    "case_id",
+    "video_id",
+    "subject_type",
+    "seed_frame_id",
+    "seed_bbox_px",
+    "tracker_version",
+    "window_start_us",
+    "window_end_us",
+    "state",
+    "mean_confidence",
+    "continuity_score",
+    "confirmed",
+    "detector_observation_count",
+    "observations",
+    "mode"
+  ],
+  "title": "Track",
+  "type": "object"
+}

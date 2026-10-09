@@ -1,0 +1,120 @@
+{
+  "$defs": {
+    "FrameManifestEntry": {
+      "additionalProperties": false,
+      "properties": {
+        "frame_number": {
+          "description": "Decoder-output (presentation) order index",
+          "minimum": 0,
+          "title": "Frame Number",
+          "type": "integer"
+        },
+        "height_px": {
+          "exclusiveMinimum": 0,
+          "title": "Height Px",
+          "type": "integer"
+        },
+        "is_keyframe": {
+          "title": "Is Keyframe",
+          "type": "boolean"
+        },
+        "pts": {
+          "description": "Raw stream PTS in time_base units",
+          "title": "Pts",
+          "type": "integer"
+        },
+        "pts_us": {
+          "description": "Presentation timestamp in integer microseconds",
+          "minimum": 0,
+          "title": "Pts Us",
+          "type": "integer"
+        },
+        "width_px": {
+          "exclusiveMinimum": 0,
+          "title": "Width Px",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "frame_number",
+        "pts_us",
+        "pts",
+        "is_keyframe",
+        "width_px",
+        "height_px"
+      ],
+      "title": "FrameManifestEntry",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Canonical exact-PTS frame manifest.\n\n``pts_us = (pts * tb_num * 1_000_000) // tb_den`` in exact integer arithmetic. Video duration is\ncomputed in stream ticks first: ``end_ticks = last.pts + frame_duration_ticks`` (packet\nduration, else the last PTS delta), then converted with the same floor rule.\nNever ``fps * seconds``.",
+  "properties": {
+    "content_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Content Sha256",
+      "type": "string"
+    },
+    "created_at": {
+      "examples": [
+        "2026-10-09T16:00:00.000000Z"
+      ],
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,6})?Z$",
+      "title": "Created At",
+      "type": "string"
+    },
+    "extractor": {
+      "description": "ffprobe version string",
+      "maxLength": 200,
+      "minLength": 1,
+      "title": "Extractor",
+      "type": "string"
+    },
+    "frames": {
+      "items": {
+        "$ref": "#/$defs/FrameManifestEntry"
+      },
+      "minItems": 1,
+      "title": "Frames",
+      "type": "array"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "source_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Source Sha256",
+      "type": "string"
+    },
+    "time_base": {
+      "examples": [
+        "30000/1001"
+      ],
+      "pattern": "^[1-9]\\d*/[1-9]\\d*$",
+      "title": "Time Base",
+      "type": "string"
+    },
+    "video_id": {
+      "examples": [
+        "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+      ],
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "title": "Video Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "created_at",
+    "content_sha256",
+    "video_id",
+    "source_sha256",
+    "time_base",
+    "extractor",
+    "frames"
+  ],
+  "title": "FrameManifest",
+  "type": "object"
+}

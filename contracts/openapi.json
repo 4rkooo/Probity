@@ -1,0 +1,5186 @@
+{
+  "components": {
+    "schemas": {
+      "AdapterHealth": {
+        "additionalProperties": false,
+        "properties": {
+          "adapter_name": {
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Adapter Name",
+            "type": "string"
+          },
+          "checked_at": {
+            "examples": [
+              "2026-10-09T16:00:00.000000Z"
+            ],
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,6})?Z$",
+            "title": "Checked At",
+            "type": "string"
+          },
+          "detail": {
+            "anyOf": [
+              {
+                "maxLength": 500,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Detail"
+          },
+          "latency_ms": {
+            "minimum": 0.0,
+            "title": "Latency Ms",
+            "type": "integer"
+          },
+          "mode": {
+            "$ref": "#/components/schemas/AdapterMode"
+          },
+          "model_id": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 1,
+                "pattern": "^[A-Za-z0-9._:/@+-]+$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Model Id"
+          },
+          "schema_version": {
+            "const": "1.0",
+            "default": "1.0",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/HealthStatus"
+          }
+        },
+        "required": [
+          "adapter_name",
+          "model_id",
+          "mode",
+          "status",
+          "checked_at",
+          "latency_ms"
+        ],
+        "title": "AdapterHealth",
+        "type": "object"
+      },
+      "AdapterMode": {
+        "description": "Mode an adapter resolved to at startup health check.",
+        "enum": [
+          "LIVE",
+          "DEGRADED",
+          "FIXTURE",
+          "DISABLED"
+        ],
+        "title": "AdapterMode",
+        "type": "string"
+      },
+      "AlignmentMethod": {
+        "enum": [
+          "IDENTITY",
+          "AKAZE_HOMOGRAPHY",
+          "ECC_AFFINE"
+        ],
+        "title": "AlignmentMethod",
+        "type": "string"
+      },
+      "CaseStatus": {
+        "enum": [
+          "ACTIVE",
+          "QUARANTINED",
+          "ARCHIVED"
+        ],
+        "title": "CaseStatus",
+        "type": "string"
+      },
+      "CaseWorkspace": {
+        "additionalProperties": false,
+        "properties": {
+          "case_id": {
+            "examples": [
+              "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+            ],
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Case Id",
+            "type": "string"
+          },
+          "content_sha256": {
+            "pattern": "^[0-9a-f]{64}$",
+            "title": "Content Sha256",
+            "type": "string"
+          },
+          "created_at": {
+            "examples": [
+              "2026-10-09T16:00:00.000000Z"
+            ],
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,6})?Z$",
+            "title": "Created At",
+            "type": "string"
+          },
+          "display_name": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Display Name",
+            "type": "string"
+          },
+          "mode": {
+            "$ref": "#/components/schemas/OperatingMode"
+          },
+          "owner_alias": {
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Owner Alias",
+            "type": "string"
+          },
+          "purpose": {
+            "const": "DEMO_RESEARCH",
+            "default": "DEMO_RESEARCH",
+            "title": "Purpose",
+            "type": "string"
+          },
+          "schema_version": {
+            "const": "1.0",
+            "default": "1.0",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/CaseStatus"
+          }
+        },
+        "required": [
+          "created_at",
+          "content_sha256",
+          "case_id",
+          "display_name",
+          "mode",
+          "owner_alias",
+          "status"
+        ],
+        "title": "CaseWorkspace",
+        "type": "object"
+      },
+      "ClassConfidence": {
+        "additionalProperties": false,
+        "properties": {
+          "class_name": {
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Class Name",
+            "type": "string"
+          },
+          "detection_count": {
+            "minimum": 0.0,
+            "title": "Detection Count",
+            "type": "integer"
+          },
+          "max_confidence": {
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Max Confidence",
+            "type": "number"
+          }
+        },
+        "required": [
+          "class_name",
+          "max_confidence",
+          "detection_count"
+        ],
+        "title": "ClassConfidence",
+        "type": "object"
+      },
+      "CoveragePct": {
+        "additionalProperties": false,
+        "properties": {
+          "BORROWED": {
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Borrowed",
+            "type": "number"
+          },
+          "GENERATED_BLEND": {
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Generated Blend",
+            "type": "number"
+          },
+          "ORIGINAL": {
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Original",
+            "type": "number"
+          }
+        },
+        "required": [
+          "ORIGINAL",
+          "BORROWED",
+          "GENERATED_BLEND"
+        ],
+        "title": "CoveragePct",
+        "type": "object"
+      },
+      "CreateCaseRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "display_name": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Display Name",
+            "type": "string"
+          },
+          "owner_alias": {
+            "default": "analyst",
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Owner Alias",
+            "type": "string"
+          }
+        },
+        "required": [
+          "display_name"
+        ],
+        "title": "CreateCaseRequest",
+        "type": "object"
+      },
+      "ErrorBody": {
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "$ref": "#/components/schemas/ErrorCode"
+          },
+          "correlation_id": {
+            "examples": [
+              "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+            ],
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Correlation Id",
+            "type": "string"
+          },
+          "details": {
+            "additionalProperties": true,
+            "title": "Details",
+            "type": "object"
+          },
+          "message": {
+            "maxLength": 500,
+            "minLength": 1,
+            "title": "Message",
+            "type": "string"
+          },
+          "retryable": {
+            "title": "Retryable",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "code",
+          "message",
+          "retryable",
+          "correlation_id"
+        ],
+        "title": "ErrorBody",
+        "type": "object"
+      },
+      "ErrorCode": {
+        "description": "Normalized API/job error codes (section 7).",
+        "enum": [
+          "VALIDATION_FAILED",
+          "IDEMPOTENCY_KEY_REQUIRED",
+          "IDEMPOTENCY_CONFLICT",
+          "NOT_FOUND",
+          "INVALID_STATE_TRANSITION",
+          "ARTIFACT_HASH_CONFLICT",
+          "REVIEW_REQUIRED",
+          "SOURCE_HASH_MISMATCH",
+          "PAYLOAD_TOO_LARGE",
+          "UNSUPPORTED_MEDIA",
+          "MEDIA_PROBE_TIMEOUT",
+          "NON_MONOTONIC_TIMESTAMPS",
+          "QUERY_NEEDS_CLARIFICATION",
+          "VIDEO_NOT_SEARCHABLE",
+          "SPONSOR_TIMEOUT",
+          "SPONSOR_UNAVAILABLE",
+          "SPONSOR_MALFORMED_RESPONSE",
+          "FIXTURE_NOT_FOUND",
+          "FIXTURE_MANIFEST_INVALID",
+          "WORKER_INTERRUPTED",
+          "CANCELLED",
+          "INSUFFICIENT_COMPATIBLE_DONORS",
+          "INTERNAL_ERROR"
+        ],
+        "title": "ErrorCode",
+        "type": "string"
+      },
+      "ErrorEnvelope": {
+        "additionalProperties": false,
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        },
+        "required": [
+          "error"
+        ],
+        "title": "ErrorEnvelope",
+        "type": "object"
+      },
+      "EvidenceReport": {
+        "additionalProperties": false,
+        "properties": {
+          "bundle_sha256": {
+            "pattern": "^[0-9a-f]{64}$",
+            "title": "Bundle Sha256",
+            "type": "string"
+          },
+          "case_id": {
+            "examples": [
+              "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+            ],
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Case Id",
+            "type": "string"
+          },
+          "content_sha256": {
+            "pattern": "^[0-9a-f]{64}$",
+            "title": "Content Sha256",
+            "type": "string"
+          },
+          "created_at": {
+            "examples": [
+              "2026-10-09T16:00:00.000000Z"
+            ],
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,6})?Z$",
+            "title": "Created At",
+            "type": "string"
+          },
+          "draft_model_id": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 1,
+                "pattern": "^[A-Za-z0-9._:/@+-]+$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Draft Model Id"
+          },
+          "generated_at": {
+            "examples": [
+              "2026-10-09T16:00:00.000000Z"
+            ],
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,6})?Z$",
+            "title": "Generated At",
+            "type": "string"
+          },
+          "html_uri": {
+            "description": "Opaque, case-scoped asset reference served by GET /v1/assets/{asset_id}",
+            "pattern": "^asset://[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Html Uri",
+            "type": "string"
+          },
+          "json_uri": {
+            "description": "Opaque, case-scoped asset reference served by GET /v1/assets/{asset_id}",
+            "pattern": "^asset://[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Json Uri",
+            "type": "string"
+          },
+          "limitations": {
+            "items": {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            "minItems": 1,
+            "title": "Limitations",
+            "type": "array"
+          },
+          "mode": {
+            "$ref": "#/components/schemas/InferenceMode"
+          },
+          "report_id": {
+            "examples": [
+              "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+            ],
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Report Id",
+            "type": "string"
+          },
+          "review_id": {
+            "examples": [
+              "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+            ],
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Review Id",
+            "type": "string"
+          },
+          "run_id": {
+            "examples": [
+              "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+            ],
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Run Id",
+            "type": "string"
+          },
+          "schema_version": {
+            "const": "1.0",
+            "default": "1.0",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "source_sha256": {
+            "pattern": "^[0-9a-f]{64}$",
+            "title": "Source Sha256",
+            "type": "string"
+          },
+          "source_sha256_verified_at_export": {
+            "pattern": "^[0-9a-f]{64}$",
+            "title": "Source Sha256 Verified At Export",
+            "type": "string"
+          },
+          "source_verified": {
+            "title": "Source Verified",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "created_at",
+          "content_sha256",
+          "report_id",
+          "case_id",
+          "run_id",
+          "review_id",
+          "source_sha256",
+          "source_sha256_verified_at_export",
+          "source_verified",
+          "html_uri",
+          "json_uri",
+          "bundle_sha256",
+          "generated_at",
+          "draft_model_id",
+          "mode",
+          "limitations"
+        ],
+        "title": "EvidenceReport",
+        "type": "object"
+      },
+      "ExplanationSource": {
+        "enum": [
+          "REASONER",
+          "TEMPLATE"
+        ],
+        "title": "ExplanationSource",
+        "type": "string"
+      },
+      "FixtureInfo": {
+        "additionalProperties": false,
+        "properties": {
+          "display_name": {
+            "title": "Display Name",
+            "type": "string"
+          },
+          "duration_us": {
+            "title": "Duration Us",
+            "type": "integer"
+          },
+          "fixture_id": {
+            "title": "Fixture Id",
+            "type": "string"
+          },
+          "license_note": {
+            "title": "License Note",
+            "type": "string"
+          },
+          "source_sha256": {
+            "pattern": "^[0-9a-f]{64}$",
+            "title": "Source Sha256",
+            "type": "string"
+          },
+          "synthetic": {
+            "title": "Synthetic",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "fixture_id",
+          "display_name",
+          "source_sha256",
+          "duration_us",
+          "license_note",
+          "synthetic"
+        ],
+        "title": "FixtureInfo",
+        "type": "object"
+      },
+      "HealthResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "adapters": {
+            "items": {
+              "$ref": "#/components/schemas/AdapterHealth"
+            },
+            "title": "Adapters",
+            "type": "array"
+          },
+          "database": {
+            "enum": [
+              "ok",
+              "unavailable"
+            ],
+            "title": "Database",
+            "type": "string"
+          },
+          "fixtures": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/FixtureInfo"
+            },
+            "title": "Fixtures",
+            "type": "array"
+          },
+          "mode": {
+            "$ref": "#/components/schemas/OperatingMode"
+          },
+          "process": {
+            "enum": [
+              "api",
+              "worker"
+            ],
+            "title": "Process",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "ok",
+              "degraded"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status",
+          "version",
+          "mode",
+          "process",
+          "database",
+          "adapters"
+        ],
+        "title": "HealthResponse",
+        "type": "object"
+      },
+      "HealthStatus": {
+        "enum": [
+          "OK",
+          "DEGRADED",
+          "UNAVAILABLE",
+          "DISABLED"
+        ],
+        "title": "HealthStatus",
+        "type": "string"
+      },
+      "HumanReview": {
+        "additionalProperties": false,
+        "properties": {
+          "comment": {
+            "maxLength": 1000,
+            "title": "Comment",
+            "type": "string"
+          },
+          "content_sha256": {
+            "pattern": "^[0-9a-f]{64}$",
+            "title": "Content Sha256",
+            "type": "string"
+          },
+          "created_at": {
+            "examples": [
+              "2026-10-09T16:00:00.000000Z"
+            ],
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,6})?Z$",
+            "title": "Created At",
+            "type": "string"
+          },
+          "decision": {
+            "$ref": "#/components/schemas/ReviewDecision"
+          },
+          "reason_code": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/VetoReason"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "review_id": {
+            "examples": [
+              "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+            ],
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Review Id",
+            "type": "string"
+          },
+          "reviewed_provenance_sha256": {
+            "pattern": "^[0-9a-f]{64}$",
+            "title": "Reviewed Provenance Sha256",
+            "type": "string"
+          },
+          "reviewed_result_sha256": {
+            "pattern": "^[0-9a-f]{64}$",
+            "title": "Reviewed Result Sha256",
+            "type": "string"
+          },
+          "reviewer_alias": {
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Reviewer Alias",
+            "type": "string"
+          },
+          "run_id": {
+            "examples": [
+              "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+            ],
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Run Id",
+            "type": "string"
+          },
+          "schema_version": {
+            "const": "1.0",
+            "default": "1.0",
+            "title": "Schema Version",
+            "type": "string"
+          }
+        },
+        "required": [
+          "created_at",
+          "content_sha256",
+          "review_id",
+          "run_id",
+          "reviewer_alias",
+          "decision",
+          "reason_code",
+          "comment",
+          "reviewed_result_sha256",
+          "reviewed_provenance_sha256"
+        ],
+        "title": "HumanReview",
+        "type": "object"
+      },
+      "IndexState": {
+        "description": "VideoSegment lifecycle.",
+        "enum": [
+          "PENDING",
+          "DESCRIBED",
+          "EMBEDDED",
+          "INDEXED",
+          "FAILED"
+        ],
+        "title": "IndexState",
+        "type": "string"
+      },
+      "InferenceMode": {
+        "description": "Disclosed origin of a produced record: live sponsor call or verified fixture cache.",
+        "enum": [
+          "LIVE",
+          "FIXTURE"
+        ],
+        "title": "InferenceMode",
+        "type": "string"
+      },
+      "IngestState": {
+        "description": "SourceVideo lifecycle.",
+        "enum": [
+          "STORED",
+          "INDEXING",
+          "SEARCHABLE",
+          "PARTIAL",
+          "FAILED",
+          "CANCELLED",
+          "QUARANTINED"
+        ],
+        "title": "IngestState",
+        "type": "string"
+      },
+      "IntegrityScore": {
+        "additionalProperties": false,
+        "properties": {
+          "audit_completeness": {
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Audit Completeness",
+            "type": "number"
+          },
+          "formula_version": {
+            "const": "integrity-v1",
+            "default": "integrity-v1",
+            "title": "Formula Version",
+            "type": "string"
+          },
+          "mean_alignment_confidence": {
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Mean Alignment Confidence",
+            "type": "number"
+          },
+          "mean_source_confidence": {
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Mean Source Confidence",
+            "type": "number"
+          },
+          "score_0_100": {
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Score 0 100",
+            "type": "integer"
+          },
+          "semantic_generated_pct": {
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Semantic Generated Pct",
+            "type": "number"
+          },
+          "supported_coverage": {
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Supported Coverage",
+            "type": "number"
+          },
+          "track_continuity": {
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Track Continuity",
+            "type": "number"
+          }
+        },
+        "required": [
+          "score_0_100",
+          "supported_coverage",
+          "mean_source_confidence",
+          "mean_alignment_confidence",
+          "track_continuity",
+          "audit_completeness",
+          "semantic_generated_pct"
+        ],
+        "title": "IntegrityScore",
+        "type": "object"
+      },
+      "Interpolation": {
+        "enum": [
+          "IDENTITY",
+          "LANCZOS4"
+        ],
+        "title": "Interpolation",
+        "type": "string"
+      },
+      "JobError": {
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "$ref": "#/components/schemas/ErrorCode"
+          },
+          "message": {
+            "maxLength": 500,
+            "minLength": 1,
+            "title": "Message",
+            "type": "string"
+          },
+          "retryable": {
+            "title": "Retryable",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "code",
+          "message",
+          "retryable"
+        ],
+        "title": "JobError",
+        "type": "object"
+      },
+      "JobKind": {
+        "enum": [
+          "INGEST",
+          "TRACK",
+          "RECONSTRUCT",
+          "REPORT"
+        ],
+        "title": "JobKind",
+        "type": "string"
+      },
+      "JobStage": {
+        "enum": [
+          "VALIDATE",
+          "HASH",
+          "EXTRACT",
+          "DESCRIBE",
+          "EMBED",
+          "DETECT",
+          "INDEX",
+          "TRACK",
+          "ALIGN",
+          "FUSE",
+          "REPORT"
+        ],
+        "title": "JobStage",
+        "type": "string"
+      },
+      "JobState": {
+        "enum": [
+          "CREATED",
+          "QUEUED",
+          "RUNNING",
+          "SUCCEEDED",
+          "PARTIAL",
+          "REFUSED",
+          "FAILED",
+          "CANCELLING",
+          "CANCELLED"
+        ],
+        "title": "JobState",
+        "type": "string"
+      },
+      "JobView": {
+        "additionalProperties": false,
+        "properties": {
+          "attempt": {
+            "default": 1,
+            "exclusiveMinimum": 0.0,
+            "title": "Attempt",
+            "type": "integer"
+          },
+          "cancel_requested_at": {
+            "anyOf": [
+              {
+                "examples": [
+                  "2026-10-09T16:00:00.000000Z"
+                ],
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,6})?Z$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cancel Requested At"
+          },
+          "case_id": {
+            "examples": [
+              "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+            ],
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Case Id",
+            "type": "string"
+          },
+          "completed_units": {
+            "default": 0,
+            "minimum": 0.0,
+            "title": "Completed Units",
+            "type": "integer"
+          },
+          "content_sha256": {
+            "pattern": "^[0-9a-f]{64}$",
+            "title": "Content Sha256",
+            "type": "string"
+          },
+          "correlation_id": {
+            "examples": [
+              "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+            ],
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Correlation Id",
+            "type": "string"
+          },
+          "created_at": {
+            "examples": [
+              "2026-10-09T16:00:00.000000Z"
+            ],
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,6})?Z$",
+            "title": "Created At",
+            "type": "string"
+          },
+          "error": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/JobError"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "finished_at": {
+            "anyOf": [
+              {
+                "examples": [
+                  "2026-10-09T16:00:00.000000Z"
+                ],
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,6})?Z$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Finished At"
+          },
+          "job_id": {
+            "examples": [
+              "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+            ],
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Job Id",
+            "type": "string"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/JobKind"
+          },
+          "mode": {
+            "$ref": "#/components/schemas/InferenceMode"
+          },
+          "partial": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PartialCoverage"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "refusal_reasons": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/ReasonCode"
+            },
+            "title": "Refusal Reasons",
+            "type": "array"
+          },
+          "schema_version": {
+            "const": "1.0",
+            "default": "1.0",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "stage": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/JobStage"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "started_at": {
+            "anyOf": [
+              {
+                "examples": [
+                  "2026-10-09T16:00:00.000000Z"
+                ],
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,6})?Z$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Started At"
+          },
+          "state": {
+            "$ref": "#/components/schemas/JobState"
+          },
+          "subject_id": {
+            "description": "video_id | track_id | run_id | report_id by kind",
+            "examples": [
+              "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+            ],
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Subject Id",
+            "type": "string"
+          },
+          "total_units": {
+            "default": 0,
+            "minimum": 0.0,
+            "title": "Total Units",
+            "type": "integer"
+          },
+          "updated_at": {
+            "examples": [
+              "2026-10-09T16:00:00.000000Z"
+            ],
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,6})?Z$",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "created_at",
+          "content_sha256",
+          "job_id",
+          "kind",
+          "case_id",
+          "subject_id",
+          "state",
+          "mode",
+          "correlation_id",
+          "updated_at"
+        ],
+        "title": "JobView",
+        "type": "object"
+      },
+      "ObservationSource": {
+        "enum": [
+          "DETECTOR",
+          "ANALYST_ROI",
+          "CSRT_BRIDGE"
+        ],
+        "title": "ObservationSource",
+        "type": "string"
+      },
+      "OperatingMode": {
+        "description": "Configured process mode (PROBITY_MODE).",
+        "enum": [
+          "AUTO",
+          "LIVE",
+          "FIXTURE"
+        ],
+        "title": "OperatingMode",
+        "type": "string"
+      },
+      "PartialCoverage": {
+        "additionalProperties": false,
+        "properties": {
+          "committed_segment_ids": {
+            "items": {
+              "examples": [
+                "0199a51e-43bf-7aa2-86e1-b2a0bb287492:s0004"
+              ],
+              "pattern": "^(?P<video_id>[0-9a-f-]{36}):s(?P<n>\\d{4,})$",
+              "type": "string"
+            },
+            "minItems": 1,
+            "title": "Committed Segment Ids",
+            "type": "array"
+          },
+          "failed_segment_ids": {
+            "default": [],
+            "items": {
+              "examples": [
+                "0199a51e-43bf-7aa2-86e1-b2a0bb287492:s0004"
+              ],
+              "pattern": "^(?P<video_id>[0-9a-f-]{36}):s(?P<n>\\d{4,})$",
+              "type": "string"
+            },
+            "title": "Failed Segment Ids",
+            "type": "array"
+          },
+          "indexed_ranges": {
+            "items": {
+              "$ref": "#/components/schemas/TimeRangeUs"
+            },
+            "minItems": 1,
+            "title": "Indexed Ranges",
+            "type": "array"
+          }
+        },
+        "required": [
+          "committed_segment_ids",
+          "indexed_ranges"
+        ],
+        "title": "PartialCoverage",
+        "type": "object"
+      },
+      "PixelOrigin": {
+        "additionalProperties": false,
+        "properties": {
+          "alignment_method": {
+            "$ref": "#/components/schemas/AlignmentMethod"
+          },
+          "color_bias": {
+            "anyOf": [
+              {
+                "maxItems": 3,
+                "minItems": 3,
+                "prefixItems": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  }
+                ],
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Color Bias"
+          },
+          "color_gain": {
+            "anyOf": [
+              {
+                "maxItems": 3,
+                "minItems": 3,
+                "prefixItems": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  }
+                ],
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Color Gain"
+          },
+          "decision_ids": {
+            "default": [],
+            "items": {
+              "examples": [
+                "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+              ],
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+              "type": "string"
+            },
+            "title": "Decision Ids",
+            "type": "array"
+          },
+          "provenance_class": {
+            "enum": [
+              "ORIGINAL",
+              "BORROWED",
+              "GENERATED_BLEND"
+            ],
+            "title": "Provenance Class",
+            "type": "string"
+          },
+          "run_id": {
+            "examples": [
+              "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+            ],
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Run Id",
+            "type": "string"
+          },
+          "source_frame_id": {
+            "examples": [
+              "0199a51e-43bf-7aa2-86e1-b2a0bb287492:f417"
+            ],
+            "pattern": "^(?P<video_id>[0-9a-f-]{36}):f(?P<n>0|[1-9]\\d*)$",
+            "title": "Source Frame Id",
+            "type": "string"
+          },
+          "source_index": {
+            "minimum": 0.0,
+            "title": "Source Index",
+            "type": "integer"
+          },
+          "source_pts_us": {
+            "description": "Presentation timestamp in integer microseconds",
+            "minimum": 0.0,
+            "title": "Source Pts Us",
+            "type": "integer"
+          },
+          "source_x": {
+            "title": "Source X",
+            "type": "number"
+          },
+          "source_y": {
+            "title": "Source Y",
+            "type": "number"
+          },
+          "transform_id": {
+            "anyOf": [
+              {
+                "maxLength": 64,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Transform Id"
+          },
+          "x": {
+            "minimum": 0.0,
+            "title": "X",
+            "type": "integer"
+          },
+          "y": {
+            "minimum": 0.0,
+            "title": "Y",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "run_id",
+          "x",
+          "y",
+          "provenance_class",
+          "source_index",
+          "source_frame_id",
+          "source_pts_us",
+          "source_x",
+          "source_y",
+          "transform_id",
+          "alignment_method"
+        ],
+        "title": "PixelOrigin",
+        "type": "object"
+      },
+      "PolicyDecision": {
+        "additionalProperties": false,
+        "properties": {
+          "content_sha256": {
+            "pattern": "^[0-9a-f]{64}$",
+            "title": "Content Sha256",
+            "type": "string"
+          },
+          "created_at": {
+            "examples": [
+              "2026-10-09T16:00:00.000000Z"
+            ],
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,6})?Z$",
+            "title": "Created At",
+            "type": "string"
+          },
+          "decision_id": {
+            "examples": [
+              "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+            ],
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Decision Id",
+            "type": "string"
+          },
+          "observed": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "integer"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Observed"
+          },
+          "operator": {
+            "enum": [
+              "<",
+              "<=",
+              ">",
+              ">=",
+              "==",
+              "!=",
+              "in",
+              "none"
+            ],
+            "title": "Operator",
+            "type": "string"
+          },
+          "outcome": {
+            "$ref": "#/components/schemas/PolicyOutcome"
+          },
+          "policy_key": {
+            "anyOf": [
+              {
+                "maxLength": 80,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Policy Key"
+          },
+          "reason": {
+            "maxLength": 300,
+            "minLength": 1,
+            "title": "Reason",
+            "type": "string"
+          },
+          "rule_code": {
+            "$ref": "#/components/schemas/ReasonCode"
+          },
+          "run_id": {
+            "examples": [
+              "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+            ],
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Run Id",
+            "type": "string"
+          },
+          "schema_version": {
+            "const": "1.0",
+            "default": "1.0",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "sequence": {
+            "minimum": 0.0,
+            "title": "Sequence",
+            "type": "integer"
+          },
+          "stage": {
+            "$ref": "#/components/schemas/PolicyStage"
+          },
+          "subject_ref": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Subject Ref",
+            "type": "string"
+          },
+          "threshold": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "integer"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Threshold"
+          },
+          "units": {
+            "anyOf": [
+              {
+                "maxLength": 32,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Units"
+          }
+        },
+        "required": [
+          "created_at",
+          "content_sha256",
+          "decision_id",
+          "run_id",
+          "sequence",
+          "rule_code",
+          "stage",
+          "subject_ref",
+          "outcome",
+          "reason",
+          "observed",
+          "operator",
+          "threshold",
+          "units"
+        ],
+        "title": "PolicyDecision",
+        "type": "object"
+      },
+      "PolicyOutcome": {
+        "enum": [
+          "ACCEPT",
+          "REJECT",
+          "WARN"
+        ],
+        "title": "PolicyOutcome",
+        "type": "string"
+      },
+      "PolicyStage": {
+        "enum": [
+          "INPUT",
+          "QUERY",
+          "TRACK",
+          "QUALITY",
+          "PREFLIGHT",
+          "ALIGN",
+          "COLOR",
+          "RANK",
+          "FUSE",
+          "VALIDATE",
+          "PROVENANCE",
+          "INTEGRITY",
+          "REVIEW",
+          "MODE"
+        ],
+        "title": "PolicyStage",
+        "type": "string"
+      },
+      "ProvenanceSummary": {
+        "additionalProperties": false,
+        "description": "Embedded in ReconstructionRun; PixelProvenance + provenance.npz are the authority.",
+        "properties": {
+          "coverage_complete": {
+            "title": "Coverage Complete",
+            "type": "boolean"
+          },
+          "coverage_pct": {
+            "$ref": "#/components/schemas/CoveragePct"
+          },
+          "encoding_version": {
+            "const": "npz-pixel-v1",
+            "default": "npz-pixel-v1",
+            "title": "Encoding Version",
+            "type": "string"
+          },
+          "source_lut": {
+            "items": {
+              "$ref": "#/components/schemas/SourceLutEntry"
+            },
+            "minItems": 1,
+            "title": "Source Lut",
+            "type": "array"
+          },
+          "subject_coverage_pct": {
+            "$ref": "#/components/schemas/CoveragePct"
+          },
+          "tile_size_px": {
+            "const": 8,
+            "default": 8,
+            "title": "Tile Size Px",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "coverage_pct",
+          "subject_coverage_pct",
+          "coverage_complete",
+          "source_lut"
+        ],
+        "title": "ProvenanceSummary",
+        "type": "object"
+      },
+      "ReasonCode": {
+        "description": "Policy/audit reason codes (section 10) plus rule-coded refusal reasons (sections 2, 9).",
+        "enum": [
+          "SOURCE_HASH_VERIFIED",
+          "SOURCE_HASH_MISMATCH",
+          "TRACK_CONFIRMED",
+          "TRACK_NOT_CONFIRMED",
+          "IDENTITY_GEOMETRY_MISMATCH",
+          "DONOR_OBSTRUCTED",
+          "DONOR_NOT_CLEARER",
+          "LIGHTING_OUT_OF_RANGE",
+          "ALIGNMENT_AKAZE_ACCEPTED",
+          "ALIGNMENT_ECC_FALLBACK_ACCEPTED",
+          "ALIGNMENT_FAILED",
+          "BORROW_TILE_ACCEPTED",
+          "KEEP_ORIGINAL_CLEAR",
+          "REVERT_TILE_VALIDATION",
+          "PROVENANCE_COMPLETE",
+          "PROVENANCE_INCOMPLETE",
+          "GENERATED_SEMANTIC_PIXEL",
+          "INTEGRITY_BELOW_MINIMUM",
+          "HUMAN_APPROVED",
+          "HUMAN_VETOED",
+          "QUERY_POLICY_FILTERED",
+          "FIXTURE_MODE_DISCLOSED",
+          "SUBJECT_NOT_RIGID",
+          "TARGET_TOO_SMALL",
+          "TARGET_QUALITY_TOO_LOW",
+          "DECODE_NOT_DETERMINISTIC",
+          "INSUFFICIENT_COMPATIBLE_DONORS",
+          "PHOTOMETRIC_INCOMPATIBLE",
+          "NO_TILE_IMPROVED",
+          "DONOR_OUTSIDE_WINDOW",
+          "DONOR_TRACK_MISMATCH",
+          "GENERATED_INPUT_REJECTED"
+        ],
+        "title": "ReasonCode",
+        "type": "string"
+      },
+      "ReconstructionCreateRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "policy_profile": {
+            "const": "demo-conservative-v1",
+            "default": "demo-conservative-v1",
+            "title": "Policy Profile",
+            "type": "string"
+          },
+          "target_bbox_px": {
+            "maxItems": 4,
+            "minItems": 4,
+            "prefixItems": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "integer"
+              },
+              {
+                "type": "integer"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "title": "Target Bbox Px",
+            "type": "array"
+          },
+          "target_frame_id": {
+            "examples": [
+              "0199a51e-43bf-7aa2-86e1-b2a0bb287492:f417"
+            ],
+            "pattern": "^(?P<video_id>[0-9a-f-]{36}):f(?P<n>0|[1-9]\\d*)$",
+            "title": "Target Frame Id",
+            "type": "string"
+          },
+          "track_id": {
+            "examples": [
+              "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+            ],
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Track Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "track_id",
+          "target_frame_id",
+          "target_bbox_px"
+        ],
+        "title": "ReconstructionCreateRequest",
+        "type": "object"
+      },
+      "ReconstructionRun": {
+        "additionalProperties": false,
+        "properties": {
+          "accepted_donor_frame_ids": {
+            "items": {
+              "examples": [
+                "0199a51e-43bf-7aa2-86e1-b2a0bb287492:f417"
+              ],
+              "pattern": "^(?P<video_id>[0-9a-f-]{36}):f(?P<n>0|[1-9]\\d*)$",
+              "type": "string"
+            },
+            "maxItems": 5,
+            "title": "Accepted Donor Frame Ids",
+            "type": "array"
+          },
+          "algorithm_version": {
+            "const": "probity-tile-v1",
+            "default": "probity-tile-v1",
+            "title": "Algorithm Version",
+            "type": "string"
+          },
+          "case_id": {
+            "examples": [
+              "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+            ],
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Case Id",
+            "type": "string"
+          },
+          "config_sha256": {
+            "pattern": "^[0-9a-f]{64}$",
+            "title": "Config Sha256",
+            "type": "string"
+          },
+          "content_sha256": {
+            "pattern": "^[0-9a-f]{64}$",
+            "title": "Content Sha256",
+            "type": "string"
+          },
+          "created_at": {
+            "examples": [
+              "2026-10-09T16:00:00.000000Z"
+            ],
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,6})?Z$",
+            "title": "Created At",
+            "type": "string"
+          },
+          "finished_at": {
+            "anyOf": [
+              {
+                "examples": [
+                  "2026-10-09T16:00:00.000000Z"
+                ],
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,6})?Z$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Finished At"
+          },
+          "inspection_clip_uri": {
+            "anyOf": [
+              {
+                "description": "Opaque, case-scoped asset reference served by GET /v1/assets/{asset_id}",
+                "pattern": "^asset://[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Inspection Clip Uri"
+          },
+          "integrity": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/IntegrityScore"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "iteration_count": {
+            "maximum": 2.0,
+            "minimum": 0.0,
+            "title": "Iteration Count",
+            "type": "integer"
+          },
+          "mode": {
+            "$ref": "#/components/schemas/InferenceMode"
+          },
+          "policy_decision_ids": {
+            "items": {
+              "examples": [
+                "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+              ],
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+              "type": "string"
+            },
+            "title": "Policy Decision Ids",
+            "type": "array"
+          },
+          "policy_profile": {
+            "const": "demo-conservative-v1",
+            "default": "demo-conservative-v1",
+            "title": "Policy Profile",
+            "type": "string"
+          },
+          "provenance": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ProvenanceSummary"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "provenance_sha256": {
+            "anyOf": [
+              {
+                "pattern": "^[0-9a-f]{64}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Provenance Sha256"
+          },
+          "provenance_uri": {
+            "anyOf": [
+              {
+                "description": "Opaque, case-scoped asset reference served by GET /v1/assets/{asset_id}",
+                "pattern": "^asset://[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Provenance Uri"
+          },
+          "refusal_reasons": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/ReasonCode"
+            },
+            "title": "Refusal Reasons",
+            "type": "array"
+          },
+          "result_png_sha256": {
+            "anyOf": [
+              {
+                "pattern": "^[0-9a-f]{64}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Result Png Sha256"
+          },
+          "result_png_uri": {
+            "anyOf": [
+              {
+                "description": "Opaque, case-scoped asset reference served by GET /v1/assets/{asset_id}",
+                "pattern": "^asset://[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Result Png Uri"
+          },
+          "run_id": {
+            "examples": [
+              "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+            ],
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Run Id",
+            "type": "string"
+          },
+          "schema_version": {
+            "const": "1.0",
+            "default": "1.0",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "started_at": {
+            "anyOf": [
+              {
+                "examples": [
+                  "2026-10-09T16:00:00.000000Z"
+                ],
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,6})?Z$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Started At"
+          },
+          "state": {
+            "$ref": "#/components/schemas/ReconstructionState"
+          },
+          "target_bbox_px": {
+            "maxItems": 4,
+            "minItems": 4,
+            "prefixItems": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "integer"
+              },
+              {
+                "type": "integer"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "title": "Target Bbox Px",
+            "type": "array"
+          },
+          "target_frame_id": {
+            "examples": [
+              "0199a51e-43bf-7aa2-86e1-b2a0bb287492:f417"
+            ],
+            "pattern": "^(?P<video_id>[0-9a-f-]{36}):f(?P<n>0|[1-9]\\d*)$",
+            "title": "Target Frame Id",
+            "type": "string"
+          },
+          "target_pts_us": {
+            "description": "Presentation timestamp in integer microseconds",
+            "minimum": 0.0,
+            "title": "Target Pts Us",
+            "type": "integer"
+          },
+          "track_id": {
+            "examples": [
+              "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+            ],
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Track Id",
+            "type": "string"
+          },
+          "uncertainty": {
+            "items": {
+              "maxLength": 300,
+              "minLength": 1,
+              "type": "string"
+            },
+            "title": "Uncertainty",
+            "type": "array"
+          },
+          "video_id": {
+            "examples": [
+              "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+            ],
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Video Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "created_at",
+          "content_sha256",
+          "run_id",
+          "case_id",
+          "video_id",
+          "track_id",
+          "target_frame_id",
+          "target_pts_us",
+          "target_bbox_px",
+          "state",
+          "config_sha256",
+          "iteration_count",
+          "accepted_donor_frame_ids",
+          "policy_decision_ids",
+          "uncertainty",
+          "mode",
+          "started_at",
+          "finished_at"
+        ],
+        "title": "ReconstructionRun",
+        "type": "object"
+      },
+      "ReconstructionState": {
+        "enum": [
+          "QUEUED",
+          "RUNNING",
+          "SUCCEEDED",
+          "REFUSED",
+          "FAILED",
+          "CANCELLED"
+        ],
+        "title": "ReconstructionState",
+        "type": "string"
+      },
+      "ReportAccepted": {
+        "additionalProperties": false,
+        "properties": {
+          "job_id": {
+            "examples": [
+              "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+            ],
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Job Id",
+            "type": "string"
+          },
+          "report_id": {
+            "examples": [
+              "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+            ],
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Report Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "report_id",
+          "job_id"
+        ],
+        "title": "ReportAccepted",
+        "type": "object"
+      },
+      "ReportCreateRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "review_id": {
+            "examples": [
+              "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+            ],
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Review Id",
+            "type": "string"
+          },
+          "run_id": {
+            "examples": [
+              "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+            ],
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Run Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "run_id",
+          "review_id"
+        ],
+        "title": "ReportCreateRequest",
+        "type": "object"
+      },
+      "ReviewCreateRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "comment": {
+            "default": "",
+            "maxLength": 1000,
+            "title": "Comment",
+            "type": "string"
+          },
+          "decision": {
+            "$ref": "#/components/schemas/ReviewDecision"
+          },
+          "reason_code": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/VetoReason"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "reviewed_provenance_sha256": {
+            "pattern": "^[0-9a-f]{64}$",
+            "title": "Reviewed Provenance Sha256",
+            "type": "string"
+          },
+          "reviewed_result_sha256": {
+            "pattern": "^[0-9a-f]{64}$",
+            "title": "Reviewed Result Sha256",
+            "type": "string"
+          },
+          "reviewer_alias": {
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Reviewer Alias",
+            "type": "string"
+          }
+        },
+        "required": [
+          "reviewer_alias",
+          "decision",
+          "reviewed_result_sha256",
+          "reviewed_provenance_sha256"
+        ],
+        "title": "ReviewCreateRequest",
+        "type": "object"
+      },
+      "ReviewDecision": {
+        "enum": [
+          "APPROVE",
+          "VETO"
+        ],
+        "title": "ReviewDecision",
+        "type": "string"
+      },
+      "RunAccepted": {
+        "additionalProperties": false,
+        "properties": {
+          "job_id": {
+            "examples": [
+              "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+            ],
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Job Id",
+            "type": "string"
+          },
+          "run_id": {
+            "examples": [
+              "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+            ],
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Run Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "run_id",
+          "job_id"
+        ],
+        "title": "RunAccepted",
+        "type": "object"
+      },
+      "ScoreComponents": {
+        "additionalProperties": false,
+        "description": "Components clamped to [0,1]; unavailable optional evidence contributes 0 and is listed.",
+        "properties": {
+          "cosine": {
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Cosine",
+            "type": "number"
+          },
+          "detection_match": {
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Detection Match",
+            "type": "number"
+          },
+          "lexical_overlap": {
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Lexical Overlap",
+            "type": "number"
+          },
+          "unavailable": {
+            "default": [],
+            "items": {
+              "enum": [
+                "lexical_overlap",
+                "detection_match",
+                "visibility_match"
+              ],
+              "type": "string"
+            },
+            "title": "Unavailable",
+            "type": "array"
+          },
+          "visibility_match": {
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Visibility Match",
+            "type": "number"
+          }
+        },
+        "required": [
+          "cosine",
+          "lexical_overlap",
+          "detection_match",
+          "visibility_match"
+        ],
+        "title": "ScoreComponents",
+        "type": "object"
+      },
+      "SearchCandidate": {
+        "additionalProperties": false,
+        "properties": {
+          "collapsed_into": {
+            "anyOf": [
+              {
+                "examples": [
+                  "0199a51e-43bf-7aa2-86e1-b2a0bb287492:s0004"
+                ],
+                "pattern": "^(?P<video_id>[0-9a-f-]{36}):s(?P<n>\\d{4,})$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Collapsed Into"
+          },
+          "components": {
+            "$ref": "#/components/schemas/ScoreComponents"
+          },
+          "final_rank": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Final Rank"
+          },
+          "score": {
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Score",
+            "type": "number"
+          },
+          "segment_id": {
+            "examples": [
+              "0199a51e-43bf-7aa2-86e1-b2a0bb287492:s0004"
+            ],
+            "pattern": "^(?P<video_id>[0-9a-f-]{36}):s(?P<n>\\d{4,})$",
+            "title": "Segment Id",
+            "type": "string"
+          },
+          "similarity": {
+            "maximum": 1.0,
+            "minimum": -1.0,
+            "title": "Similarity",
+            "type": "number"
+          },
+          "vector_rank": {
+            "exclusiveMinimum": 0.0,
+            "title": "Vector Rank",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "segment_id",
+          "vector_rank",
+          "similarity",
+          "components",
+          "score"
+        ],
+        "title": "SearchCandidate",
+        "type": "object"
+      },
+      "SearchCreateRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "max_results": {
+            "default": 5,
+            "maximum": 5.0,
+            "minimum": 1.0,
+            "title": "Max Results",
+            "type": "integer"
+          },
+          "query": {
+            "maxLength": 500,
+            "minLength": 1,
+            "title": "Query",
+            "type": "string"
+          },
+          "time_range": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TimeRangeUs"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "query"
+        ],
+        "title": "SearchCreateRequest",
+        "type": "object"
+      },
+      "SearchEvidence": {
+        "additionalProperties": false,
+        "properties": {
+          "candidates": {
+            "items": {
+              "$ref": "#/components/schemas/SearchCandidate"
+            },
+            "title": "Candidates",
+            "type": "array"
+          },
+          "case_id": {
+            "examples": [
+              "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+            ],
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Case Id",
+            "type": "string"
+          },
+          "content_sha256": {
+            "pattern": "^[0-9a-f]{64}$",
+            "title": "Content Sha256",
+            "type": "string"
+          },
+          "correlation_id": {
+            "examples": [
+              "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+            ],
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Correlation Id",
+            "type": "string"
+          },
+          "created_at": {
+            "examples": [
+              "2026-10-09T16:00:00.000000Z"
+            ],
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,6})?Z$",
+            "title": "Created At",
+            "type": "string"
+          },
+          "embedding_model_id": {
+            "maxLength": 200,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9._:/@+-]+$",
+            "title": "Embedding Model Id",
+            "type": "string"
+          },
+          "indexed_range": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TimeRangeUs"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "latency_ms": {
+            "minimum": 0.0,
+            "title": "Latency Ms",
+            "type": "integer"
+          },
+          "mode": {
+            "$ref": "#/components/schemas/InferenceMode"
+          },
+          "planner_model_id": {
+            "maxLength": 200,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9._:/@+-]+$",
+            "title": "Planner Model Id",
+            "type": "string"
+          },
+          "query": {
+            "maxLength": 500,
+            "minLength": 1,
+            "title": "Query",
+            "type": "string"
+          },
+          "query_plan": {
+            "$ref": "#/components/schemas/SearchPlan"
+          },
+          "reasoner_model_id": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 1,
+                "pattern": "^[A-Za-z0-9._:/@+-]+$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reasoner Model Id"
+          },
+          "results": {
+            "items": {
+              "$ref": "#/components/schemas/SearchResult"
+            },
+            "maxItems": 5,
+            "title": "Results",
+            "type": "array"
+          },
+          "schema_version": {
+            "const": "1.0",
+            "default": "1.0",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "search_id": {
+            "examples": [
+              "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+            ],
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Search Id",
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/SearchStatus"
+          },
+          "video_id": {
+            "examples": [
+              "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+            ],
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Video Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "created_at",
+          "content_sha256",
+          "search_id",
+          "case_id",
+          "video_id",
+          "query",
+          "query_plan",
+          "planner_model_id",
+          "embedding_model_id",
+          "reasoner_model_id",
+          "status",
+          "mode",
+          "indexed_range",
+          "candidates",
+          "results",
+          "latency_ms",
+          "correlation_id"
+        ],
+        "title": "SearchEvidence",
+        "type": "object"
+      },
+      "SearchPlan": {
+        "additionalProperties": false,
+        "properties": {
+          "filtered_terms": {
+            "default": [],
+            "items": {
+              "maxLength": 60,
+              "minLength": 1,
+              "type": "string"
+            },
+            "title": "Filtered Terms",
+            "type": "array"
+          },
+          "needs_clarification": {
+            "default": false,
+            "title": "Needs Clarification",
+            "type": "boolean"
+          },
+          "objective_terms": {
+            "default": [],
+            "items": {
+              "maxLength": 40,
+              "minLength": 1,
+              "type": "string"
+            },
+            "title": "Objective Terms",
+            "type": "array"
+          },
+          "policy_reason_codes": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/ReasonCode"
+            },
+            "title": "Policy Reason Codes",
+            "type": "array"
+          },
+          "semantic_query": {
+            "maxLength": 300,
+            "minLength": 0,
+            "title": "Semantic Query",
+            "type": "string"
+          },
+          "subject_classes": {
+            "default": [],
+            "items": {
+              "maxLength": 64,
+              "minLength": 1,
+              "type": "string"
+            },
+            "title": "Subject Classes",
+            "type": "array"
+          },
+          "time_range": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TimeRangeUs"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "semantic_query"
+        ],
+        "title": "SearchPlan",
+        "type": "object"
+      },
+      "SearchResult": {
+        "additionalProperties": false,
+        "properties": {
+          "components": {
+            "$ref": "#/components/schemas/ScoreComponents"
+          },
+          "description": {
+            "maxLength": 1000,
+            "title": "Description",
+            "type": "string"
+          },
+          "detected_classes": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/ClassConfidence"
+            },
+            "title": "Detected Classes",
+            "type": "array"
+          },
+          "end_frame": {
+            "minimum": 0.0,
+            "title": "End Frame",
+            "type": "integer"
+          },
+          "end_pts_us": {
+            "description": "Presentation timestamp in integer microseconds",
+            "minimum": 0.0,
+            "title": "End Pts Us",
+            "type": "integer"
+          },
+          "evidence_detection_ids": {
+            "default": [],
+            "items": {
+              "examples": [
+                "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+              ],
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+              "type": "string"
+            },
+            "title": "Evidence Detection Ids",
+            "type": "array"
+          },
+          "explanation": {
+            "maxLength": 600,
+            "minLength": 1,
+            "title": "Explanation",
+            "type": "string"
+          },
+          "explanation_input_hash": {
+            "pattern": "^[0-9a-f]{64}$",
+            "title": "Explanation Input Hash",
+            "type": "string"
+          },
+          "explanation_source": {
+            "$ref": "#/components/schemas/ExplanationSource"
+          },
+          "outside_indexed_range_warning": {
+            "default": false,
+            "title": "Outside Indexed Range Warning",
+            "type": "boolean"
+          },
+          "rank": {
+            "maximum": 5.0,
+            "minimum": 1.0,
+            "title": "Rank",
+            "type": "integer"
+          },
+          "score": {
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Score",
+            "type": "number"
+          },
+          "segment_id": {
+            "examples": [
+              "0199a51e-43bf-7aa2-86e1-b2a0bb287492:s0004"
+            ],
+            "pattern": "^(?P<video_id>[0-9a-f-]{36}):s(?P<n>\\d{4,})$",
+            "title": "Segment Id",
+            "type": "string"
+          },
+          "source_sha256": {
+            "pattern": "^[0-9a-f]{64}$",
+            "title": "Source Sha256",
+            "type": "string"
+          },
+          "start_frame": {
+            "minimum": 0.0,
+            "title": "Start Frame",
+            "type": "integer"
+          },
+          "start_pts_us": {
+            "description": "Presentation timestamp in integer microseconds",
+            "minimum": 0.0,
+            "title": "Start Pts Us",
+            "type": "integer"
+          },
+          "thumbnail_uri": {
+            "anyOf": [
+              {
+                "description": "Opaque, case-scoped asset reference served by GET /v1/assets/{asset_id}",
+                "pattern": "^asset://[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Thumbnail Uri"
+          },
+          "video_id": {
+            "examples": [
+              "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+            ],
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Video Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "rank",
+          "segment_id",
+          "video_id",
+          "source_sha256",
+          "score",
+          "components",
+          "start_pts_us",
+          "end_pts_us",
+          "start_frame",
+          "end_frame",
+          "thumbnail_uri",
+          "description",
+          "explanation",
+          "explanation_source",
+          "explanation_input_hash"
+        ],
+        "title": "SearchResult",
+        "type": "object"
+      },
+      "SearchStatus": {
+        "enum": [
+          "OK",
+          "NO_RESULTS",
+          "NEEDS_CLARIFICATION"
+        ],
+        "title": "SearchStatus",
+        "type": "string"
+      },
+      "SourceLutEntry": {
+        "additionalProperties": false,
+        "properties": {
+          "alignment_method": {
+            "$ref": "#/components/schemas/AlignmentMethod"
+          },
+          "color_bias": {
+            "anyOf": [
+              {
+                "maxItems": 3,
+                "minItems": 3,
+                "prefixItems": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  }
+                ],
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Color Bias"
+          },
+          "color_gain": {
+            "anyOf": [
+              {
+                "maxItems": 3,
+                "minItems": 3,
+                "prefixItems": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  }
+                ],
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Color Gain"
+          },
+          "decision_ids": {
+            "default": [],
+            "items": {
+              "examples": [
+                "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+              ],
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+              "type": "string"
+            },
+            "title": "Decision Ids",
+            "type": "array"
+          },
+          "frame_id": {
+            "examples": [
+              "0199a51e-43bf-7aa2-86e1-b2a0bb287492:f417"
+            ],
+            "pattern": "^(?P<video_id>[0-9a-f-]{36}):f(?P<n>0|[1-9]\\d*)$",
+            "title": "Frame Id",
+            "type": "string"
+          },
+          "frame_number": {
+            "minimum": 0.0,
+            "title": "Frame Number",
+            "type": "integer"
+          },
+          "index": {
+            "minimum": 0.0,
+            "title": "Index",
+            "type": "integer"
+          },
+          "interpolation": {
+            "$ref": "#/components/schemas/Interpolation"
+          },
+          "matrix": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "number"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Row-major 3x3 homography (9) or 2x3 affine (6), donor->target",
+            "title": "Matrix"
+          },
+          "pts_us": {
+            "description": "Presentation timestamp in integer microseconds",
+            "minimum": 0.0,
+            "title": "Pts Us",
+            "type": "integer"
+          },
+          "role": {
+            "$ref": "#/components/schemas/SourceRole"
+          },
+          "transform_id": {
+            "anyOf": [
+              {
+                "maxLength": 64,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Transform Id"
+          }
+        },
+        "required": [
+          "index",
+          "frame_id",
+          "frame_number",
+          "pts_us",
+          "role",
+          "alignment_method",
+          "interpolation"
+        ],
+        "title": "SourceLutEntry",
+        "type": "object"
+      },
+      "SourceRole": {
+        "enum": [
+          "TARGET",
+          "DONOR"
+        ],
+        "title": "SourceRole",
+        "type": "string"
+      },
+      "SourceVideo": {
+        "additionalProperties": false,
+        "properties": {
+          "byte_length": {
+            "exclusiveMinimum": 0.0,
+            "title": "Byte Length",
+            "type": "integer"
+          },
+          "case_id": {
+            "examples": [
+              "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+            ],
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Case Id",
+            "type": "string"
+          },
+          "container": {
+            "const": "mp4",
+            "title": "Container",
+            "type": "string"
+          },
+          "content_sha256": {
+            "pattern": "^[0-9a-f]{64}$",
+            "title": "Content Sha256",
+            "type": "string"
+          },
+          "created_at": {
+            "examples": [
+              "2026-10-09T16:00:00.000000Z"
+            ],
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,6})?Z$",
+            "title": "Created At",
+            "type": "string"
+          },
+          "duration_us": {
+            "exclusiveMinimum": 0.0,
+            "maximum": 600000000.0,
+            "title": "Duration Us",
+            "type": "integer"
+          },
+          "fixture_id": {
+            "anyOf": [
+              {
+                "pattern": "^[a-z0-9][a-z0-9-]{1,63}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fixture Id"
+          },
+          "frame_count": {
+            "exclusiveMinimum": 0.0,
+            "title": "Frame Count",
+            "type": "integer"
+          },
+          "has_audio": {
+            "title": "Has Audio",
+            "type": "boolean"
+          },
+          "height_px": {
+            "exclusiveMinimum": 0.0,
+            "maximum": 1080.0,
+            "title": "Height Px",
+            "type": "integer"
+          },
+          "indexed_range": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TimeRangeUs"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "ingest_state": {
+            "$ref": "#/components/schemas/IngestState"
+          },
+          "license_note": {
+            "anyOf": [
+              {
+                "maxLength": 500,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "License Note"
+          },
+          "mime": {
+            "const": "video/mp4",
+            "description": "Detected by probe, never taken from the client",
+            "title": "Mime",
+            "type": "string"
+          },
+          "nominal_fps": {
+            "description": "Display only; never used to derive frame identity",
+            "examples": [
+              "30000/1001"
+            ],
+            "pattern": "^[1-9]\\d*/[1-9]\\d*$",
+            "title": "Nominal Fps",
+            "type": "string"
+          },
+          "original_name": {
+            "description": "Client-supplied; display only, untrusted",
+            "maxLength": 255,
+            "minLength": 1,
+            "title": "Original Name",
+            "type": "string"
+          },
+          "probe_sha256": {
+            "description": "SHA-256 of canonical JSON of the ffprobe result",
+            "pattern": "^[0-9a-f]{64}$",
+            "title": "Probe Sha256",
+            "type": "string"
+          },
+          "schema_version": {
+            "const": "1.0",
+            "default": "1.0",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "sha256": {
+            "pattern": "^[0-9a-f]{64}$",
+            "title": "Sha256",
+            "type": "string"
+          },
+          "source_asset_uri": {
+            "description": "Opaque, case-scoped asset reference served by GET /v1/assets/{asset_id}",
+            "pattern": "^asset://[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Source Asset Uri",
+            "type": "string"
+          },
+          "storage_uri": {
+            "description": "Content-addressed, write-once source path relative to the data root",
+            "pattern": "^source/sha256/[0-9a-f]{2}/[0-9a-f]{64}/original\\.mp4$",
+            "title": "Storage Uri",
+            "type": "string"
+          },
+          "time_base": {
+            "examples": [
+              "30000/1001"
+            ],
+            "pattern": "^[1-9]\\d*/[1-9]\\d*$",
+            "title": "Time Base",
+            "type": "string"
+          },
+          "video_codec": {
+            "enum": [
+              "h264",
+              "hevc"
+            ],
+            "title": "Video Codec",
+            "type": "string"
+          },
+          "video_id": {
+            "examples": [
+              "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+            ],
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Video Id",
+            "type": "string"
+          },
+          "width_px": {
+            "exclusiveMinimum": 0.0,
+            "maximum": 1920.0,
+            "title": "Width Px",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "created_at",
+          "content_sha256",
+          "video_id",
+          "case_id",
+          "original_name",
+          "sha256",
+          "byte_length",
+          "mime",
+          "container",
+          "video_codec",
+          "width_px",
+          "height_px",
+          "duration_us",
+          "time_base",
+          "nominal_fps",
+          "frame_count",
+          "has_audio",
+          "storage_uri",
+          "source_asset_uri",
+          "probe_sha256",
+          "ingest_state"
+        ],
+        "title": "SourceVideo",
+        "type": "object"
+      },
+      "SubjectType": {
+        "enum": [
+          "LICENSE_PLATE",
+          "SIGN",
+          "RIGID_ROI"
+        ],
+        "title": "SubjectType",
+        "type": "string"
+      },
+      "TimeRangeUs": {
+        "additionalProperties": false,
+        "properties": {
+          "end_pts_us": {
+            "description": "Presentation timestamp in integer microseconds",
+            "minimum": 0.0,
+            "title": "End Pts Us",
+            "type": "integer"
+          },
+          "start_pts_us": {
+            "description": "Presentation timestamp in integer microseconds",
+            "minimum": 0.0,
+            "title": "Start Pts Us",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "start_pts_us",
+          "end_pts_us"
+        ],
+        "title": "TimeRangeUs",
+        "type": "object"
+      },
+      "Track": {
+        "additionalProperties": false,
+        "properties": {
+          "case_id": {
+            "examples": [
+              "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+            ],
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Case Id",
+            "type": "string"
+          },
+          "confirmed": {
+            "title": "Confirmed",
+            "type": "boolean"
+          },
+          "content_sha256": {
+            "pattern": "^[0-9a-f]{64}$",
+            "title": "Content Sha256",
+            "type": "string"
+          },
+          "continuity_score": {
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Continuity Score",
+            "type": "number"
+          },
+          "created_at": {
+            "examples": [
+              "2026-10-09T16:00:00.000000Z"
+            ],
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,6})?Z$",
+            "title": "Created At",
+            "type": "string"
+          },
+          "detector_model_id": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 1,
+                "pattern": "^[A-Za-z0-9._:/@+-]+$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Detector Model Id"
+          },
+          "detector_observation_count": {
+            "minimum": 0.0,
+            "title": "Detector Observation Count",
+            "type": "integer"
+          },
+          "mean_confidence": {
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Mean Confidence",
+            "type": "number"
+          },
+          "mode": {
+            "$ref": "#/components/schemas/InferenceMode"
+          },
+          "observations": {
+            "items": {
+              "$ref": "#/components/schemas/TrackObservation"
+            },
+            "title": "Observations",
+            "type": "array"
+          },
+          "reason_codes": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/ReasonCode"
+            },
+            "title": "Reason Codes",
+            "type": "array"
+          },
+          "schema_version": {
+            "const": "1.0",
+            "default": "1.0",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "seed_bbox_px": {
+            "maxItems": 4,
+            "minItems": 4,
+            "prefixItems": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "integer"
+              },
+              {
+                "type": "integer"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "title": "Seed Bbox Px",
+            "type": "array"
+          },
+          "seed_detection_id": {
+            "anyOf": [
+              {
+                "examples": [
+                  "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+                ],
+                "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Seed Detection Id"
+          },
+          "seed_frame_id": {
+            "examples": [
+              "0199a51e-43bf-7aa2-86e1-b2a0bb287492:f417"
+            ],
+            "pattern": "^(?P<video_id>[0-9a-f-]{36}):f(?P<n>0|[1-9]\\d*)$",
+            "title": "Seed Frame Id",
+            "type": "string"
+          },
+          "state": {
+            "$ref": "#/components/schemas/TrackState"
+          },
+          "subject_type": {
+            "$ref": "#/components/schemas/SubjectType"
+          },
+          "track_id": {
+            "examples": [
+              "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+            ],
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Track Id",
+            "type": "string"
+          },
+          "tracker": {
+            "const": "bytetrack",
+            "default": "bytetrack",
+            "title": "Tracker",
+            "type": "string"
+          },
+          "tracker_version": {
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Tracker Version",
+            "type": "string"
+          },
+          "video_id": {
+            "examples": [
+              "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+            ],
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Video Id",
+            "type": "string"
+          },
+          "window_end_us": {
+            "description": "Presentation timestamp in integer microseconds",
+            "minimum": 0.0,
+            "title": "Window End Us",
+            "type": "integer"
+          },
+          "window_start_us": {
+            "description": "Presentation timestamp in integer microseconds",
+            "minimum": 0.0,
+            "title": "Window Start Us",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "created_at",
+          "content_sha256",
+          "track_id",
+          "case_id",
+          "video_id",
+          "subject_type",
+          "seed_frame_id",
+          "seed_bbox_px",
+          "tracker_version",
+          "window_start_us",
+          "window_end_us",
+          "state",
+          "mean_confidence",
+          "continuity_score",
+          "confirmed",
+          "detector_observation_count",
+          "observations",
+          "mode"
+        ],
+        "title": "Track",
+        "type": "object"
+      },
+      "TrackAccepted": {
+        "additionalProperties": false,
+        "properties": {
+          "job_id": {
+            "examples": [
+              "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+            ],
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Job Id",
+            "type": "string"
+          },
+          "track_id": {
+            "examples": [
+              "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+            ],
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Track Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "track_id",
+          "job_id"
+        ],
+        "title": "TrackAccepted",
+        "type": "object"
+      },
+      "TrackCreateRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "seed_bbox_px": {
+            "maxItems": 4,
+            "minItems": 4,
+            "prefixItems": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "integer"
+              },
+              {
+                "type": "integer"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "title": "Seed Bbox Px",
+            "type": "array"
+          },
+          "seed_detection_id": {
+            "anyOf": [
+              {
+                "examples": [
+                  "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+                ],
+                "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Seed Detection Id"
+          },
+          "seed_frame_id": {
+            "examples": [
+              "0199a51e-43bf-7aa2-86e1-b2a0bb287492:f417"
+            ],
+            "pattern": "^(?P<video_id>[0-9a-f-]{36}):f(?P<n>0|[1-9]\\d*)$",
+            "title": "Seed Frame Id",
+            "type": "string"
+          },
+          "subject_type": {
+            "$ref": "#/components/schemas/SubjectType"
+          }
+        },
+        "required": [
+          "subject_type",
+          "seed_frame_id",
+          "seed_bbox_px"
+        ],
+        "title": "TrackCreateRequest",
+        "type": "object"
+      },
+      "TrackObservation": {
+        "additionalProperties": false,
+        "properties": {
+          "accepted": {
+            "title": "Accepted",
+            "type": "boolean"
+          },
+          "bbox_px": {
+            "maxItems": 4,
+            "minItems": 4,
+            "prefixItems": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "integer"
+              },
+              {
+                "type": "integer"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "title": "Bbox Px",
+            "type": "array"
+          },
+          "confidence": {
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Confidence",
+            "type": "number"
+          },
+          "detection_id": {
+            "anyOf": [
+              {
+                "examples": [
+                  "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+                ],
+                "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Detection Id"
+          },
+          "frame_id": {
+            "examples": [
+              "0199a51e-43bf-7aa2-86e1-b2a0bb287492:f417"
+            ],
+            "pattern": "^(?P<video_id>[0-9a-f-]{36}):f(?P<n>0|[1-9]\\d*)$",
+            "title": "Frame Id",
+            "type": "string"
+          },
+          "pts_us": {
+            "description": "Presentation timestamp in integer microseconds",
+            "minimum": 0.0,
+            "title": "Pts Us",
+            "type": "integer"
+          },
+          "reason_code": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ReasonCode"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "source": {
+            "$ref": "#/components/schemas/ObservationSource"
+          }
+        },
+        "required": [
+          "frame_id",
+          "pts_us",
+          "bbox_px",
+          "source",
+          "detection_id",
+          "confidence",
+          "accepted"
+        ],
+        "title": "TrackObservation",
+        "type": "object"
+      },
+      "TrackState": {
+        "enum": [
+          "PENDING",
+          "CONFIRMED",
+          "NOT_CONFIRMED"
+        ],
+        "title": "TrackState",
+        "type": "string"
+      },
+      "VetoReason": {
+        "enum": [
+          "MISALIGNMENT",
+          "MISIDENTIFIED_SUBJECT",
+          "MISLEADING_APPEARANCE",
+          "INSUFFICIENT_EVIDENCE",
+          "OTHER"
+        ],
+        "title": "VetoReason",
+        "type": "string"
+      },
+      "VideoAccepted": {
+        "additionalProperties": false,
+        "properties": {
+          "deduplicated": {
+            "title": "Deduplicated",
+            "type": "boolean"
+          },
+          "job_id": {
+            "examples": [
+              "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+            ],
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Job Id",
+            "type": "string"
+          },
+          "sha256": {
+            "pattern": "^[0-9a-f]{64}$",
+            "title": "Sha256",
+            "type": "string"
+          },
+          "video_id": {
+            "examples": [
+              "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+            ],
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Video Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "video_id",
+          "job_id",
+          "sha256",
+          "deduplicated"
+        ],
+        "title": "VideoAccepted",
+        "type": "object"
+      },
+      "VideoSegment": {
+        "additionalProperties": false,
+        "properties": {
+          "clip_uri": {
+            "anyOf": [
+              {
+                "description": "Opaque, case-scoped asset reference served by GET /v1/assets/{asset_id}",
+                "pattern": "^asset://[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Clip Uri"
+          },
+          "content_sha256": {
+            "pattern": "^[0-9a-f]{64}$",
+            "title": "Content Sha256",
+            "type": "string"
+          },
+          "created_at": {
+            "examples": [
+              "2026-10-09T16:00:00.000000Z"
+            ],
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,6})?Z$",
+            "title": "Created At",
+            "type": "string"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "maxLength": 1000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "description_model_id": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 1,
+                "pattern": "^[A-Za-z0-9._:/@+-]+$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description Model Id"
+          },
+          "detected_classes": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/ClassConfidence"
+            },
+            "title": "Detected Classes",
+            "type": "array"
+          },
+          "embedding_dimension": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Embedding Dimension"
+          },
+          "embedding_model_id": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 1,
+                "pattern": "^[A-Za-z0-9._:/@+-]+$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Embedding Model Id"
+          },
+          "embedding_ref": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Embedding Ref"
+          },
+          "end_frame": {
+            "description": "Inclusive last frame with pts_us < end_pts_us",
+            "minimum": 0.0,
+            "title": "End Frame",
+            "type": "integer"
+          },
+          "end_pts_us": {
+            "description": "Presentation timestamp in integer microseconds",
+            "minimum": 0.0,
+            "title": "End Pts Us",
+            "type": "integer"
+          },
+          "evidence_detection_ids": {
+            "default": [],
+            "items": {
+              "examples": [
+                "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+              ],
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+              "type": "string"
+            },
+            "title": "Evidence Detection Ids",
+            "type": "array"
+          },
+          "index_state": {
+            "$ref": "#/components/schemas/IndexState"
+          },
+          "mode": {
+            "$ref": "#/components/schemas/InferenceMode"
+          },
+          "ordinal": {
+            "minimum": 0.0,
+            "title": "Ordinal",
+            "type": "integer"
+          },
+          "schema_version": {
+            "const": "1.0",
+            "default": "1.0",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "search_terms": {
+            "default": [],
+            "items": {
+              "maxLength": 40,
+              "minLength": 1,
+              "type": "string"
+            },
+            "title": "Search Terms",
+            "type": "array"
+          },
+          "segment_id": {
+            "examples": [
+              "0199a51e-43bf-7aa2-86e1-b2a0bb287492:s0004"
+            ],
+            "pattern": "^(?P<video_id>[0-9a-f-]{36}):s(?P<n>\\d{4,})$",
+            "title": "Segment Id",
+            "type": "string"
+          },
+          "source_sha256": {
+            "pattern": "^[0-9a-f]{64}$",
+            "title": "Source Sha256",
+            "type": "string"
+          },
+          "start_frame": {
+            "minimum": 0.0,
+            "title": "Start Frame",
+            "type": "integer"
+          },
+          "start_pts_us": {
+            "description": "Presentation timestamp in integer microseconds",
+            "minimum": 0.0,
+            "title": "Start Pts Us",
+            "type": "integer"
+          },
+          "thumbnail_frame": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Thumbnail Frame"
+          },
+          "thumbnail_uri": {
+            "anyOf": [
+              {
+                "description": "Opaque, case-scoped asset reference served by GET /v1/assets/{asset_id}",
+                "pattern": "^asset://[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "480 px-wide JPEG, non-canonical",
+            "title": "Thumbnail Uri"
+          },
+          "uncertainty": {
+            "default": [],
+            "items": {
+              "maxLength": 300,
+              "type": "string"
+            },
+            "title": "Uncertainty",
+            "type": "array"
+          },
+          "video_id": {
+            "examples": [
+              "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+            ],
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Video Id",
+            "type": "string"
+          },
+          "visibility_tags": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/VisibilityKind"
+            },
+            "title": "Visibility Tags",
+            "type": "array"
+          }
+        },
+        "required": [
+          "created_at",
+          "content_sha256",
+          "segment_id",
+          "video_id",
+          "source_sha256",
+          "ordinal",
+          "start_pts_us",
+          "end_pts_us",
+          "start_frame",
+          "end_frame",
+          "index_state",
+          "mode"
+        ],
+        "title": "VideoSegment",
+        "type": "object"
+      },
+      "VisibilityKind": {
+        "enum": [
+          "CLEAR",
+          "OCCLUSION",
+          "MOTION_BLUR",
+          "FOCUS_BLUR",
+          "COMPRESSION",
+          "LOW_RESOLUTION",
+          "GLARE",
+          "DARKNESS",
+          "UNKNOWN"
+        ],
+        "title": "VisibilityKind",
+        "type": "string"
+      }
+    }
+  },
+  "info": {
+    "description": "Research/demo prototype - not for legal conclusions.",
+    "title": "Probity API",
+    "version": "0.1.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/v1/assets/{asset_id}": {
+      "get": {
+        "operationId": "get_asset_v1_assets__asset_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "asset_id",
+            "required": true,
+            "schema": {
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+              "title": "Asset Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Range",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Range"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/octet-stream": {}
+            },
+            "description": "Full asset"
+          },
+          "206": {
+            "content": {
+              "application/octet-stream": {}
+            },
+            "description": "Byte range"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Record not found"
+          },
+          "416": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Range not satisfiable"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Validation failed"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Internal error (sanitized)"
+          }
+        },
+        "summary": "Get Asset",
+        "tags": [
+          "assets"
+        ]
+      }
+    },
+    "/v1/cases": {
+      "post": {
+        "operationId": "create_case_v1_cases_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 128,
+              "minLength": 8,
+              "pattern": "^[A-Za-z0-9._:-]+$",
+              "title": "Idempotency-Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCaseRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CaseWorkspace"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Conflict (idempotency, state, or artifact hash)"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Validation failed"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Internal error (sanitized)"
+          }
+        },
+        "summary": "Create Case",
+        "tags": [
+          "cases"
+        ]
+      }
+    },
+    "/v1/cases/{case_id}": {
+      "get": {
+        "operationId": "get_case_v1_cases__case_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "case_id",
+            "required": true,
+            "schema": {
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+              "title": "Case Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CaseWorkspace"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Record not found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Validation failed"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Internal error (sanitized)"
+          }
+        },
+        "summary": "Get Case",
+        "tags": [
+          "cases"
+        ]
+      }
+    },
+    "/v1/cases/{case_id}/videos": {
+      "post": {
+        "operationId": "create_video_v1_cases__case_id__videos_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "case_id",
+            "required": true,
+            "schema": {
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+              "title": "Case Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "fixture_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "pattern": "^[a-z0-9][a-z0-9-]{1,63}$",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Fixture Id"
+            }
+          },
+          {
+            "in": "query",
+            "name": "original_name",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 255,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Original Name"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 128,
+              "minLength": 8,
+              "pattern": "^[A-Za-z0-9._:-]+$",
+              "title": "Idempotency-Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/octet-stream": {
+              "schema": {
+                "format": "binary",
+                "type": "string"
+              }
+            },
+            "video/mp4": {
+              "schema": {
+                "format": "binary",
+                "type": "string"
+              }
+            }
+          },
+          "description": "Raw MP4 bytes (streamed, max 262144000). Omit the body and pass ?fixture_id= to select a verified demo fixture. Client filename and MIME are not trusted.",
+          "required": false
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VideoAccepted"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Record not found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Conflict (idempotency, state, or artifact hash)"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Payload too large"
+          },
+          "415": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unsupported media"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Validation failed"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Internal error (sanitized)"
+          }
+        },
+        "summary": "Create Video",
+        "tags": [
+          "videos"
+        ]
+      }
+    },
+    "/v1/health": {
+      "get": {
+        "operationId": "health_v1_health_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Health",
+        "tags": [
+          "system"
+        ]
+      }
+    },
+    "/v1/jobs/{job_id}": {
+      "get": {
+        "operationId": "get_job_v1_jobs__job_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "job_id",
+            "required": true,
+            "schema": {
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+              "title": "Job Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Record not found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Validation failed"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Internal error (sanitized)"
+          }
+        },
+        "summary": "Get Job",
+        "tags": [
+          "jobs"
+        ]
+      }
+    },
+    "/v1/jobs/{job_id}/cancel": {
+      "post": {
+        "operationId": "cancel_job_v1_jobs__job_id__cancel_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "job_id",
+            "required": true,
+            "schema": {
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+              "title": "Job Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 128,
+              "minLength": 8,
+              "pattern": "^[A-Za-z0-9._:-]+$",
+              "title": "Idempotency-Key",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Record not found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Conflict (idempotency, state, or artifact hash)"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Validation failed"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Internal error (sanitized)"
+          }
+        },
+        "summary": "Cancel Job",
+        "tags": [
+          "jobs"
+        ]
+      }
+    },
+    "/v1/reconstructions": {
+      "post": {
+        "operationId": "create_reconstruction_v1_reconstructions_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 128,
+              "minLength": 8,
+              "pattern": "^[A-Za-z0-9._:-]+$",
+              "title": "Idempotency-Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReconstructionCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunAccepted"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Record not found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Conflict (idempotency, state, or artifact hash)"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Validation failed"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Internal error (sanitized)"
+          }
+        },
+        "summary": "Create Reconstruction",
+        "tags": [
+          "reconstructions"
+        ]
+      }
+    },
+    "/v1/reconstructions/{run_id}": {
+      "get": {
+        "operationId": "get_reconstruction_v1_reconstructions__run_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "run_id",
+            "required": true,
+            "schema": {
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+              "title": "Run Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReconstructionRun"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Record not found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Validation failed"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Internal error (sanitized)"
+          }
+        },
+        "summary": "Get Reconstruction",
+        "tags": [
+          "reconstructions"
+        ]
+      }
+    },
+    "/v1/reconstructions/{run_id}/decisions": {
+      "get": {
+        "operationId": "list_decisions_v1_reconstructions__run_id__decisions_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "run_id",
+            "required": true,
+            "schema": {
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+              "title": "Run Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/PolicyDecision"
+                  },
+                  "title": "Response List Decisions V1 Reconstructions  Run Id  Decisions Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Record not found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Validation failed"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Internal error (sanitized)"
+          }
+        },
+        "summary": "List Decisions",
+        "tags": [
+          "reconstructions"
+        ]
+      }
+    },
+    "/v1/reconstructions/{run_id}/provenance": {
+      "get": {
+        "operationId": "get_pixel_origin_v1_reconstructions__run_id__provenance_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "run_id",
+            "required": true,
+            "schema": {
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+              "title": "Run Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "x",
+            "required": true,
+            "schema": {
+              "minimum": 0,
+              "title": "X",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "y",
+            "required": true,
+            "schema": {
+              "minimum": 0,
+              "title": "Y",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PixelOrigin"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Record not found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Validation failed"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Internal error (sanitized)"
+          }
+        },
+        "summary": "Get Pixel Origin",
+        "tags": [
+          "reconstructions"
+        ]
+      }
+    },
+    "/v1/reconstructions/{run_id}/reviews": {
+      "post": {
+        "operationId": "create_review_v1_reconstructions__run_id__reviews_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "run_id",
+            "required": true,
+            "schema": {
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+              "title": "Run Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 128,
+              "minLength": 8,
+              "pattern": "^[A-Za-z0-9._:-]+$",
+              "title": "Idempotency-Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReviewCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HumanReview"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Record not found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Conflict (idempotency, state, or artifact hash)"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Validation failed"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Internal error (sanitized)"
+          }
+        },
+        "summary": "Create Review",
+        "tags": [
+          "reviews"
+        ]
+      }
+    },
+    "/v1/reports": {
+      "post": {
+        "operationId": "create_report_v1_reports_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 128,
+              "minLength": 8,
+              "pattern": "^[A-Za-z0-9._:-]+$",
+              "title": "Idempotency-Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReportCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportAccepted"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Record not found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Conflict (idempotency, state, or artifact hash)"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Validation failed"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Internal error (sanitized)"
+          }
+        },
+        "summary": "Create Report",
+        "tags": [
+          "reports"
+        ]
+      }
+    },
+    "/v1/reports/{report_id}": {
+      "get": {
+        "operationId": "get_report_v1_reports__report_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "report_id",
+            "required": true,
+            "schema": {
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+              "title": "Report Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EvidenceReport"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Record not found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Validation failed"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Internal error (sanitized)"
+          }
+        },
+        "summary": "Get Report",
+        "tags": [
+          "reports"
+        ]
+      }
+    },
+    "/v1/searches/{search_id}": {
+      "get": {
+        "operationId": "get_search_v1_searches__search_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "search_id",
+            "required": true,
+            "schema": {
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+              "title": "Search Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchEvidence"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Record not found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Validation failed"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Internal error (sanitized)"
+          }
+        },
+        "summary": "Get Search",
+        "tags": [
+          "search"
+        ]
+      }
+    },
+    "/v1/tracks/{track_id}": {
+      "get": {
+        "operationId": "get_track_v1_tracks__track_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "track_id",
+            "required": true,
+            "schema": {
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+              "title": "Track Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Track"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Record not found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Validation failed"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Internal error (sanitized)"
+          }
+        },
+        "summary": "Get Track",
+        "tags": [
+          "tracks"
+        ]
+      }
+    },
+    "/v1/videos/{video_id}": {
+      "get": {
+        "operationId": "get_video_v1_videos__video_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "video_id",
+            "required": true,
+            "schema": {
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+              "title": "Video Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SourceVideo"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Record not found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Validation failed"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Internal error (sanitized)"
+          }
+        },
+        "summary": "Get Video",
+        "tags": [
+          "videos"
+        ]
+      }
+    },
+    "/v1/videos/{video_id}/searches": {
+      "post": {
+        "operationId": "create_search_v1_videos__video_id__searches_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "video_id",
+            "required": true,
+            "schema": {
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+              "title": "Video Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 128,
+              "minLength": 8,
+              "pattern": "^[A-Za-z0-9._:-]+$",
+              "title": "Idempotency-Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SearchCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchEvidence"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Record not found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Conflict (idempotency, state, or artifact hash)"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Validation failed"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Internal error (sanitized)"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Sponsor retry budget exhausted (retryable)"
+          }
+        },
+        "summary": "Create Search",
+        "tags": [
+          "search"
+        ]
+      }
+    },
+    "/v1/videos/{video_id}/segments": {
+      "get": {
+        "operationId": "list_segments_v1_videos__video_id__segments_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "video_id",
+            "required": true,
+            "schema": {
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+              "title": "Video Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/VideoSegment"
+                  },
+                  "title": "Response List Segments V1 Videos  Video Id  Segments Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Record not found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Validation failed"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Internal error (sanitized)"
+          }
+        },
+        "summary": "List Segments",
+        "tags": [
+          "videos"
+        ]
+      }
+    },
+    "/v1/videos/{video_id}/tracks": {
+      "post": {
+        "operationId": "create_track_v1_videos__video_id__tracks_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "video_id",
+            "required": true,
+            "schema": {
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+              "title": "Video Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 128,
+              "minLength": 8,
+              "pattern": "^[A-Za-z0-9._:-]+$",
+              "title": "Idempotency-Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TrackCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrackAccepted"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Record not found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Conflict (idempotency, state, or artifact hash)"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Validation failed"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Internal error (sanitized)"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Sponsor retry budget exhausted (retryable)"
+          }
+        },
+        "summary": "Create Track",
+        "tags": [
+          "tracks"
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,131 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "content_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Content Sha256",
+      "type": "string"
+    },
+    "created_at": {
+      "examples": [
+        "2026-10-09T16:00:00.000000Z"
+      ],
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,6})?Z$",
+      "title": "Created At",
+      "type": "string"
+    },
+    "decoder": {
+      "anyOf": [
+        {
+          "maxLength": 200,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Decoder"
+    },
+    "frame_id": {
+      "examples": [
+        "0199a51e-43bf-7aa2-86e1-b2a0bb287492:f417"
+      ],
+      "pattern": "^(?P<video_id>[0-9a-f-]{36}):f(?P<n>0|[1-9]\\d*)$",
+      "title": "Frame Id",
+      "type": "string"
+    },
+    "frame_number": {
+      "minimum": 0,
+      "title": "Frame Number",
+      "type": "integer"
+    },
+    "height_px": {
+      "exclusiveMinimum": 0,
+      "title": "Height Px",
+      "type": "integer"
+    },
+    "is_keyframe": {
+      "title": "Is Keyframe",
+      "type": "boolean"
+    },
+    "lossless_png_uri": {
+      "anyOf": [
+        {
+          "description": "derived/{video_id}/{kind}/{entity_id}/{file}; never beneath source/",
+          "pattern": "^derived/[0-9a-f-]{36}/[a-z_]+/[A-Za-z0-9:._-]+/[A-Za-z0-9._-]+$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Lossless Png Uri"
+    },
+    "pixel_format": {
+      "anyOf": [
+        {
+          "maxLength": 32,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Pixel Format"
+    },
+    "pixel_sha256": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Pixel Sha256"
+    },
+    "pts_us": {
+      "description": "Presentation timestamp in integer microseconds",
+      "minimum": 0,
+      "title": "Pts Us",
+      "type": "integer"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "video_id": {
+      "examples": [
+        "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+      ],
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "title": "Video Id",
+      "type": "string"
+    },
+    "width_px": {
+      "exclusiveMinimum": 0,
+      "title": "Width Px",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "created_at",
+    "content_sha256",
+    "frame_id",
+    "video_id",
+    "frame_number",
+    "pts_us",
+    "is_keyframe",
+    "width_px",
+    "height_px"
+  ],
+  "title": "FrameReference",
+  "type": "object"
+}

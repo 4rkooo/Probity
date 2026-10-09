@@ -1,0 +1,600 @@
+{
+  "$defs": {
+    "ClassConfidence": {
+      "additionalProperties": false,
+      "properties": {
+        "class_name": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Class Name",
+          "type": "string"
+        },
+        "detection_count": {
+          "minimum": 0,
+          "title": "Detection Count",
+          "type": "integer"
+        },
+        "max_confidence": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Max Confidence",
+          "type": "number"
+        }
+      },
+      "required": [
+        "class_name",
+        "max_confidence",
+        "detection_count"
+      ],
+      "title": "ClassConfidence",
+      "type": "object"
+    },
+    "ExplanationSource": {
+      "enum": [
+        "REASONER",
+        "TEMPLATE"
+      ],
+      "title": "ExplanationSource",
+      "type": "string"
+    },
+    "InferenceMode": {
+      "description": "Disclosed origin of a produced record: live sponsor call or verified fixture cache.",
+      "enum": [
+        "LIVE",
+        "FIXTURE"
+      ],
+      "title": "InferenceMode",
+      "type": "string"
+    },
+    "ReasonCode": {
+      "description": "Policy/audit reason codes (section 10) plus rule-coded refusal reasons (sections 2, 9).",
+      "enum": [
+        "SOURCE_HASH_VERIFIED",
+        "SOURCE_HASH_MISMATCH",
+        "TRACK_CONFIRMED",
+        "TRACK_NOT_CONFIRMED",
+        "IDENTITY_GEOMETRY_MISMATCH",
+        "DONOR_OBSTRUCTED",
+        "DONOR_NOT_CLEARER",
+        "LIGHTING_OUT_OF_RANGE",
+        "ALIGNMENT_AKAZE_ACCEPTED",
+        "ALIGNMENT_ECC_FALLBACK_ACCEPTED",
+        "ALIGNMENT_FAILED",
+        "BORROW_TILE_ACCEPTED",
+        "KEEP_ORIGINAL_CLEAR",
+        "REVERT_TILE_VALIDATION",
+        "PROVENANCE_COMPLETE",
+        "PROVENANCE_INCOMPLETE",
+        "GENERATED_SEMANTIC_PIXEL",
+        "INTEGRITY_BELOW_MINIMUM",
+        "HUMAN_APPROVED",
+        "HUMAN_VETOED",
+        "QUERY_POLICY_FILTERED",
+        "FIXTURE_MODE_DISCLOSED",
+        "SUBJECT_NOT_RIGID",
+        "TARGET_TOO_SMALL",
+        "TARGET_QUALITY_TOO_LOW",
+        "DECODE_NOT_DETERMINISTIC",
+        "INSUFFICIENT_COMPATIBLE_DONORS",
+        "PHOTOMETRIC_INCOMPATIBLE",
+        "NO_TILE_IMPROVED",
+        "DONOR_OUTSIDE_WINDOW",
+        "DONOR_TRACK_MISMATCH",
+        "GENERATED_INPUT_REJECTED"
+      ],
+      "title": "ReasonCode",
+      "type": "string"
+    },
+    "ScoreComponents": {
+      "additionalProperties": false,
+      "description": "Components clamped to [0,1]; unavailable optional evidence contributes 0 and is listed.",
+      "properties": {
+        "cosine": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Cosine",
+          "type": "number"
+        },
+        "detection_match": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Detection Match",
+          "type": "number"
+        },
+        "lexical_overlap": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Lexical Overlap",
+          "type": "number"
+        },
+        "unavailable": {
+          "default": [],
+          "items": {
+            "enum": [
+              "lexical_overlap",
+              "detection_match",
+              "visibility_match"
+            ],
+            "type": "string"
+          },
+          "title": "Unavailable",
+          "type": "array"
+        },
+        "visibility_match": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Visibility Match",
+          "type": "number"
+        }
+      },
+      "required": [
+        "cosine",
+        "lexical_overlap",
+        "detection_match",
+        "visibility_match"
+      ],
+      "title": "ScoreComponents",
+      "type": "object"
+    },
+    "SearchCandidate": {
+      "additionalProperties": false,
+      "properties": {
+        "collapsed_into": {
+          "anyOf": [
+            {
+              "examples": [
+                "0199a51e-43bf-7aa2-86e1-b2a0bb287492:s0004"
+              ],
+              "pattern": "^(?P<video_id>[0-9a-f-]{36}):s(?P<n>\\d{4,})$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Collapsed Into"
+        },
+        "components": {
+          "$ref": "#/$defs/ScoreComponents"
+        },
+        "final_rank": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Final Rank"
+        },
+        "score": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Score",
+          "type": "number"
+        },
+        "segment_id": {
+          "examples": [
+            "0199a51e-43bf-7aa2-86e1-b2a0bb287492:s0004"
+          ],
+          "pattern": "^(?P<video_id>[0-9a-f-]{36}):s(?P<n>\\d{4,})$",
+          "title": "Segment Id",
+          "type": "string"
+        },
+        "similarity": {
+          "maximum": 1.0,
+          "minimum": -1.0,
+          "title": "Similarity",
+          "type": "number"
+        },
+        "vector_rank": {
+          "exclusiveMinimum": 0,
+          "title": "Vector Rank",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "segment_id",
+        "vector_rank",
+        "similarity",
+        "components",
+        "score"
+      ],
+      "title": "SearchCandidate",
+      "type": "object"
+    },
+    "SearchPlan": {
+      "additionalProperties": false,
+      "properties": {
+        "filtered_terms": {
+          "default": [],
+          "items": {
+            "maxLength": 60,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Filtered Terms",
+          "type": "array"
+        },
+        "needs_clarification": {
+          "default": false,
+          "title": "Needs Clarification",
+          "type": "boolean"
+        },
+        "objective_terms": {
+          "default": [],
+          "items": {
+            "maxLength": 40,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Objective Terms",
+          "type": "array"
+        },
+        "policy_reason_codes": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ReasonCode"
+          },
+          "title": "Policy Reason Codes",
+          "type": "array"
+        },
+        "semantic_query": {
+          "maxLength": 300,
+          "minLength": 0,
+          "title": "Semantic Query",
+          "type": "string"
+        },
+        "subject_classes": {
+          "default": [],
+          "items": {
+            "maxLength": 64,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Subject Classes",
+          "type": "array"
+        },
+        "time_range": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/TimeRangeUs"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "semantic_query"
+      ],
+      "title": "SearchPlan",
+      "type": "object"
+    },
+    "SearchResult": {
+      "additionalProperties": false,
+      "properties": {
+        "components": {
+          "$ref": "#/$defs/ScoreComponents"
+        },
+        "description": {
+          "maxLength": 1000,
+          "title": "Description",
+          "type": "string"
+        },
+        "detected_classes": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ClassConfidence"
+          },
+          "title": "Detected Classes",
+          "type": "array"
+        },
+        "end_frame": {
+          "minimum": 0,
+          "title": "End Frame",
+          "type": "integer"
+        },
+        "end_pts_us": {
+          "description": "Presentation timestamp in integer microseconds",
+          "minimum": 0,
+          "title": "End Pts Us",
+          "type": "integer"
+        },
+        "evidence_detection_ids": {
+          "default": [],
+          "items": {
+            "examples": [
+              "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+            ],
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "type": "string"
+          },
+          "title": "Evidence Detection Ids",
+          "type": "array"
+        },
+        "explanation": {
+          "maxLength": 600,
+          "minLength": 1,
+          "title": "Explanation",
+          "type": "string"
+        },
+        "explanation_input_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Explanation Input Hash",
+          "type": "string"
+        },
+        "explanation_source": {
+          "$ref": "#/$defs/ExplanationSource"
+        },
+        "outside_indexed_range_warning": {
+          "default": false,
+          "title": "Outside Indexed Range Warning",
+          "type": "boolean"
+        },
+        "rank": {
+          "maximum": 5,
+          "minimum": 1,
+          "title": "Rank",
+          "type": "integer"
+        },
+        "score": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Score",
+          "type": "number"
+        },
+        "segment_id": {
+          "examples": [
+            "0199a51e-43bf-7aa2-86e1-b2a0bb287492:s0004"
+          ],
+          "pattern": "^(?P<video_id>[0-9a-f-]{36}):s(?P<n>\\d{4,})$",
+          "title": "Segment Id",
+          "type": "string"
+        },
+        "source_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Source Sha256",
+          "type": "string"
+        },
+        "start_frame": {
+          "minimum": 0,
+          "title": "Start Frame",
+          "type": "integer"
+        },
+        "start_pts_us": {
+          "description": "Presentation timestamp in integer microseconds",
+          "minimum": 0,
+          "title": "Start Pts Us",
+          "type": "integer"
+        },
+        "thumbnail_uri": {
+          "anyOf": [
+            {
+              "description": "Opaque, case-scoped asset reference served by GET /v1/assets/{asset_id}",
+              "pattern": "^asset://[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Thumbnail Uri"
+        },
+        "video_id": {
+          "examples": [
+            "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+          ],
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+          "title": "Video Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "rank",
+        "segment_id",
+        "video_id",
+        "source_sha256",
+        "score",
+        "components",
+        "start_pts_us",
+        "end_pts_us",
+        "start_frame",
+        "end_frame",
+        "thumbnail_uri",
+        "description",
+        "explanation",
+        "explanation_source",
+        "explanation_input_hash"
+      ],
+      "title": "SearchResult",
+      "type": "object"
+    },
+    "SearchStatus": {
+      "enum": [
+        "OK",
+        "NO_RESULTS",
+        "NEEDS_CLARIFICATION"
+      ],
+      "title": "SearchStatus",
+      "type": "string"
+    },
+    "TimeRangeUs": {
+      "additionalProperties": false,
+      "properties": {
+        "end_pts_us": {
+          "description": "Presentation timestamp in integer microseconds",
+          "minimum": 0,
+          "title": "End Pts Us",
+          "type": "integer"
+        },
+        "start_pts_us": {
+          "description": "Presentation timestamp in integer microseconds",
+          "minimum": 0,
+          "title": "Start Pts Us",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "start_pts_us",
+        "end_pts_us"
+      ],
+      "title": "TimeRangeUs",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "candidates": {
+      "items": {
+        "$ref": "#/$defs/SearchCandidate"
+      },
+      "title": "Candidates",
+      "type": "array"
+    },
+    "case_id": {
+      "examples": [
+        "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+      ],
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "title": "Case Id",
+      "type": "string"
+    },
+    "content_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Content Sha256",
+      "type": "string"
+    },
+    "correlation_id": {
+      "examples": [
+        "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+      ],
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "title": "Correlation Id",
+      "type": "string"
+    },
+    "created_at": {
+      "examples": [
+        "2026-10-09T16:00:00.000000Z"
+      ],
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,6})?Z$",
+      "title": "Created At",
+      "type": "string"
+    },
+    "embedding_model_id": {
+      "maxLength": 200,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9._:/@+-]+$",
+      "title": "Embedding Model Id",
+      "type": "string"
+    },
+    "indexed_range": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/TimeRangeUs"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "latency_ms": {
+      "minimum": 0,
+      "title": "Latency Ms",
+      "type": "integer"
+    },
+    "mode": {
+      "$ref": "#/$defs/InferenceMode"
+    },
+    "planner_model_id": {
+      "maxLength": 200,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9._:/@+-]+$",
+      "title": "Planner Model Id",
+      "type": "string"
+    },
+    "query": {
+      "maxLength": 500,
+      "minLength": 1,
+      "title": "Query",
+      "type": "string"
+    },
+    "query_plan": {
+      "$ref": "#/$defs/SearchPlan"
+    },
+    "reasoner_model_id": {
+      "anyOf": [
+        {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9._:/@+-]+$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Reasoner Model Id"
+    },
+    "results": {
+      "items": {
+        "$ref": "#/$defs/SearchResult"
+      },
+      "maxItems": 5,
+      "title": "Results",
+      "type": "array"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "search_id": {
+      "examples": [
+        "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+      ],
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "title": "Search Id",
+      "type": "string"
+    },
+    "status": {
+      "$ref": "#/$defs/SearchStatus"
+    },
+    "video_id": {
+      "examples": [
+        "0199a51e-43bf-7aa2-86e1-b2a0bb287492"
+      ],
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "title": "Video Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "created_at",
+    "content_sha256",
+    "search_id",
+    "case_id",
+    "video_id",
+    "query",
+    "query_plan",
+    "planner_model_id",
+    "embedding_model_id",
+    "reasoner_model_id",
+    "status",
+    "mode",
+    "indexed_range",
+    "candidates",
+    "results",
+    "latency_ms",
+    "correlation_id"
+  ],
+  "title": "SearchEvidence",
+  "type": "object"
+}
