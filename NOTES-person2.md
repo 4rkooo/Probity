@@ -13,8 +13,9 @@ contradict it is a bug in this file.
 | Person 1 | Register `fixtures/demo/frames/` as frame_png; frame entity folders are `f{frame_number}` (':' is an NTFS stream separator) | pending |
 | Person 1 | Confirm the worker does not re-register reconstruction AssetRefs I emit; reuse my `pixel_sha256` definition (below) for extracted frames | pending |
 | Team | Add to `config/policy.demo.yaml` (and `PolicyConfig`): `alignment.scale_ratio_min: 0.67`, `alignment.scale_ratio_max: 1.50`, `ransac.max_iters: 2000`, `ransac.confidence: 0.995`, `ransac.rng_seed: 20261009`, `clahe.clip_limit: 2.0`, `clahe.tile_grid: 4`, `akaze.detector_threshold: 0.001`, `ecc.gauss_filt_size: 5`. `config_sha256` changes | pending |
-| User | `.gitattributes`: `*.png binary`, `*.npz binary`, `*.npy binary`, `*.mp4 binary`, `*.json text eol=lf` | pending |
+| User | Root `.gitattributes`: `*.png binary`, `*.npz binary`, `*.npy binary`, `*.mp4 binary`, `*.json text eol=lf` (`fixtures/synthetic/.gitattributes` covers my goldens meanwhile) | pending |
 | User | ffmpeg on PATH (`winget install Gyan.FFmpeg`), needed for demo frame extraction | pending |
+| Repo owner (4rkooo) | Give `Jeremiahadu` write access to `4rkooo/Probity`; every push of `person2/*` returns 403 | pending |
 
 ## Findings to share
 
@@ -30,6 +31,14 @@ contradict it is a bug in this file.
   less sharp donor. This is the spec's behaviour (residual is a hard gate, then score).
 - **Tile seams are visible before validation.** Winner-take-all tiles from different donors show
   block edges; the step-8 boundary-discontinuity pass may only revert such tiles.
+- **Golden runs are synthetic, not demo.** The completed and refused `ReconstructionRun` goldens
+  live in `fixtures/synthetic/plate_translate_v1/reconstructions/completed` and
+  `fixtures/synthetic/plate_single_donor_v1/reconstructions/refused`. `fixtures/demo/` holds only
+  Person 1's manifest and clip; demo detections/tracks/reconstructions wait on the regenerated
+  clip and ffmpeg (requests above).
+- **No fixture YOLO adapter exists yet.** `adapters/fixture/yolo.py` was listed under lane A but
+  was never written (tracking consumes recorded detections directly). It moved to lane F with the
+  live adapter so one contract test covers both.
 
 ## Interpretations
 
@@ -160,3 +169,21 @@ contradict it is a bug in this file.
     not a refusal).
 41. Thresholds compare full-precision floats, so a computed gain like 0.60 - 0.50 sits just under
     0.10 and rejects. Real Q values are continuous; tests check just inside and just outside.
+
+### Parallel scaffolding (`reconstruction/types.py`, `docs/person2-lanes.md`)
+
+42. All internal dataclasses live in `types.py` (frozen, slotted). `QualityComponents` became
+    `QualityScores`; `Gate`/`Operator`/`passes` moved there so lane result types can carry gates
+    without importing `decisions.py`. Old import paths still resolve.
+43. Additions beyond the requested field lists, each needed for isolation: `Obs.frame_size`
+    (coverage needs donor frame bounds), `Obs.frame_id` (derived), `Alignment.gates` and
+    `ColorFit.gates` (lanes return unlogged gates, the integrator logs them), `Warp` (lane B's
+    resample output), `AlignedDonor.source_x/source_y` (lane D copies them instead of recomputing
+    the inverse map, so provenance coordinates equal the coordinates actually sampled),
+    `TileDecision.improvement/residual_8bit` (logged observed values), `ProvenanceArrays.lut`.
+44. Matrices are 3x3 float64 internally for both methods; the LUT stores 9 values for a homography
+    and the top two rows (6 values) for an ECC affine, as the frozen `SourceLutEntry` requires.
+45. Hash pins normalize CRLF to LF for text files only. `golden_hashes.json` covers every file
+    under `fixtures/demo` and `fixtures/synthetic`; `frozen_hashes.json` covers Person 1's contract
+    files, `pyproject.toml`, `uv.lock`, `types.py`, `conftest.py`, `test_guards.py`, `synth.py`,
+    the checker and `lanes.json`, plus the public signatures of every lane module.

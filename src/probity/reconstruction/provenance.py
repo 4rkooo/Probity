@@ -2,6 +2,9 @@
 
 A provenance artifact is either complete or refused. The validator never repairs; it reports every
 problem and raises ``ProvenanceIncomplete`` (or ``GeneratedPixelError`` for class 2).
+
+Lane D owns this module. The validator below (step 1) and the writer stubs at the end have FROZEN
+public signatures.
 """
 
 from __future__ import annotations
@@ -12,11 +15,12 @@ import numpy as np
 
 from probity.domain.enums import ProvenanceClass, ReasonCode, SourceRole
 from probity.domain.errors import ProbityError
-from probity.domain.models import CoverageCounts, CoveragePct, SourceLutEntry
+from probity.domain.models import CoverageCounts, CoveragePct, PixelProvenance, SourceLutEntry
 from probity.reconstruction.io import decode_npz, encode_npz
-from probity.reconstruction.types import ProvenanceArrays
+from probity.reconstruction.types import AlignedDonor, FusionResult, Obs, ProvenanceArrays
 
 BBox = tuple[int, int, int, int]
+LANE = "lane D"
 
 ENCODING_VERSION = "npz-pixel-v1"
 ARRAY_DTYPES: Mapping[str, np.dtype] = {
@@ -193,3 +197,34 @@ def subject_coverage_pct(arrays: ProvenanceArrays, bbox: BBox) -> CoveragePct:
         GENERATED_BLEND=int((sub == ProvenanceClass.GENERATED_BLEND).sum()),
     )
     return coverage_pct(counts, sub.size)
+
+
+# ------------------------------------------------------------------------------------------------
+# Writer (lane D)
+# ------------------------------------------------------------------------------------------------
+
+
+def build_source_lut(target: Obs, donors: Sequence[AlignedDonor],
+                     decision_ids: Mapping[int, Sequence[str]]) -> tuple[SourceLutEntry, ...]:
+    """Row 0 is the TARGET (identity); row k is ``donors[k - 1]`` (already in LUT order).
+
+    Each donor row records frame, PTS, method, matrix (9 values for a homography; the top two
+    rows, 6 values, for an ECC affine), LANCZOS4, color gain/bias, and ``decision_ids`` keyed by
+    donor frame number.
+    """
+    raise NotImplementedError(LANE)
+
+
+def build_provenance_arrays(target: Obs, fusion: FusionResult, donors: Sequence[AlignedDonor],
+                            lut: Sequence[SourceLutEntry]) -> ProvenanceArrays:
+    """Full-frame arrays sized ``target.frame_size``: identity ORIGINAL everywhere, then each
+    borrowed tile gets BORROWED, its LUT row, and the donor's ``source_x/source_y`` (target-crop
+    frame mapped to full frame). Never writes GENERATED_BLEND. Returns arrays with ``lut`` set.
+    """
+    raise NotImplementedError(LANE)
+
+
+def provenance_record(arrays: ProvenanceArrays, *, run_id: str, subject_box: BBox, npz_uri: str,
+                      npz_sha256: str, created_at: str) -> PixelProvenance:
+    """Validate with ``validate_arrays`` and build the ``PixelProvenance`` record; never partial."""
+    raise NotImplementedError(LANE)
