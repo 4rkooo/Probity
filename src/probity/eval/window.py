@@ -67,6 +67,14 @@ def load_window(root: Path) -> WindowBundle:
     return bundle
 
 
+def load_tracker_inputs(root: Path) -> dict[str, Any]:
+    """Recorded ByteTrack IDs and bridge boxes for fixture replay."""
+    raw: dict[str, Any] = read_json(root / "tracker_inputs.json")
+    if set(raw) != {"tracker_ids", "bridge_boxes", "bridge_source"}:
+        raise ValueError("tracker_inputs.json has unexpected keys")
+    return raw
+
+
 def load_truth(root: Path) -> dict[str, Any]:
     """EVALUATION ONLY: generator ground truth. The reconstruction path never calls this."""
     truth: dict[str, Any] = read_json(root / "ground_truth" / "truth.json")

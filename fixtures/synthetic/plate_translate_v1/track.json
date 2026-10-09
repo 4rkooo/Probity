@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
   "created_at": "2026-10-09T17:00:00.200000Z",
-  "content_sha256": "df7be2510b8684d95b3d19a1f341fbab688ee1413e2cdbe99debaab5f8c5df33",
+  "content_sha256": "b10f5470307b445e0218791974bd6feb05301de1d1f5708fcd78f13a4a24ca8d",
   "track_id": "01a1219b-7a81-7637-9c64-97d31e3071ff",
   "case_id": "01a1219b-7a80-71a9-89ee-ba5341bea516",
   "video_id": "01a1219b-7a80-7bd1-b62c-670da892173e",
@@ -15,7 +15,7 @@
   ],
   "seed_detection_id": "01a1219b-7a82-7526-81c0-957b56759305",
   "tracker": "bytetrack",
-  "tracker_version": "handbuilt-gt-v1",
+  "tracker_version": "probity-track-v1+synthetic-replay",
   "detector_model_id": "fixture/synthetic-gt-detector-v1",
   "window_start_us": 466666,
   "window_end_us": 4466666,
@@ -711,7 +711,7 @@
       ],
       "source": "CSRT_BRIDGE",
       "detection_id": null,
-      "confidence": 0.5,
+      "confidence": 0.0,
       "accepted": true,
       "reason_code": null
     },
@@ -726,7 +726,7 @@
       ],
       "source": "CSRT_BRIDGE",
       "detection_id": null,
-      "confidence": 0.5,
+      "confidence": 0.0,
       "accepted": true,
       "reason_code": null
     },

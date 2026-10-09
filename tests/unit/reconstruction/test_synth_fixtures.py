@@ -75,8 +75,8 @@ def test_regeneration_reproduces_committed_window(window: WindowBundle, tmp_path
     if not _same_opencv(window.root):
         pytest.skip(f"fixtures rendered with a different OpenCV build than {cv2.__version__}")
     out = synth.write_window(SPECS[window.fixture_id], tmp_path, CFG)
-    for name in ("frames.json", "frame_manifest.json", "detections.json", "track.json",
-                 "window.json", "ground_truth/truth.json"):
+    for name in ("frames.json", "frame_manifest.json", "detections.json", "tracker_inputs.json",
+                 "track.json", "window.json", "ground_truth/truth.json"):
         assert (out / name).read_bytes() == (window.root / name).read_bytes(), name
 
 

@@ -61,45 +61,79 @@ contradict it is a bug in this file.
 11. Kept tiles get one aggregate `KEEP_ORIGINAL_CLEAR` row with counts per reason; each borrowed
     tile gets its own `BORROW_TILE_ACCEPTED` row referenced from that donor's LUT `decision_ids`.
 
-### Track
+### Track (step 2, `reconstruction/tracking.py`)
 
-12. Track `continuity_score` = detector-backed observations / all observations in the window
-    (step 1, hand-built). Step 2 recomputes it from tracker output with the same definition.
-13. The identity check in step 2 will use an H-S histogram correlation (not RGB), robust to the
-    exposure differences the lighting gate handles separately.
+12. `continuity_score` = accepted detector-backed observations / sampled frames in the window.
+    `mean_confidence` is rounded to 4 dp and the stored value is the one gated.
+13. Appearance uses a hue-saturation histogram (30x32 bins, `HISTCMP_CORREL`) of the subject box
+    against the seed crop; it ignores brightness, which the lighting gate handles. The obstructed
+    synthetic frame scores 0.819 against 0.80, a thin but honest margin pinned by a test.
+14. Identity gates, in order, each against the previous accepted observation (association IoU,
+    center step) or the seed box (scale, aspect, appearance), then collision with any box of a
+    different or no ByteTrack ID. Center step is per sampled step and is not scaled by elapsed
+    frames (a bridged frame counts as the previous step).
+15. Frozen reason codes: every identity-gate failure is `IDENTITY_GEOMETRY_MISMATCH`; observations
+    after continuity breaks are `TRACK_NOT_CONFIRMED`. The specific gate key, value, and threshold
+    live in `ObservationAudit`. Finer codes (collision, appearance, gap) would need interface review.
+16. Gap rule: a sampled frame without an accepted detection is covered only by a bridge box that
+    passes every identity gate. A lost or rejected bridge, a gap over
+    `track.max_bridge_gap_frames`, or no bridger ends the track in that direction; later same-ID
+    detections are recorded as rejected. Gaps count sampled frames, not source frames.
+17. **Without CSRT (current environment: no opencv-contrib) the live tracker cannot cross any gap.**
+    Fixture mode replays recorded bridge boxes and is unaffected.
+18. Bridged observations carry `confidence = 0.0` (no detector evidence); they never count toward
+    confirmation or `mean_confidence` and never donate (preflight rejects them).
+19. Frames whose detection was rejected are not bridged in the record, but the bridger is stepped
+    and must still produce a passing box for the gap to continue.
+20. A ByteTrack ID switch is not followed: only the seed's ID is associated. Duplicate boxes with
+    the seed's ID in one frame: the best IoU against the previous box wins, others are rejected.
+21. Seeds: an explicit `seed_detection_id` must be in the seed frame and overlap `seed_bbox_px`
+    (IoU >= 0.30), else `ValidationFailed`. An ROI-only seed is confirmed by the best-overlapping
+    detection in the seed frame (becomes a DETECTOR seed). Otherwise it stays `ANALYST_ROI` with
+    D = 0.50 and adopts the ByteTrack ID of the nearest overlapping detection within
+    `max_bridge_gap_frames + 1` sampled frames; with none, the track is NOT_CONFIRMED. A seed
+    box that collides with another box makes the track NOT_CONFIRMED.
+22. Window radius = min(request `window_radius_us`, `track.window_radius_s`). Sampling stride =
+    `ceil((1e6 / max_sample_fps) / (median_dt_us + 1))`, anchored at the seed, plus the seed and
+    every frame with a stored detection; the +1 us absorbs integer PTS rounding (30 fps -> 2).
+23. Frames or detections from another video raise `ValidationFailed` (a plumbing error, not a
+    refusal); non-`FrameReference` inputs raise `NonEvidentiaryInput`.
+24. Synthetic tracks are built by `confirm_track` from `tracker_inputs.json` (ByteTrack ID 1 for
+    the single subject; ground-truth bridge boxes standing in for CSRT, disclosed in
+    `bridge_source`); `tracker_version = probity-track-v1+synthetic-replay`.
 
 ### Hashing and files
 
-14. `pixel_sha256` (`probity-pixel-v1`): SHA-256 over the ASCII header
+25. `pixel_sha256` (`probity-pixel-v1`): SHA-256 over the ASCII header
     `probity-pixel-v1|uint8|{H},{W},3|RGB\n` followed by the RGB bytes (row-major, C-contiguous).
     Decoded pixels are hashed separately from file bytes.
-15. npz files are written by our own zip writer (fixed 1980 timestamp, `create_system=3`,
+26. npz files are written by our own zip writer (fixed 1980 timestamp, `create_system=3`,
     deflate level 6, sorted names). `np.savez` embeds wall-clock times and is not byte-stable.
-16. File-byte SHA-256 is recorded for every artifact, but golden comparisons across machines use
+27. File-byte SHA-256 is recorded for every artifact, but golden comparisons across machines use
     pixel / array digests, because zlib output may differ between builds. Byte equality is asserted
     only when the OpenCV version matches the one recorded in `truth.json`.
-17. JSON is UTF-8 with `\n` line endings, 2-space indent, trailing newline, written via temp file
+28. JSON is UTF-8 with `\n` line endings, 2-space indent, trailing newline, written via temp file
     + fsync + `os.replace` (handle closed first).
 
 ### Synthetic fixtures (`fixtures/synthetic/`)
 
-18. Synthetic windows have no MP4. Their `source_sha256` is the canonical SHA-256 of
+29. Synthetic windows have no MP4. Their `source_sha256` is the canonical SHA-256 of
     `{"synth_version", "pixel_sha256": [ordered frame hashes]}`.
-19. Ground truth (clean target, occlusion masks, plate text, true geometry) lives only under
+30. Ground truth (clean target, occlusion masks, plate text, true geometry) lives only under
     `ground_truth/`, is flagged `evaluation_only`, and is unreachable through the frame loader.
-20. Scene is 480x288 @ 15 fps, 75 frames; plate 220x72 so AKAZE has features (finding above).
+31. Scene is 480x288 @ 15 fps, 75 frames; plate 220x72 so AKAZE has features (finding above).
     Target sigma 2.5: at sigma 1.0-2.0 the quality gains were too small or the obstructed frame
     failed the quality floor first, which would have hidden the `DONOR_OBSTRUCTED` path.
-21. **Fixture-design fix (not a threshold change):** the single-donor variant's background frames
+32. **Fixture-design fix (not a threshold change):** the single-donor variant's background frames
     were blurred to 0.92-0.999x the target sigma. Sub-pixel plate phase then made some of them
     measure blurrier than the target, breaking "target is the blurriest". The range is now
     0.80-0.95x, still far below the 0.10 quality-gain threshold.
 
 ### Hand-built golden runs (step 1 only; removed in step 8)
 
-22. `src/probity/eval/handbuilt_runs.py` builds the goldens with ground-truth translations in
+33. `src/probity/eval/handbuilt_runs.py` builds the goldens with ground-truth translations in
     place of AKAZE/ECC. Every run carries the hand-built note in `uncertainty`, and every alignment
     decision says so. A uses inlier=1 and error=0, so `mean_alignment_confidence = 1.0` and the
     integrity score (96) is optimistic; step 8 replaces these files with real pipeline output.
-23. Color in the hand-built run is identity gain/bias with the context-ring residual and sample
+34. Color in the hand-built run is identity gain/bias with the context-ring residual and sample
     gates still enforced. Audit completeness Au = 1.0 by construction.

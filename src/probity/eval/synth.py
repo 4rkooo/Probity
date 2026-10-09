@@ -18,17 +18,12 @@ import math
 from collections.abc import Sequence
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
+from typing import Any
 
 import cv2
 import numpy as np
 
-from probity.domain.enums import (
-    InferenceMode,
-    ObservationSource,
-    ReasonCode,
-    SubjectType,
-    TrackState,
-)
+from probity.domain.enums import InferenceMode, SubjectType
 from probity.domain.ids import canonical_sha256, frame_id
 from probity.domain.models import (
     Detection,
@@ -36,15 +31,29 @@ from probity.domain.models import (
     FrameManifestEntry,
     FrameReference,
     Track,
-    TrackObservation,
 )
 from probity.domain.policy import PolicyConfig, default_policy
+from probity.ports import TrackRequest
 from probity.reconstruction.determinism import FixedClock, seeded_uuid7, unit_float
-from probity.reconstruction.io import frame_png_uri, write_json, write_png
+from probity.reconstruction.io import (
+    FixtureFrameResolver,
+    frame_png_uri,
+    load_frame,
+    write_json,
+    write_png,
+)
+from probity.reconstruction.tracking import (
+    TRACK_LOGIC_VERSION,
+    ReplayBridger,
+    TrackedDetection,
+    TrackMeta,
+    confirm_track,
+)
 
 SYNTH_VERSION = "probity-synth-v1"
 DETECTOR_MODEL_ID = "fixture/synthetic-gt-detector-v1"
-TRACKER_VERSION = "handbuilt-gt-v1"
+TRACKER_VERSION = f"{TRACK_LOGIC_VERSION}+synthetic-replay"
+SYNTH_TRACKER_ID = 1
 RENDER_SCALE = 4
 BASE_TIME = "2026-10-09T17:00:00.000000Z"
 
@@ -415,58 +424,37 @@ def build_detections(spec: WindowSpec, ids: WindowIds, clock: FixedClock) -> lis
     return out
 
 
-def build_track(spec: WindowSpec, ids: WindowIds, detections: Sequence[Detection],
+def tracker_inputs(spec: WindowSpec, detections: Sequence[Detection]) -> dict[str, object]:
+    """Recorded tracker inputs for fixture replay. The synthetic window has one subject, so every
+    detection carries ByteTrack ID 1; bridge boxes for detector-gap frames are the generator's
+    ground-truth boxes standing in for CSRT output (disclosed in ``bridge_source``)."""
+    return {
+        "tracker_ids": {d.detection_id: SYNTH_TRACKER_ID for d in detections},
+        "bridge_boxes": {str(n): list(detection_box(spec.scene, n))
+                         for n, fs in enumerate(spec.frames) if not fs.detected},
+        "bridge_source": "synthetic ground-truth boxes standing in for OpenCV CSRT",
+    }
+
+
+def build_track(spec: WindowSpec, ids: WindowIds, digest: str, frames: Sequence[FrameReference],
+                detections: Sequence[Detection], raw: dict[str, Any], root: Path,
                 cfg: PolicyConfig, clock: FixedClock) -> Track:
-    """HAND-BUILT ground-truth track (step 1). Step 2 regenerates it with tracking.py."""
-    sc = spec.scene
-    radius_us = round(cfg.track.window_radius_s * 1_000_000)
-    t_pts = pts_us(spec.target_frame, sc.fps)
-    lo, hi = t_pts - radius_us, t_pts + radius_us
-    by_frame = {d.frame_id: d for d in detections}
-    observations: list[TrackObservation] = []
-    for n in range(spec.n_frames):
-        p = pts_us(n, sc.fps)
-        if not lo <= p <= hi:
-            continue
-        fid = frame_id(ids.video_id, n)
-        det = by_frame.get(fid)
-        if det is not None:
-            observations.append(TrackObservation(
-                frame_id=fid, pts_us=p, bbox_px=det.bbox_px, source=ObservationSource.DETECTOR,
-                detection_id=det.detection_id, confidence=det.confidence, accepted=True))
-        else:
-            observations.append(TrackObservation(
-                frame_id=fid, pts_us=p, bbox_px=detection_box(sc, n),
-                source=ObservationSource.CSRT_BRIDGE, detection_id=None,
-                confidence=cfg.quality.analyst_seed_confidence, accepted=True))
-    detector = [o for o in observations if o.source is ObservationSource.DETECTOR]
-    mean_conf = round(sum(o.confidence for o in detector) / len(detector), 4)
-    continuity = round(len(detector) / len(observations), 4)
-    seed = by_frame[frame_id(ids.video_id, spec.target_frame)]
-    confirmed = (len(detector) >= cfg.track.min_detector_observations
-                 and mean_conf >= cfg.track.min_mean_confidence)
-    return Track.create(
-        created_at=clock.at(200),
-        track_id=ids.track_id,
-        case_id=ids.case_id,
-        video_id=ids.video_id,
-        subject_type=SubjectType.LICENSE_PLATE,
-        seed_frame_id=seed.frame_id,
-        seed_bbox_px=seed.bbox_px,
-        seed_detection_id=seed.detection_id,
-        tracker_version=TRACKER_VERSION,
-        detector_model_id=DETECTOR_MODEL_ID,
-        window_start_us=max(0, lo),
-        window_end_us=hi,
-        state=TrackState.CONFIRMED if confirmed else TrackState.NOT_CONFIRMED,
-        mean_confidence=mean_conf,
-        continuity_score=continuity,
-        confirmed=confirmed,
-        detector_observation_count=len(detector),
-        observations=tuple(observations),
-        reason_codes=(ReasonCode.TRACK_CONFIRMED if confirmed else ReasonCode.TRACK_NOT_CONFIRMED,),
-        mode=InferenceMode.FIXTURE,
-    )
+    """Track from ``tracking.confirm_track`` over the recorded tracker inputs."""
+    seed = next(d for d in detections if d.frame_id == frame_id(ids.video_id, spec.target_frame))
+    request = TrackRequest(
+        track_id=ids.track_id, case_id=ids.case_id, video_id=ids.video_id,
+        source_sha256=digest, subject_type=SubjectType.LICENSE_PLATE,
+        seed_frame_id=seed.frame_id, seed_bbox_px=seed.bbox_px,
+        seed_detection_id=seed.detection_id)
+    tracked = [TrackedDetection(d, raw["tracker_ids"].get(d.detection_id)) for d in detections]
+    bridge = {int(n): (int(b[0]), int(b[1]), int(b[2]), int(b[3]))
+              for n, b in raw["bridge_boxes"].items()}
+    resolver = FixtureFrameResolver(root, ids.video_id)
+    meta = TrackMeta(tracker_version=TRACKER_VERSION, detector_model_id=DETECTOR_MODEL_ID,
+                     mode=InferenceMode.FIXTURE, created_at=clock.at(200))
+    outcome = confirm_track(request, frames, tracked, lambda ref: load_frame(ref, resolver),
+                            cfg, meta, lambda: ReplayBridger(bridge))
+    return outcome.track
 
 
 def ground_truth(spec: WindowSpec, rendered: Sequence[RenderedFrame]) -> dict[str, object]:
@@ -516,11 +504,13 @@ def write_window(spec: WindowSpec, out_root: Path, cfg: PolicyConfig) -> Path:
     digest = source_digest(hashes)
     frames = build_frames(spec, ids, hashes, clock)
     detections = build_detections(spec, ids, clock)
-    track = build_track(spec, ids, detections, cfg, clock)
+    raw = tracker_inputs(spec, detections)
+    track = build_track(spec, ids, digest, frames, detections, raw, root, cfg, clock)
 
     write_json(root / "frame_manifest.json", build_manifest(spec, ids, digest, clock))
     write_json(root / "frames.json", frames)
     write_json(root / "detections.json", detections)
+    write_json(root / "tracker_inputs.json", raw)
     write_json(root / "track.json", track)
     write_json(root / "window.json", {
         "fixture_id": spec.fixture_id,
