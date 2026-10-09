@@ -189,3 +189,36 @@ contradict it is a bug in this file.
     under `fixtures/demo` and `fixtures/synthetic`; `frozen_hashes.json` covers Person 1's contract
     files, `pyproject.toml`, `uv.lock`, `types.py`, `conftest.py`, `test_guards.py`, `synth.py`,
     the checker and `lanes.json`, plus the public signatures of every lane module.
+
+### Integrator (`reconstruction/trueframe.py`, `validate.py`)
+
+46. **Source identity on synthetic windows.** There is no MP4. `source_sha256` is
+    `source_digest` over ordered frame `pixel_sha256` values (`probity-synth-v1`). A mismatch is
+    `SOURCE_HASH_MISMATCH` and a `REFUSED` run. Real files, when `source_path` is supplied, are
+    also hashed and must match.
+47. **Bounded window then confirm.** `window_bounds` + `sample_window` first; `confirm_track`
+    runs on that window with fixture `ReplayBridger` boxes. If replay inputs are absent the
+    request track is used and preflight still gates `TRACK_CONFIRMED`.
+48. **Lanes return unlogged gates.** The integrator records every material accept/reject through
+    `DecisionLog.check/apply`. Alignment logs every attempt gate (AKAZE then ECC) even when the
+    fallback is the one that accepts; `alignment.accepted` is authoritative.
+49. **Validation is revert-only.** Pass 1 is fuse then residual + 2-px boundary discontinuity
+    against unchanged target neighbors (never currently-borrowed pixels as context). Pass 2 may
+    only revert. Stop when the changed fraction of subject pixels is below
+    `iteration.convergence_changed_fraction`, or after `iteration.max_passes` (2).
+50. **Refusal is success.** `REFUSED` is returned with a rule-coded `refusal_reasons` tuple;
+    `JobCancelled` still propagates. `GENERATED_BLEND` is never written. Algorithm version on this
+    branch remains `trueframe-tile-v1` (Person 1's `probity-tile-v1` rename waits on merging
+    `person1/platform`).
+51. **Rank gate always logged.** `donor_count_gate` is recorded even when it passes, so `Au`
+    sees `(RANK, INSUFFICIENT_COMPATIBLE_DONORS)`. Fewer than `donor.min_count` after alignment
+    and color is `INSUFFICIENT_COMPATIBLE_DONORS`; obstructed / incompatible donors are rejected
+    earlier with `DONOR_OBSTRUCTED` / `LIGHTING_OUT_OF_RANGE`.
+52. **Translate window vs real color.** AKAZE accepts the four designed donors (26, 31, 43, 48)
+    with coverage 1.0. The car-body context ring is nearly flat; per-channel IRLS then returns
+    unbounded gain/bias (G-channel gain ~0.10, identity residual ~0.7/255). `color.gain_min`
+    rejects every donor and the run is `REFUSED` / `INSUFFICIENT_COMPATIBLE_DONORS`. Gates were
+    not loosened. Requested of Lane B: if the design is rank-deficient or identity residual is
+    already inside `color.max_mean_abs_residual_8bit`, return identity (gain=1, bias=0) instead
+    of an out-of-range slope. That is more conservative than applying gain 0.1. Recorded in
+    `notes/lane-b-requests.md` #3. Hand-built goldens still use identity color (interpretation 33).
