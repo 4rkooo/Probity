@@ -1,0 +1,120 @@
+{
+  "fixture_id": "demo-plate-90s",
+  "source_sha256": "9806895754d3af16f50ba66a99514f4b7c1b6659b278fdf7f8260cfd12bf05e5",
+  "model_id": "fixture/cosmos-embed-v1",
+  "dimension": 64,
+  "normalized": true,
+  "prompt_sha256": "cba1e7ac4bf12f6bbfbb11c34d57f7cc3b617bca04f55d322fdbf0b1a61725e5",
+  "embeddings_path": "search/embeddings.npy",
+  "embeddings_sha256": "c8c0b810662c9a1b1f207a6ae1558107486fd757bc8992cc2e9b238e799ca60d",
+  "descriptions_path": "search/descriptions.jsonl",
+  "descriptions_sha256": "caa27cb000ea4497baa4934a7b066d2604b66a2ba302276257d3ba308c551bbe",
+  "count": 15,
+  "refs": [
+    {
+      "ordinal": 0,
+      "start_pts_us": 0,
+      "end_pts_us": 8000000,
+      "embedding_ref": "demo-plate-90s/embeddings.npy#0",
+      "input_sha256": "a36e69e53a0782bc274f775c9cae6376711c1db866c5bc6e3f9fd82c38c8180e"
+    },
+    {
+      "ordinal": 1,
+      "start_pts_us": 6000000,
+      "end_pts_us": 14000000,
+      "embedding_ref": "demo-plate-90s/embeddings.npy#1",
+      "input_sha256": "7552bb03e6aad74e75c96e6b4a15a439e59b0aa0f94ba1a1be86fe8350682a29"
+    },
+    {
+      "ordinal": 2,
+      "start_pts_us": 12000000,
+      "end_pts_us": 20000000,
+      "embedding_ref": "demo-plate-90s/embeddings.npy#2",
+      "input_sha256": "259b0a7fc2afbd2de6d130c67ded76a124e561a6a5be1042378156f85ba68455"
+    },
+    {
+      "ordinal": 3,
+      "start_pts_us": 18000000,
+      "end_pts_us": 26000000,
+      "embedding_ref": "demo-plate-90s/embeddings.npy#3",
+      "input_sha256": "5a25b53ff452de9231a7a5095f3c1bfdee6c8f00ca70442c4fed46586511c4c9"
+    },
+    {
+      "ordinal": 4,
+      "start_pts_us": 24000000,
+      "end_pts_us": 32000000,
+      "embedding_ref": "demo-plate-90s/embeddings.npy#4",
+      "input_sha256": "f2b81e0de56a934f0783e72dab32491deef4a9ce151aa729fe1008e28cd03e5a"
+    },
+    {
+      "ordinal": 5,
+      "start_pts_us": 30000000,
+      "end_pts_us": 38000000,
+      "embedding_ref": "demo-plate-90s/embeddings.npy#5",
+      "input_sha256": "f2b81e0de56a934f0783e72dab32491deef4a9ce151aa729fe1008e28cd03e5a"
+    },
+    {
+      "ordinal": 6,
+      "start_pts_us": 36000000,
+      "end_pts_us": 44000000,
+      "embedding_ref": "demo-plate-90s/embeddings.npy#6",
+      "input_sha256": "24eed98799f724d7e516b770c8598373b5614d01cd765cc457216655f82b5b31"
+    },
+    {
+      "ordinal": 7,
+      "start_pts_us": 42000000,
+      "end_pts_us": 50000000,
+      "embedding_ref": "demo-plate-90s/embeddings.npy#7",
+      "input_sha256": "65d2b5a2e2a48c5e72a55f211e0ebee00a028919eadb187b2a23889bae9c9183"
+    },
+    {
+      "ordinal": 8,
+      "start_pts_us": 48000000,
+      "end_pts_us": 56000000,
+      "embedding_ref": "demo-plate-90s/embeddings.npy#8",
+      "input_sha256": "6f1dfca23615127b94084de4d675d80d57756e78d78446777230ecabce8e4ff8"
+    },
+    {
+      "ordinal": 9,
+      "start_pts_us": 54000000,
+      "end_pts_us": 62000000,
+      "embedding_ref": "demo-plate-90s/embeddings.npy#9",
+      "input_sha256": "5b027ee459770796846e0eb971fb52741fcaeb42bab80ed35926f39213c6f77a"
+    },
+    {
+      "ordinal": 10,
+      "start_pts_us": 60000000,
+      "end_pts_us": 68000000,
+      "embedding_ref": "demo-plate-90s/embeddings.npy#10",
+      "input_sha256": "c5f99a7e06c5f5945fca22080b5422cfa53287192b392c4c17f167ad13f3d5e1"
+    },
+    {
+      "ordinal": 11,
+      "start_pts_us": 66000000,
+      "end_pts_us": 74000000,
+      "embedding_ref": "demo-plate-90s/embeddings.npy#11",
+      "input_sha256": "34e292409a632026b4b780e8c8d23c1cb164368ffc447665e2d1e92506677fbc"
+    },
+    {
+      "ordinal": 12,
+      "start_pts_us": 72000000,
+      "end_pts_us": 80000000,
+      "embedding_ref": "demo-plate-90s/embeddings.npy#12",
+      "input_sha256": "89ad02572c9419f79bb630ede948ed74f39ca540cbe7f85afffff3e2e42562f2"
+    },
+    {
+      "ordinal": 13,
+      "start_pts_us": 78000000,
+      "end_pts_us": 86000000,
+      "embedding_ref": "demo-plate-90s/embeddings.npy#13",
+      "input_sha256": "a3c6cb056acea54cd552b522074dd7703d3d45f4cc16463ebc6e0fb3f62d5822"
+    },
+    {
+      "ordinal": 14,
+      "start_pts_us": 84000000,
+      "end_pts_us": 90000000,
+      "embedding_ref": "demo-plate-90s/embeddings.npy#14",
+      "input_sha256": "cded5c3656491f40bb24474ccd066e170d2b989a42ebe62c84eef02d248bdb56"
+    }
+  ]
+}
