@@ -3,7 +3,7 @@
 Flow: verify source hash -> bounded window -> confirmed track -> preflight gates -> align ->
 color -> rank/cap -> fuse -> provenance -> revert-only validation (max 2 passes; second pass
 ONLY reverts) -> integrity. Refusal is a successful ``REFUSED`` run. ``GENERATED_BLEND`` is
-never written. Algorithm version on this branch is ``trueframe-tile-v1``.
+never written. Algorithm version is ``probity-tile-v1``.
 """
 
 from __future__ import annotations
@@ -88,7 +88,7 @@ from probity.reconstruction.types import (
 from probity.reconstruction.validate import validate_and_revert
 
 LANE = "integrator"
-ALGORITHM_VERSION = "trueframe-tile-v1"
+ALGORITHM_VERSION = "probity-tile-v1"
 RUN_START = "2026-10-09T17:10:00.000000Z"
 SYNTHETIC_NOTE = "Synthetic evaluation window; no real scene, vehicle, or plate."
 REFUSAL_NOTE = "No defensible enhancement produced; the original frame is unchanged."

@@ -141,7 +141,7 @@ def render_review_view(client: MockApiClient) -> None:
                 f"(reason: {current_review.reason_code}). Report export is permanently locked."
             )
 
-    verified, _ = client.verify_source()
+    verified, _ = client.verify_run_source()
     blockers = approval_blockers(run, source_verified=verified)
     # Exactly one current review per artifact-hash pair; a stale review does not lock.
     locked = current

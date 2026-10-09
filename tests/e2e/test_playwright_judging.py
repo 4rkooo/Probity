@@ -120,20 +120,25 @@ def test_judging_path_in_browser(app_url: str, browser) -> None:
     frame = page.frame_locator("iframe").first
     canvas = frame.locator("#cR")
     expect(canvas).to_be_visible()
+    from probity.api.mock_client import MockApiClient
+    from tests.ui.conftest import borrowed_pixel
+
+    px, py, donor_pts = borrowed_pixel(MockApiClient(), 48)
     pos = frame.locator("body").evaluate(
-        """() => { const v = viewport(); const r = cR.getBoundingClientRect();
-                   return {x: (260.5 - v.x0) * r.width / v.w, y: (481.5 - v.y0) * r.height / v.h}; }"""
+        f"""() => {{ const v = viewport(); const r = cR.getBoundingClientRect();
+                   return {{x: ({px} + 0.5 - v.x0) * r.width / v.w, y: ({py} + 0.5 - v.y0) * r.height / v.h}}; }}"""
     )
     canvas.click(position=pos)  # unpin the default pixel
     canvas.hover(position={"x": pos["x"] + 0.2, "y": pos["y"]})
     expect(frame.locator("#iClass")).to_have_text("BORROWED")
-    expect(frame.locator("#iFrame")).to_contain_text("f424")
-    expect(frame.locator("#iPts")).to_contain_text("14.133s")
+    expect(frame.locator("#iFrame")).to_contain_text("f48")
+    expect(frame.locator("#iPts")).to_contain_text(f"{donor_pts / 1e6:.3f}s")
     canvas.click(position={"x": pos["x"] + 0.2, "y": pos["y"]})  # pin it
     frame.locator("#openSrc").click()
-    expect(frame.locator("#leftTitle")).to_contain_text("SOURCE DONOR f424")
-    current = frame.locator("body").evaluate("() => vA.currentTime")
-    assert abs(current - 14.133333) <= 1 / 30, current
+    expect(frame.locator("#leftTitle")).to_contain_text("SOURCE DONOR f48")
+    # Both players moved to the donor frame (frame-exact index, PTS from the manifest).
+    assert frame.locator("body").evaluate("() => D.framePts[cur]") == donor_pts
+    expect(frame.locator("#ptsA")).to_contain_text("f48")
     expect(frame.get_by_text("RECOMPRESSED PREVIEW - NOT THE CANONICAL RESULT")).to_be_visible()
 
     page.get_by_role("tab", name="⚖️ Conventional Upscaler (Baseline)").click()

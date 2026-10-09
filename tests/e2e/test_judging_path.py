@@ -13,7 +13,7 @@ from streamlit.testing.v1 import AppTest
 
 from probity.reports.export import verify_bundle
 from probity.ui.state import reset_client
-from tests.ui.conftest import HOME_PATH, click, texts
+from tests.ui.conftest import HOME_PATH, borrowed_pixel, click, texts
 
 
 def test_five_minute_judging_path() -> None:
@@ -46,14 +46,18 @@ def test_five_minute_judging_path() -> None:
 
     # 1:40-2:20 confirmed track and target frame
     page = texts(at)
-    assert "f417" in page and "CONFIRMED" in page
+    assert "CONFIRMED" in page
+    target_select = next(sb for sb in at.selectbox if "Reconstruction target frame" in sb.label)
+    assert target_select.value == client.target_frame_number
     click(at, "Run Probity Reconstruction")
 
     # 2:20-4:10 Probity, provenance, baseline
     assert at.session_state["run_outcome"] == "SUCCEEDED"
     assert "BASELINE IS NON-EVIDENTIARY" in texts(at)
-    at.number_input(key="inspect_x").set_value(230).run()
-    assert "f409" in texts(at) and "13.633s" in texts(at)
+    x, y, pts_us = borrowed_pixel(client, 31)
+    at.number_input(key="inspect_x").set_value(x).run()
+    at.number_input(key="inspect_y").set_value(y).run()
+    assert "f31" in texts(at) and f"{pts_us / 1e6:.3f}s" in texts(at)
     click(at, "Proceed to Integrity & Review")
 
     # 4:10-4:40 approve exact hashes

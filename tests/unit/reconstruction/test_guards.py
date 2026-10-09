@@ -91,7 +91,7 @@ def test_goldens_validate_against_frozen_schema(name: str, request: pytest.Fixtu
     golden: GoldenRun = request.getfixturevalue(name)
     run = golden.run
     assert run.content_sha256 == run.compute_content_sha256()
-    assert run.algorithm_version == "trueframe-tile-v1"
+    assert run.algorithm_version == "probity-tile-v1"
     assert run.policy_profile == "demo-conservative-v1"
     assert [d.decision_id for d in golden.decisions] == list(run.policy_decision_ids)
     assert [d.sequence for d in golden.decisions] == list(range(len(golden.decisions)))

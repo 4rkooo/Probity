@@ -63,6 +63,21 @@ class ExportBundle:
     manifest: list[ManifestEntry] = field(default_factory=list)
 
 
+@dataclass(frozen=True)
+class SourceIdentity:
+    """What the report says about the source: an ingested MP4 or a lossless frame sequence."""
+
+    original_name: str
+    width_px: int
+    height_px: int
+    duration_us: int
+    sha256: str
+
+    @classmethod
+    def from_video(cls, video: SourceVideo) -> SourceIdentity:
+        return cls(video.original_name, video.width_px, video.height_px, video.duration_us, video.sha256)
+
+
 class ExportBlockedError(ValueError):
     """Raised when the review/export gate refuses an export."""
 
@@ -70,28 +85,28 @@ class ExportBlockedError(ValueError):
 def export_evidence_bundle(
     *,
     case: CaseWorkspace,
-    video: SourceVideo,
+    source: SourceIdentity,
+    observed_source_sha256: str,
     run: ReconstructionRun,
     review: HumanReview | None,
     decisions: Sequence[PolicyDecision],
-    source_path: Path,
     artifacts: dict[str, tuple[Path, str]],
     trace_spans: Sequence[dict[str, Any]],
     narrative: ReportNarrative,
     narrative_fell_back: bool,
     output_dir: Path,
-    source_tampered: bool = False,
     mode: InferenceMode = InferenceMode.FIXTURE,
 ) -> ExportBundle:
-    """Re-verify the source, enforce the gate, and write a verifiable evidence bundle.
+    """Enforce the gate on a freshly re-verified source hash and write a verifiable bundle.
+
+    ``observed_source_sha256`` must be computed by the caller immediately before export
+    (file SHA-256 for an MP4, ordered pixel-hash digest for a frame sequence).
 
     ``artifacts`` maps a bundle filename to ``(source_path, role)``. Roles ``result`` and
     ``provenance`` are checked against the run's recorded hashes before anything is written.
     """
-    observed_source = sha256_file(source_path) if source_path.exists() else "0" * 64
-    if source_tampered:
-        observed_source = hashlib.sha256(observed_source.encode() + b"tampered").hexdigest()
-    source_verified = observed_source == video.sha256
+    observed_source = observed_source_sha256
+    source_verified = observed_source == source.sha256
 
     blockers = export_blockers(run, review, source_verified=source_verified)
     if blockers or review is None:
@@ -112,10 +127,10 @@ def export_evidence_bundle(
 
     manifest: list[ManifestEntry] = [
         ManifestEntry(
-            path=f"(source) {video.original_name}",
-            role="source_video",
+            path=f"(source) {source.original_name}",
+            role="source",
             sha256=observed_source,
-            recorded_sha256=video.sha256,
+            recorded_sha256=source.sha256,
         )
     ]
     for name, (path, role) in artifacts.items():
@@ -143,12 +158,12 @@ def export_evidence_bundle(
 
     report, html_path, json_path = ReportRenderer().render_bundle(
         case=case,
-        video=video,
+        video=source,  # type: ignore[arg-type]  # renderer reads the SourceIdentity fields only
         run=run,
         review=review,
         output_dir=out,
         narrative=narrative,
-        source_path=None if source_tampered else source_path,
+        source_path=None,  # already re-verified above via observed_source_sha256
         mode=mode,
         extra_context={
             "decisions": list(decisions),

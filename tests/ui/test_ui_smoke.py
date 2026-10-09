@@ -6,7 +6,7 @@ import random
 
 from probity.domain.enums import VetoReason
 from probity.ui.components.provenance_canvas import build_canvas_html, resolve_from_exceptions
-from tests.ui.conftest import click, texts
+from tests.ui.conftest import borrowed_pixel, click, texts
 
 # ---------------------------------------------------------------------------------------------
 # Persistent shell
@@ -137,8 +137,9 @@ def test_unconfirmed_track_disables_reconstruction(make_app) -> None:
     assert any("track not confirmed" in w.value for w in at.warning)
 
 
-def test_refusal_state(make_app) -> None:
-    at = make_app("Probity", target_frame=414, recon_done=False, run_outcome=None).run()
+def test_refusal_state(make_app, client) -> None:
+    client.run_outcome = "REFUSED"
+    at = make_app("Probity", recon_done=False, run_outcome=None).run()
     assert not at.exception
     page = texts(at)
     assert "No defensible enhancement produced" in page
@@ -155,23 +156,33 @@ def test_reconstruction_failure_state(make_app, client) -> None:
     assert "Retryable: no" in page
 
 
-def test_comparison_labels_baseline_and_resolves_pixels(make_app) -> None:
+def test_comparison_labels_baseline_and_resolves_pixels(make_app, client) -> None:
     at = make_app("Probity").run()
     assert not at.exception
-    assert "BASELINE IS NON-EVIDENTIARY" in texts(at)
-
-    at.number_input(key="inspect_x").set_value(230).run()
-    at.number_input(key="inspect_y").set_value(481).run()
     page = texts(at)
-    assert "BORROWED" in page and "f409" in page and "13.633s" in page
+    assert "BASELINE IS NON-EVIDENTIARY" in page
+    assert "probity-tile-v1" in page
 
-    at.number_input(key="inspect_x").set_value(260).run()
-    page = texts(at)
-    assert "f424" in page and "14.133s" in page
+    for donor in (43, 26):
+        x, y, pts_us = borrowed_pixel(client, donor)
+        at.number_input(key="inspect_x").set_value(x).run()
+        at.number_input(key="inspect_y").set_value(y).run()
+        page = texts(at)
+        assert "BORROWED" in page and f"f{donor}" in page and f"{pts_us / 1e6:.3f}s" in page
 
     click(at, "Open source frame")
-    assert at.session_state["open_source"]["frame"] == 424
-    assert "Original player seeked to 14.133s" in texts(at)
+    assert at.session_state["open_source"]["frame"] == 26
+    assert "Original source seeked to f26 @ 1.733s" in texts(at)
+
+
+def test_non_cached_target_is_not_faked(make_app, client) -> None:
+    other = next(
+        int(o.frame_id.rsplit("f", 1)[1])
+        for o in client.track_confirmed.observations
+        if o.accepted and not o.frame_id.endswith(f":f{client.target_frame_number}")
+    )
+    at = make_app("Probity", target_frame=other, recon_done=False, run_outcome=None).run()
+    assert any("No verified cached Probity run exists" in w.value for w in at.warning)
 
 
 def test_canvas_lookup_matches_npz_everywhere(client) -> None:
@@ -195,15 +206,15 @@ def test_canvas_lookup_matches_npz_everywhere(client) -> None:
         target_img_uri="data:,",
         result_img_uri="data:,",
         donor_img_uris={},
-        source_video_uri="data:,",
+        source_frame_uris=["data:,"],
+        source_frame_pts_us=[client.run_succeeded.target_pts_us],
         lut_entries=[],
         exceptions=exceptions,
         frame_size=(w, h),
-        subject_bbox=(216, 470, 292, 496),
+        subject_bbox=client.run_succeeded.target_bbox_px,
         decision_codes={},
-        target_pts_us=13_900_000,
-        nominal_fps=30.0,
-        initial_pixel=(224, 481),
+        target_pts_us=client.run_succeeded.target_pts_us,
+        initial_pixel=(int(exceptions[0][0]), int(exceptions[0][1])),
     )
     assert "RECOMPRESSED PREVIEW - NOT THE CANONICAL RESULT" in html
     assert "Open source" in html

@@ -1,6 +1,6 @@
 """Section 9 observation-quality measures. Every threshold and normalizer comes from PolicyConfig.
 
-Formula weights (Q) are part of ``trueframe-tile-v1`` and are not policy gates.
+Formula weights (Q) are part of ``probity-tile-v1`` and are not policy gates.
 """
 
 from __future__ import annotations

@@ -8,7 +8,12 @@ from pathlib import Path
 import streamlit as st
 
 from probity.api.mock_client import MockApiClient
-from probity.reports.export import ExportBlockedError, export_evidence_bundle, verify_bundle
+from probity.reports.export import (
+    ExportBlockedError,
+    SourceIdentity,
+    export_evidence_bundle,
+    verify_bundle,
+)
 from probity.reports.gate import export_blockers
 
 
@@ -22,7 +27,7 @@ def render_report_view(client: MockApiClient) -> None:
 
     run = client.run_succeeded
     review = client.get_latest_review(run.run_id)
-    verified, observed = client.verify_source()
+    verified, observed = client.verify_run_source()
     blockers = export_blockers(run, review, source_verified=verified)
     codes = {b.code for b in blockers}
 
@@ -78,7 +83,7 @@ def render_report_view(client: MockApiClient) -> None:
         st.dataframe(
             [
                 {"Field": "Case", "Value": f"{client.case.display_name} ({client.case.case_id})"},
-                {"Field": "Source", "Value": f"{client.source_video.original_name} · {client.source_video.width_px}x{client.source_video.height_px}"},
+                {"Field": "Source", "Value": f"{client.run_source_identity()['original_name']} · {client.run_source_identity()['width_px']}x{client.run_source_identity()['height_px']}"},
                 {"Field": "Target frame / PTS", "Value": f"{run.target_frame_id.split(':')[-1]} @ {run.target_pts_us} µs"},
                 {"Field": "Donors", "Value": ", ".join(d.split(":")[-1] for d in run.accepted_donor_frame_ids)},
                 {"Field": "Integrity", "Value": f"{integ.score_0_100}/100 ({integ.formula_version})" if integ else "n/a"},
@@ -103,7 +108,7 @@ def render_report_view(client: MockApiClient) -> None:
         st.markdown(
             """
             - `report.html` / `report.json` - standalone and machine-readable reports
-            - `target_f417.png`, `result.png`, donor PNGs - lossless canonical stills
+            - target frame, `result.png`, donor frames - lossless canonical stills
             - `provenance.npz` - authoritative class / source-index / source-coordinate arrays
             - `policy_decisions.json` - ordered audit log
             - `trace_summary.json` - sanitized Weave spans (no media bytes, crops, secrets, or notes)
@@ -114,15 +119,7 @@ def render_report_view(client: MockApiClient) -> None:
     with col2:
         st.markdown("### Export Bundle")
         if st.button("📦 Export Evidence Bundle", type="primary", width="stretch"):
-            artifacts = {
-                "target_f417.png": (client.get_asset_path("target_f417.png"), "target_still"),
-                "result.png": (client.get_asset_path("result.png"), "result"),
-                "provenance.npz": (client.get_asset_path("provenance.npz"), "provenance"),
-            }
-            for entry in run.provenance.source_lut if run.provenance else ():
-                name = client.frame_asset_name(entry.frame_number)
-                if entry.role == "DONOR" and name:
-                    artifacts[name] = (client.get_asset_path(name), "donor_still")
+            artifacts = client.export_artifacts()
             with client.trace.span(
                 "report.render",
                 {
@@ -136,17 +133,17 @@ def render_report_view(client: MockApiClient) -> None:
                 try:
                     bundle = export_evidence_bundle(
                         case=client.case,
-                        video=client.source_video,
+                        source=SourceIdentity(**client.run_source_identity()),
+                        # Re-hash every source frame immediately before export.
+                        observed_source_sha256=client.verify_run_source()[1],
                         run=run,
                         review=review,
                         decisions=client.list_decisions(run.run_id),
-                        source_path=client.source_path(),
                         artifacts=artifacts,
                         trace_spans=client.trace.spans,
                         narrative=narrative,
                         narrative_fell_back=fell_back,
                         output_dir=_export_dir(run.run_id),
-                        source_tampered=client.source_tampered,
                     )
                 except ExportBlockedError as exc:
                     st.error(str(exc))
