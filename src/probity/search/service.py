@@ -42,8 +42,9 @@ class SystemClock:
 
 
 def _inference_mode(understanding: VideoUnderstanding, store: EvidenceStore) -> InferenceMode:
+    """Mode that produced the evidence. Unresolved DEGRADED is not disclosed as live."""
     modes = {understanding.mode, store.mode}
-    if AdapterMode.FIXTURE in modes:
+    if AdapterMode.FIXTURE in modes or AdapterMode.DEGRADED in modes:
         return InferenceMode.FIXTURE
     return InferenceMode.LIVE
 
@@ -64,6 +65,13 @@ class LocalSearchService:
         self._policy = policy
         self._reasoner = reasoner
         self._clock: Clock = clock if clock is not None else SystemClock()
+
+    async def _disclosed_mode(self) -> InferenceMode:
+        for adapter in (self._understanding, self._store):
+            resolve = getattr(adapter, "resolve", None)
+            if resolve is not None:
+                await resolve()
+        return _inference_mode(self._understanding, self._store)
 
     async def search(
         self, video: SourceVideo, query: SearchQuery, correlation_id: str
@@ -86,12 +94,13 @@ class LocalSearchService:
                 filtered_terms=plan.filtered_terms,
                 policy_reason_codes=plan.policy_reason_codes,
             )
-        mode = _inference_mode(self._understanding, self._store)
 
         def elapsed_ms() -> int:
             return max(0, int((self._clock.monotonic_ns() - started) / 1_000_000))
 
         if plan.needs_clarification:
+            # SearchEvidence.embedding_model_id is a required ModelId. embed_query did
+            # not run, and the frozen model rejects None. No sentinel for that absence exists.
             return SearchEvidence.create(
                 created_at=self._clock.now(),
                 search_id=new_uuid7(),
@@ -103,7 +112,7 @@ class LocalSearchService:
                 embedding_model_id="fixture/cosmos-embed-v1",
                 reasoner_model_id=self._reasoner.model_id if self._reasoner is not None else None,
                 status=SearchStatus.NEEDS_CLARIFICATION,
-                mode=mode,
+                mode=await self._disclosed_mode(),
                 indexed_range=video.indexed_range,
                 candidates=(),
                 results=(),
@@ -176,6 +185,7 @@ class LocalSearchService:
             )
 
         status = SearchStatus.OK if results else SearchStatus.NO_RESULTS
+        mode = await self._disclosed_mode()
         # Keep candidate final_rank aligned with result ranks for survivors.
         remapped: list[SearchCandidate] = []
         result_rank = {row.segment_id: row.rank for row in results}

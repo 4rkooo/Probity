@@ -35,7 +35,7 @@ def assert_unchanged(label: str, before: Any, after: Any) -> None:
 
 
 class FallbackVideoUnderstanding:
-    """Resolves Cosmos live vs fixture. Never switches mid-call."""
+    """Resolves Cosmos live vs fixture once, on the first health check."""
 
     schema_version = "1.0"
 
@@ -75,6 +75,8 @@ class FallbackVideoUnderstanding:
         return AdapterMode.DEGRADED
 
     async def resolve(self) -> Any:
+        if self._resolved is not None:
+            return self._resolved
         if self._operating_mode is OperatingMode.FIXTURE:
             self._resolved = self._fixture
             return self._resolved
@@ -147,7 +149,11 @@ class FallbackVideoUnderstanding:
 
 
 class FallbackEvidenceStore:
-    """Resolves VAST live vs fixture. Replay the same request after sponsor exhaustion."""
+    """Resolves VAST live vs fixture once. Replay one failed request on fixture.
+
+    Health is fixed at the first check. A later write does not move to fixture after
+    a live write in the same store has already committed.
+    """
 
     schema_version = "1.0"
 
@@ -163,7 +169,7 @@ class FallbackEvidenceStore:
         self._operating_mode = mode
         self._health_budget_s = health_budget_s
         self._resolved: Any | None = None
-        self._mutating = False
+        self._live_write_committed = False
 
     @property
     def adapter_name(self) -> str:
@@ -188,7 +194,7 @@ class FallbackEvidenceStore:
         return AdapterMode.DEGRADED
 
     async def resolve(self) -> Any:
-        if self._mutating and self._resolved is not None:
+        if self._resolved is not None:
             return self._resolved
         if self._operating_mode is OperatingMode.FIXTURE:
             self._resolved = self._fixture
@@ -215,34 +221,33 @@ class FallbackEvidenceStore:
     async def _invoke(self, method: str, mutating: bool, *args: Any) -> Any:
         target = await self.resolve()
         snapshots = [snapshot_value(arg) for arg in args]
-        if mutating:
-            self._mutating = True
         error: BaseException | None = None
         result: Any = None
+        call: Callable[..., Awaitable[Any]] = getattr(target, method)
         try:
-            call: Callable[..., Awaitable[Any]] = getattr(target, method)
-            try:
-                result = await call(*args)
-            except _FALLBACK_ERRORS as exc:
-                error = exc
-            for arg, before in zip(args, snapshots, strict=True):
-                assert_unchanged(method, before, snapshot_value(arg))
-            if error is None:
-                return result
-            if (
-                self._operating_mode is OperatingMode.LIVE
-                or self._operating_mode is OperatingMode.FIXTURE
-                or target is self._fixture
-            ):
-                raise error
-            result = await getattr(self._fixture, method)(*args)
-            self._resolved = self._fixture
-            for arg, before in zip(args, snapshots, strict=True):
-                assert_unchanged(method, before, snapshot_value(arg))
+            result = await call(*args)
+        except _FALLBACK_ERRORS as exc:
+            error = exc
+        for arg, before in zip(args, snapshots, strict=True):
+            assert_unchanged(method, before, snapshot_value(arg))
+        if error is None:
+            if mutating and target is self._primary:
+                self._live_write_committed = True
             return result
-        finally:
-            if mutating:
-                self._mutating = False
+        # A committed live write must not continue on fixture. Replay is only the
+        # same failed request, and only when live has not already committed.
+        if (
+            self._operating_mode is OperatingMode.LIVE
+            or self._operating_mode is OperatingMode.FIXTURE
+            or target is self._fixture
+            or self._live_write_committed
+        ):
+            raise error
+        result = await getattr(self._fixture, method)(*args)
+        self._resolved = self._fixture
+        for arg, before in zip(args, snapshots, strict=True):
+            assert_unchanged(method, before, snapshot_value(arg))
+        return result
 
     async def put_source(self, video: Any, local_path: str) -> str:
         return await self._invoke("put_source", True, video, local_path)

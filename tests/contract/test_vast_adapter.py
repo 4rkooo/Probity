@@ -308,3 +308,85 @@ async def test_auto_forced_failure_falls_back_without_mutation() -> None:
     expected = await fixture.search(request)
     assert [row.segment.segment_id for row in rows] == [row.segment.segment_id for row in expected]
     assert wrapped.mode is AdapterMode.FIXTURE
+
+
+class _HealthOnceTransport:
+    def __init__(self, *, succeed_writes: int) -> None:
+        self.health_calls = 0
+        self.writes = 0
+        self.succeed_writes = succeed_writes
+
+    async def execute(self, operation: str, payload: dict[str, Any]) -> Any:
+        if operation == "health":
+            self.health_calls += 1
+            return {"ok": True}
+        if operation == "put_source":
+            self.writes += 1
+            if self.writes <= self.succeed_writes:
+                return str(payload["video"]["storage_uri"])
+            raise TimeoutError
+        raise TimeoutError
+
+
+class _CallLogStore(FixtureEvidenceStore):
+    def __init__(self) -> None:
+        super().__init__()
+        self.calls: list[str] = []
+
+    async def put_source(self, video: SourceVideo, local_path: str) -> str:
+        self.calls.append("put_source")
+        return await super().put_source(video, local_path)
+
+
+def _source_video() -> SourceVideo:
+    raw = (CONTRACTS / "source_video.json").read_text(encoding="utf-8")
+    return SourceVideo.model_validate_json(raw)
+
+
+async def test_auto_health_resolves_once_and_live_write_does_not_continue_on_fixture() -> None:
+    video = _source_video()
+    transport = _HealthOnceTransport(succeed_writes=1)
+    fixture = _CallLogStore()
+    live = LiveVastEvidenceStore(
+        enabled=True,
+        endpoint="https://example.invalid",
+        token=SecretStr("unused"),
+        transport=transport,
+        sleep=SleepLog(),
+    )
+    wrapped = FallbackEvidenceStore(live, fixture, OperatingMode.AUTO)
+    stored = await wrapped.put_source(video, "ignored.mp4")
+    assert stored == video.storage_uri
+    assert transport.health_calls == 1
+    assert fixture.calls == []
+    assert wrapped.mode is AdapterMode.LIVE
+    with pytest.raises(SponsorTimeout):
+        await wrapped.put_source(video, "ignored.mp4")
+    assert fixture.calls == []
+    assert transport.health_calls == 1
+    assert transport.writes == 2
+    assert wrapped.mode is AdapterMode.LIVE
+
+
+async def test_auto_uncommitted_write_replays_same_request_on_fixture() -> None:
+    video = _source_video()
+    transport = _HealthOnceTransport(succeed_writes=0)
+    fixture = _CallLogStore()
+    live = LiveVastEvidenceStore(
+        enabled=True,
+        endpoint="https://example.invalid",
+        token=SecretStr("unused"),
+        transport=transport,
+        sleep=SleepLog(),
+    )
+    wrapped = FallbackEvidenceStore(live, fixture, OperatingMode.AUTO)
+    stored = await wrapped.put_source(video, "ignored.mp4")
+    assert stored == video.storage_uri
+    assert fixture.calls == ["put_source"]
+    assert wrapped.mode is AdapterMode.FIXTURE
+    assert transport.health_calls == 1
+    again = await wrapped.put_source(video, "ignored.mp4")
+    assert again == video.storage_uri
+    assert fixture.calls == ["put_source", "put_source"]
+    assert transport.health_calls == 1
+    assert transport.writes == 1

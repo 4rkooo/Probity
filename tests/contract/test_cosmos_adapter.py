@@ -221,3 +221,37 @@ async def test_live_mode_never_falls_back() -> None:
     wrapped = FallbackVideoUnderstanding(live, fixture, OperatingMode.LIVE)
     with pytest.raises(SponsorTimeout):
         await wrapped.describe(_clip(), COSMOS_INGESTION_PROMPT)
+
+
+class _CountingTimeout:
+    def __init__(self) -> None:
+        self.health_calls = 0
+        self.other_calls = 0
+
+    async def execute(self, operation: str, payload: dict[str, Any]) -> Any:
+        if operation == "health":
+            self.health_calls += 1
+            return {"ok": True}
+        self.other_calls += 1
+        raise TimeoutError
+
+
+async def test_auto_health_resolves_once() -> None:
+    transport = _CountingTimeout()
+    live = LiveCosmosUnderstanding(
+        enabled=True,
+        endpoint="https://example.invalid",
+        token=SecretStr("unused"),
+        transport=transport,
+        sleep=SleepLog(),
+    )
+    wrapped = FallbackVideoUnderstanding(live, _fixture(), OperatingMode.AUTO)
+    await wrapped.describe(_clip(1), COSMOS_INGESTION_PROMPT)
+    assert wrapped.mode is AdapterMode.FIXTURE
+    assert transport.health_calls == 1
+    other_after_first = transport.other_calls
+    assert other_after_first == 3
+    await wrapped.embed_query("blue sedan rear plate")
+    assert transport.health_calls == 1
+    assert transport.other_calls == other_after_first
+    assert wrapped.mode is AdapterMode.FIXTURE
