@@ -11,6 +11,24 @@ make setup          # uv sync --frozen (environment in .uvenv; override with UV_
 make test
 ```
 
+### Builders Challenge (live VAST / Cosmos / YOLO)
+
+On a workshop VM, map `/config/<team>.config` into `PROBITY_*` and run the API + worker with
+live sponsor transports (Cosmos3-Reason + Embed1, VSS/VAST ingress health, YOLO endpoint):
+
+```bash
+make setup
+uv sync --frozen --extra ui --extra recon
+source scripts/workshop_env.sh   # exports PROBITY_* from /config; never prints secrets
+make workshop-dev                # or: bash scripts/start_workshop.sh
+PROBITY_API_BASE=http://127.0.0.1:8000 streamlit run src/probity/ui/Home.py \
+  --server.address 0.0.0.0 --server.port 8501
+```
+
+Custom MP4 upload uses the live API. Ingest describes/embeds with NVIDIA Cosmos NIMs and
+indexes through the VAST-attributed evidence path. `GET /v1/health` should show
+`cosmos-live` and `vast-live` when the workshop stack is reachable.
+
 ## Frozen contracts (schema_version 1.0)
 
 | Contract | Location |

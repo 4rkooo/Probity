@@ -25,8 +25,16 @@ def render_report_view(client: MockApiClient) -> None:
     ss = st.session_state
     st.subheader("7. Evidence Report Delivery & Export Manifest")
 
-    run = client.run_succeeded
+    run = (
+        client.get_reconstruction()
+        if client.uses_live_upload
+        else client.run_succeeded
+    )
     review = client.get_latest_review(run.run_id)
+    if client.uses_live_upload:
+        st.info(
+            f"Evidence report for uploaded clip **{client.source_video.original_name}**."
+        )
     verified, observed = client.verify_run_source()
     blockers = export_blockers(run, review, source_verified=verified)
     codes = {b.code for b in blockers}
@@ -89,7 +97,14 @@ def render_report_view(client: MockApiClient) -> None:
                 {"Field": "Integrity", "Value": f"{integ.score_0_100}/100 ({integ.formula_version})" if integ else "n/a"},
                 {"Field": "Original / Borrowed / Generated (subject)", "Value": f"{prov.subject_coverage_pct.ORIGINAL:.2f}% / {prov.subject_coverage_pct.BORROWED:.2f}% / {prov.subject_coverage_pct.GENERATED_BLEND:.2f}%" if prov else "n/a"},
                 {"Field": "Review", "Value": f"{review.decision} by {review.reviewer_alias} at {review.created_at}"},
-                {"Field": "Mode", "Value": f"{run.mode} (verified cached inference)"},
+                {
+                    "Field": "Mode",
+                    "Value": (
+                        f"{run.mode} (custom upload)"
+                        if client.uses_live_upload
+                        else f"{run.mode} (verified cached inference)"
+                    ),
+                },
             ],
             width="stretch",
             hide_index=True,
@@ -162,7 +177,7 @@ def render_report_view(client: MockApiClient) -> None:
                   <div style="color:#38bdf8; font-family:monospace; word-break:break-all;">{ss['export_bundle_sha256']}</div>
                   <div style="margin-top:6px; color:{'#4ade80' if not problems else '#f87171'}; font-weight:700;">
                     {'✓ Bundle re-verified: every manifest hash matches' if not problems else '✗ ' + '; '.join(problems)}</div>
-                  <div style="margin-top:4px;">Mode: FIXTURE (verified cached inference)</div>
+                  <div style="margin-top:4px;">Mode: {"LIVE (custom upload)" if client.uses_live_upload else "FIXTURE (verified cached inference)"}</div>
                 </div>
                 """,
                 unsafe_allow_html=True,

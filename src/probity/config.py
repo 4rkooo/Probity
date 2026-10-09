@@ -30,6 +30,8 @@ class Settings(BaseSettings):
     lease_seconds: int = Field(default=30, gt=0)
     worker_poll_seconds: float = Field(default=0.5, gt=0)
     log_level: str = "INFO"
+    # When true, fixture Cosmos synthesizes descriptions for non-catalog uploads.
+    synthetic_descriptions: bool = False
 
     vast_enabled: bool = False
     vast_endpoint: str | None = None
@@ -38,6 +40,11 @@ class Settings(BaseSettings):
     cosmos_endpoint: str | None = None
     cosmos_token: SecretStr | None = None
     cosmos_model_id: str | None = None
+    cosmos_embed_endpoint: str | None = None
+    cosmos_embed_model_id: str | None = None
+    yolo_enabled: bool = False
+    yolo_endpoint: str | None = None
+    wandb_enabled: bool = False
 
     @property
     def resolved_database_url(self) -> str:
