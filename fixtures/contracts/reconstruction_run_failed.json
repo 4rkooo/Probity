@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
   "created_at": "2026-10-09T16:07:30.000000Z",
-  "content_sha256": "e97eddb2540b28430818f6e9f1e76042c2f67da7cd3500ca7ec8625d50e0e79f",
+  "content_sha256": "e2a8b696861be3cc20064b11c6a2fa29e03152d9d5528816a5ece1017fff4840",
   "run_id": "01a1216b-69d0-785a-a900-7d898626cb7d",
   "case_id": "01a12164-8c00-7bfc-9416-0a1e8674dac6",
   "video_id": "01a12164-8fe8-7cab-9c96-17404faf2b24",
@@ -16,7 +16,7 @@
   ],
   "state": "FAILED",
   "policy_profile": "demo-conservative-v1",
-  "config_sha256": "4b092bf020018373de8fd528f9dd62748017d3e8fafd3f169d7f9d774a6ef28c",
+  "config_sha256": "43dbd6f0b7103433eee95eb040de93b592f332a6de4b2cc55dd4602b3f988855",
   "algorithm_version": "probity-tile-v1",
   "iteration_count": 0,
   "accepted_donor_frame_ids": [],

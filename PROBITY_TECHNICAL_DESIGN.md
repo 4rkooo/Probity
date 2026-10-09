@@ -619,13 +619,19 @@ All numeric gates used by the MVP appear here and live in `config/policy.demo.ya
 | `akaze.min_keypoints` | 20 | Minimum geometry evidence |
 | `akaze.ratio_test` | 0.75 | Filter ambiguous descriptor matches |
 | `akaze.min_good_matches` | 12 | Minimum homography support |
+| `akaze.detector_threshold` | 0.001 | Fixed AKAZE detector response threshold |
+| `clahe.clip_limit/tile_grid` | 2.0/4 | Contrast normalization for feature detection only |
 | `ransac.reprojection_threshold_px` | 2.0 | Inlier cutoff in target coordinates |
+| `ransac.max_iters/confidence` | 2000/0.995 | Fixed RANSAC budget for deterministic homographies |
+| `ransac.rng_seed` | 20261009 | `cv2.setRNGSeed` value before every homography fit |
 | `alignment.min_inlier_ratio` | 0.65 | Homography confidence gate |
 | `alignment.max_median_reprojection_px` | 2.0 | Alignment error gate |
 | `alignment.min_valid_coverage` | 0.85 | Reject mostly out-of-frame warps |
 | `alignment.max_corner_outside_fraction` | 0.10 | Reject extreme projected geometry |
+| `alignment.scale_ratio_min/max` | 0.67/1.50 | Reject implausible homography/affine scale |
 | `ecc.max_iterations/epsilon` | 50/0.00001 | Bounded fallback convergence |
 | `ecc.min_correlation` | 0.92 | Fallback acceptance gate |
+| `ecc.gauss_filt_size` | 5 | Fixed ECC pre-smoothing kernel |
 | `color.gain_min/max` | 0.80/1.25 | Bound per-channel relighting |
 | `color.bias_min/max_8bit` | -20/20 | Bound per-channel offset |
 | `color.max_context_gradient_8bit` | 32 | Select stable context-ring fit pixels |

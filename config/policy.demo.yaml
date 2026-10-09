@@ -64,20 +64,31 @@ akaze:
   min_keypoints: 20
   ratio_test: 0.75
   min_good_matches: 12
+  detector_threshold: 0.001
+
+clahe:
+  clip_limit: 2.0
+  tile_grid: 4
 
 ransac:
   reprojection_threshold_px: 2.0
+  max_iters: 2000
+  confidence: 0.995
+  rng_seed: 20261009
 
 alignment:
   min_inlier_ratio: 0.65
   max_median_reprojection_px: 2.0
   min_valid_coverage: 0.85
   max_corner_outside_fraction: 0.10
+  scale_ratio_min: 0.67
+  scale_ratio_max: 1.50
 
 ecc:
   max_iterations: 50
   epsilon: 0.00001
   min_correlation: 0.92
+  gauss_filt_size: 5
 
 color:
   gain_min: 0.80
