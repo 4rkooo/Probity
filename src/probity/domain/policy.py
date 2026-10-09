@@ -104,10 +104,19 @@ class AkazePolicy(_Section):
     min_keypoints: Annotated[int, Field(gt=0)]
     ratio_test: Unit
     min_good_matches: Annotated[int, Field(gt=0)]
+    detector_threshold: Pos
+
+
+class ClahePolicy(_Section):
+    clip_limit: Pos
+    tile_grid: Annotated[int, Field(gt=0)]
 
 
 class RansacPolicy(_Section):
     reprojection_threshold_px: Pos
+    max_iters: Annotated[int, Field(gt=0)]
+    confidence: Annotated[float, Field(gt=0, lt=1)]
+    rng_seed: Annotated[int, Field(ge=0)]
 
 
 class AlignmentPolicy(_Section):
@@ -115,12 +124,15 @@ class AlignmentPolicy(_Section):
     max_median_reprojection_px: Pos
     min_valid_coverage: Unit
     max_corner_outside_fraction: Unit
+    scale_ratio_min: Pos
+    scale_ratio_max: Pos
 
 
 class EccPolicy(_Section):
     max_iterations: Annotated[int, Field(gt=0)]
     epsilon: Pos
     min_correlation: Unit
+    gauss_filt_size: Annotated[int, Field(ge=0)]
 
 
 class ColorPolicy(_Section):
@@ -218,6 +230,7 @@ class PolicyConfig(_Section):
     target: TargetPolicy
     donor: DonorPolicy
     akaze: AkazePolicy
+    clahe: ClahePolicy
     ransac: RansacPolicy
     alignment: AlignmentPolicy
     ecc: EccPolicy

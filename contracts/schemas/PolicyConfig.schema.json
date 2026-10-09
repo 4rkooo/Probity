@@ -63,6 +63,11 @@
     "AkazePolicy": {
       "additionalProperties": false,
       "properties": {
+        "detector_threshold": {
+          "exclusiveMinimum": 0,
+          "title": "Detector Threshold",
+          "type": "number"
+        },
         "min_good_matches": {
           "exclusiveMinimum": 0,
           "title": "Min Good Matches",
@@ -83,7 +88,8 @@
       "required": [
         "min_keypoints",
         "ratio_test",
-        "min_good_matches"
+        "min_good_matches",
+        "detector_threshold"
       ],
       "title": "AkazePolicy",
       "type": "object"
@@ -113,15 +119,48 @@
           "minimum": 0,
           "title": "Min Valid Coverage",
           "type": "number"
+        },
+        "scale_ratio_max": {
+          "exclusiveMinimum": 0,
+          "title": "Scale Ratio Max",
+          "type": "number"
+        },
+        "scale_ratio_min": {
+          "exclusiveMinimum": 0,
+          "title": "Scale Ratio Min",
+          "type": "number"
         }
       },
       "required": [
         "min_inlier_ratio",
         "max_median_reprojection_px",
         "min_valid_coverage",
-        "max_corner_outside_fraction"
+        "max_corner_outside_fraction",
+        "scale_ratio_min",
+        "scale_ratio_max"
       ],
       "title": "AlignmentPolicy",
+      "type": "object"
+    },
+    "ClahePolicy": {
+      "additionalProperties": false,
+      "properties": {
+        "clip_limit": {
+          "exclusiveMinimum": 0,
+          "title": "Clip Limit",
+          "type": "number"
+        },
+        "tile_grid": {
+          "exclusiveMinimum": 0,
+          "title": "Tile Grid",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "clip_limit",
+        "tile_grid"
+      ],
+      "title": "ClahePolicy",
       "type": "object"
     },
     "ColorPolicy": {
@@ -301,6 +340,11 @@
           "title": "Epsilon",
           "type": "number"
         },
+        "gauss_filt_size": {
+          "minimum": 0,
+          "title": "Gauss Filt Size",
+          "type": "integer"
+        },
         "max_iterations": {
           "exclusiveMinimum": 0,
           "title": "Max Iterations",
@@ -316,7 +360,8 @@
       "required": [
         "max_iterations",
         "epsilon",
-        "min_correlation"
+        "min_correlation",
+        "gauss_filt_size"
       ],
       "title": "EccPolicy",
       "type": "object"
@@ -516,14 +561,33 @@
     "RansacPolicy": {
       "additionalProperties": false,
       "properties": {
+        "confidence": {
+          "exclusiveMaximum": 1,
+          "exclusiveMinimum": 0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "max_iters": {
+          "exclusiveMinimum": 0,
+          "title": "Max Iters",
+          "type": "integer"
+        },
         "reprojection_threshold_px": {
           "exclusiveMinimum": 0,
           "title": "Reprojection Threshold Px",
           "type": "number"
+        },
+        "rng_seed": {
+          "minimum": 0,
+          "title": "Rng Seed",
+          "type": "integer"
         }
       },
       "required": [
-        "reprojection_threshold_px"
+        "reprojection_threshold_px",
+        "max_iters",
+        "confidence",
+        "rng_seed"
       ],
       "title": "RansacPolicy",
       "type": "object"
@@ -823,6 +887,9 @@
     "alignment": {
       "$ref": "#/$defs/AlignmentPolicy"
     },
+    "clahe": {
+      "$ref": "#/$defs/ClahePolicy"
+    },
     "color": {
       "$ref": "#/$defs/ColorPolicy"
     },
@@ -900,6 +967,7 @@
     "target",
     "donor",
     "akaze",
+    "clahe",
     "ransac",
     "alignment",
     "ecc",

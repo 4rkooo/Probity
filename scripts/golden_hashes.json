@@ -1,7 +1,7 @@
 {
   "files": {
     "fixtures/demo/api/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "fixtures/demo/manifest.json": "d254a5d1a330263ec7bafb3a46d71f58be91dc0ccbbe515193dad56283c7b90c",
+    "fixtures/demo/manifest.json": "d4d9af043c57f47065bede5c0d1f2cf6760a570af51a40135b6011bba7bee02b",
     "fixtures/demo/search/build_search_fixtures.py": "c05b23d00fd1e80b909032d82b877f44661e7c80b99e5d8673b38e0e2989a9db",
     "fixtures/demo/search/descriptions.jsonl": "caa27cb000ea4497baa4934a7b066d2604b66a2ba302276257d3ba308c551bbe",
     "fixtures/demo/search/embedding_refs.json": "da9a26f66eed0be875809efd762a7af6279037a70c4866b0f4173b665e9d3e17",
@@ -91,10 +91,10 @@
     "fixtures/synthetic/plate_single_donor_v1/ground_truth/occlusion_mask_f0034.png": "ef8ea67851f5c55590404553c56341a518a9092c5f8e7affa792fdea6e76bf95",
     "fixtures/synthetic/plate_single_donor_v1/ground_truth/truth.json": "e36b0180e0332dad1e23d3568806f1a22a74c12e6c259f6d7b436502c0dbb5f8",
     "fixtures/synthetic/plate_single_donor_v1/reconstructions/refused/decisions.json": "5fd861789434e9a4b41c68829f4b018afbe37da93af990537cdf9984a877233f",
-    "fixtures/synthetic/plate_single_donor_v1/reconstructions/refused/run.json": "5a5ab2b12e08fd633877d6c3110da9db387798163a437627db89ebaf78c5fa1a",
+    "fixtures/synthetic/plate_single_donor_v1/reconstructions/refused/run.json": "1c90ff9ffbbd24227f43fe8f49fa581af58af091bd3b1617529391cae7bfd9fc",
     "fixtures/synthetic/plate_single_donor_v1/track.json": "55e1e4715b051a8cffccd72556443799e3fd244388a96bd189726303f4f9bf84",
     "fixtures/synthetic/plate_single_donor_v1/tracker_inputs.json": "36b2858f3e3fff57459fd5ee73906e7c55952f028fc699186d4ed3c83a89baf2",
-    "fixtures/synthetic/plate_single_donor_v1/window.json": "131cd5b39caba3fc3247c64e3a246fb36c902701416126d07e8240d66e36485c",
+    "fixtures/synthetic/plate_single_donor_v1/window.json": "4f821aef237addabefd0fc7680ae6a90fe6a8caffabea75c8ecf8eb7f130bdb1",
     "fixtures/synthetic/plate_translate_v1/detections.json": "8c7af5f657d2dd7f65f7e4c747632bdbe9743470da5231ba97717f6fdac02043",
     "fixtures/synthetic/plate_translate_v1/frame_manifest.json": "ce1620913d98b589cde951a293158842d27180cae22a5a3c8e954e0f8501f546",
     "fixtures/synthetic/plate_translate_v1/frames.json": "1a16ca1e8a7655624e18c3faacb5ec2d647fd4cd037a5099380aeff2f9b16867",
@@ -181,10 +181,10 @@
     "fixtures/synthetic/plate_translate_v1/reconstructions/completed/provenance.json": "3e4abac0b86efdc713e3af6cd7c6f5bbdfadebb21bc24dc044185f0d9a8f4f2a",
     "fixtures/synthetic/plate_translate_v1/reconstructions/completed/provenance.npz": "430dc4d15c49a45552918245d563fc37eb8aa753af1bd75b1b166eadc913c194",
     "fixtures/synthetic/plate_translate_v1/reconstructions/completed/result.png": "6f4247042b584b33c04057f375cf3c360d03b13b0282c226129aaa0d07152fbd",
-    "fixtures/synthetic/plate_translate_v1/reconstructions/completed/run.json": "3c721c698804dc8eb655340064843f59dacd864e24e951d1168dfc9b17dd1cc0",
+    "fixtures/synthetic/plate_translate_v1/reconstructions/completed/run.json": "e048169d57bf28383d188e4857aa915202e442a2c8eb20080c98b0d057c392a8",
     "fixtures/synthetic/plate_translate_v1/track.json": "210774a6071d66a4aec378f53d40aed126da123572c0a809faa31b6566a63049",
     "fixtures/synthetic/plate_translate_v1/tracker_inputs.json": "a8c4256765cc57e38250197f8d79f96fc487f990e4c9d5e57993c13911e3774f",
-    "fixtures/synthetic/plate_translate_v1/window.json": "7bf16fcf1cfefa40baa2800c104a36805aaf08d66dcf3adc3a2127fefa7b42d1"
+    "fixtures/synthetic/plate_translate_v1/window.json": "2e0659b9de9150ed4f3da429af85a1596c8568f8beeff11e1fe6218ff385d33f"
   },
   "normalization": "SHA-256; text files hashed with CRLF normalized to LF (see scripts/check_lane.py)",
   "roots": [
