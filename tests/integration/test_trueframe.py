@@ -66,12 +66,7 @@ def _reject_for_frame(decisions, frame_number: int):
 
 
 def test_golden_window_aligns_at_least_two_same_track_donors() -> None:
-    """Designed sharp donors (same track/video, never the target) pass AKAZE.
-
-    Bounded color then rejects them (flat car-body ring, ill-conditioned IRLS; NOTES #52),
-    so this window currently REFUSES with INSUFFICIENT_COMPATIBLE_DONORS rather than borrowing.
-    Gates are not loosened.
-    """
+    """Designed sharp donors (same track/video, never the target) pass AKAZE and identity color."""
     window = _window("plate_translate_v1")
     built = _run(window)
     run = built.result.run
@@ -92,21 +87,14 @@ def test_golden_window_aligns_at_least_two_same_track_donors() -> None:
         assert parse_frame_id(fid)[0] == window.video_id
         assert fid in detector_frames
         assert fid != run.target_frame_id
-    assert run.state is ReconstructionState.REFUSED
-    assert run.refusal_reasons == (ReasonCode.INSUFFICIENT_COMPATIBLE_DONORS,)
-    color_rejects = [
-        d for d in built.result.decisions
-        if d.stage is PolicyStage.COLOR and d.outcome is PolicyOutcome.REJECT
-        and d.rule_code is ReasonCode.LIGHTING_OUT_OF_RANGE
-        and d.policy_key == "color.gain_min"
-    ]
-    assert len(color_rejects) >= CFG.donor.min_count
+    assert run.state is ReconstructionState.SUCCEEDED
+    assert len(run.accepted_donor_frame_ids) >= CFG.donor.min_count
 
 
 def test_committed_golden_has_zero_unsupported_changed_pixels() -> None:
     """Hand-built completed golden: >=2 same-track donors, winner-take-all, no unsupported pixels.
 
-    TrueFrame itself does not yet emit a SUCCEEDED run on this window (NOTES #52).
+    TrueFrame now emits SUCCEEDED on this window (identity color; lane-b request #3).
     """
     window = _window("plate_translate_v1")
     run = ReconstructionRun.model_validate(read_json(COMPLETED / "run.json"))

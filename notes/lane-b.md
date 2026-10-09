@@ -59,7 +59,17 @@ Owner files: `src/probity/reconstruction/align.py`, `src/probity/reconstruction/
     Fit is independent per BGR channel: three-iteration Huber IRLS (`k = 1.345 * 1.4826` MAD) of
     `target = gain * donor + bias`. Residual is the mean absolute 8-bit error of that fit on the
     same pixels. `apply_color` is `clip(rint(gain * crop + bias), 0, 255)` in float64, whole crop.
-16. **Thin-strip / demo plate.** Unchanged from `NOTES-person2.md`: a 76x26 demo plate will
+16. **Identity color when IRLS is unbounded.** If the unweighted IRLS design `[donor, 1]` is
+    rank-deficient on any channel (near-constant context ring) **or** the fitted affine is
+    outside gain/bias bounds while identity residual is already
+    `<= color.max_mean_abs_residual_8bit`, return identity `(1,1,1)/(0,0,0)`. Applying a
+    rank-deficient slope (translate car-body G gain ~0.10) is less conservative than
+    identity. Sample and residual gates are unchanged and are not loosened. Identity
+    residual outside the residual gate still rejects as `PHOTOMETRIC_INCOMPATIBLE` (flat
+    ring) or, when the design is full rank, `LIGHTING_OUT_OF_RANGE` as today. Gates
+    document the choice: a rank gate (`observed <= 1`) when deficient, and the residual
+    accept reason names identity. A well-conditioned in-range affine is still estimated.
+17. **Thin-strip / demo plate.** Unchanged from `NOTES-person2.md`: a 76x26 demo plate will
     `TOO_FEW_FEATURES` into ECC. Tests use the 220x72 synthetic plate size so AKAZE is exercisable.
 
 ## Status

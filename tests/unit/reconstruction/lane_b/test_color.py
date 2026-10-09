@@ -287,3 +287,60 @@ def test_fit_color_is_deterministic(
     assert a.mean_abs_residual == b.mean_abs_residual and a.samples == b.samples
     applied = color.apply_color(warp.crop, a)
     assert np.array_equal(applied, color.apply_color(warp.crop, b))
+
+
+# ------------------------------------------------------------------------------------------------
+# Identity fallback (rank-deficient / identity residual already inside the residual gate)
+# ------------------------------------------------------------------------------------------------
+
+
+def test_rank_deficient_identity_residual_inside_accepts_identity(
+    obs_of: Callable[..., Obs], policy: PolicyConfig,
+) -> None:
+    """Flat ring: IRLS is rank-deficient; identity residual on the residual-gate boundary."""
+    limit = int(policy.color.max_mean_abs_residual_8bit)
+    donor = flat_frame(80)
+    target_frame = flat_frame(80 + limit)
+    result = color.fit_color(*_photometric_pair(obs_of, donor, target_frame), policy)
+    assert result.accepted and result.reason is PHOTO
+    assert result.gain == (1.0, 1.0, 1.0) and result.bias == (0.0, 0.0, 0.0)
+    assert result.mean_abs_residual == float(limit)
+    assert result.samples >= policy.color.min_context_samples
+    assert all(g.ok for g in result.gates)
+    rank_gate = next(g for g in result.gates if g.units == "rank")
+    assert rank_gate.ok and rank_gate.observed <= 1 and rank_gate.stage is PolicyStage.COLOR
+    assert "rank-deficient" in rank_gate.accept_reason
+    residual = next(g for g in result.gates if g.policy_key == "color.max_mean_abs_residual_8bit")
+    assert residual.ok and residual.observed == float(limit)
+    assert "Identity residual" in residual.accept_reason
+
+
+def test_rank_deficient_identity_residual_outside_is_photometric_incompatible(
+    obs_of: Callable[..., Obs], policy: PolicyConfig,
+) -> None:
+    """Flat ring: identity residual just outside the residual gate still rejects as PHOTO."""
+    limit = int(policy.color.max_mean_abs_residual_8bit)
+    donor = flat_frame(80)
+    target_frame = flat_frame(80 + limit + 1)
+    result = color.fit_color(*_photometric_pair(obs_of, donor, target_frame), policy)
+    assert not result.accepted and result.reason is PHOTO
+    assert result.gain == (1.0, 1.0, 1.0) and result.bias == (0.0, 0.0, 0.0)
+    assert result.mean_abs_residual == float(limit + 1)
+    failed = next(g for g in result.gates if not g.ok)
+    assert failed.policy_key == "color.max_mean_abs_residual_8bit"
+    assert failed.failure_code is PHOTO
+    assert failed.observed == float(limit + 1)
+
+
+def test_well_conditioned_ring_still_estimates_gain(
+    obs_of: Callable[..., Obs], policy: PolicyConfig,
+) -> None:
+    """A full-rank in-range affine is kept; identity is not substituted."""
+    donor = (textured_frame(3) // 2 + 40).astype(np.uint8)
+    target_frame = np.clip(np.rint(1.10 * donor.astype(np.float64) + 8.0), 0, 255).astype(np.uint8)
+    result = color.fit_color(*_photometric_pair(obs_of, donor, target_frame), policy)
+    assert result.accepted and result.reason is PHOTO
+    np.testing.assert_allclose(result.gain, (1.10, 1.10, 1.10), atol=0.03)
+    np.testing.assert_allclose(result.bias, (8.0, 8.0, 8.0), atol=1.0)
+    assert result.gain != (1.0, 1.0, 1.0)
+    assert not any(g.units == "rank" for g in result.gates)
