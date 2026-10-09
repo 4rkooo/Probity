@@ -120,6 +120,17 @@ def subject_slice(target: Obs) -> tuple[slice, slice]:
     return slice(y1 - ey1, y2 - ey1), slice(x1 - ex1, x2 - ex1)
 
 
+def subject_tiles(cfg: PolicyConfig, box: BBox = SUBJECT) -> list[BBox]:
+    return q.tiles(box, cfg.fusion.tile_px)
+
+
+def paint_crop_tile(warped: np.ndarray, target: Obs, box: BBox, pattern: np.ndarray) -> None:
+    """Write ``pattern`` into the target-crop array at full-frame ``box``."""
+    ex1, ey1, _, _ = target.expanded_box
+    x1, y1, x2, y2 = box
+    warped[y1 - ey1 : y2 - ey1, x1 - ex1 : x2 - ex1] = pattern
+
+
 def make_donor(
     target: Obs,
     frame_number: int,
