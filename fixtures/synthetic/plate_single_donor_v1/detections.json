@@ -1,0 +1,2046 @@
+[
+  {
+    "schema_version": "1.0",
+    "created_at": "2026-10-09T17:00:00.001000Z",
+    "content_sha256": "c9e1d0bc381b3c78b25dd638180ce83ce1c7ebe620c32e0e922ce030a94d9206",
+    "detection_id": "01a1219b-7a82-7d5d-afa4-a1ae2ff0eab6",
+    "video_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b",
+    "frame_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b:f0",
+    "pts_us": 0,
+    "model_id": "fixture/synthetic-gt-detector-v1",
+    "model_sha256": null,
+    "class_id": 0,
+    "class_name": "license_plate",
+    "confidence": 0.6048,
+    "bbox_px": [
+      64,
+      112,
+      284,
+      184
+    ],
+    "bbox_norm": [
+      0.13333333333333333,
+      0.3888888888888889,
+      0.5916666666666667,
+      0.6388888888888888
+    ],
+    "occlusion_score": null,
+    "inference_mode": "FIXTURE"
+  },
+  {
+    "schema_version": "1.0",
+    "created_at": "2026-10-09T17:00:00.002000Z",
+    "content_sha256": "72dccf5e3ff650b0bf3642cf2c52bd15a2ca773cd11aa51e61169868d57223f2",
+    "detection_id": "01a1219b-7a82-734c-8e88-9b6de2a93985",
+    "video_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b",
+    "frame_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b:f1",
+    "pts_us": 66666,
+    "model_id": "fixture/synthetic-gt-detector-v1",
+    "model_sha256": null,
+    "class_id": 0,
+    "class_name": "license_plate",
+    "confidence": 0.6295,
+    "bbox_px": [
+      65,
+      112,
+      285,
+      184
+    ],
+    "bbox_norm": [
+      0.13541666666666666,
+      0.3888888888888889,
+      0.59375,
+      0.6388888888888888
+    ],
+    "occlusion_score": null,
+    "inference_mode": "FIXTURE"
+  },
+  {
+    "schema_version": "1.0",
+    "created_at": "2026-10-09T17:00:00.003000Z",
+    "content_sha256": "023846b80e0efae2b20b693e159ba1c2cbf645488a868013b6a622a26a1d5d79",
+    "detection_id": "01a1219b-7a82-7ce1-8dfb-2e51ab2be3d7",
+    "video_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b",
+    "frame_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b:f2",
+    "pts_us": 133333,
+    "model_id": "fixture/synthetic-gt-detector-v1",
+    "model_sha256": null,
+    "class_id": 0,
+    "class_name": "license_plate",
+    "confidence": 0.6432,
+    "bbox_px": [
+      65,
+      113,
+      285,
+      185
+    ],
+    "bbox_norm": [
+      0.13541666666666666,
+      0.3923611111111111,
+      0.59375,
+      0.6423611111111112
+    ],
+    "occlusion_score": null,
+    "inference_mode": "FIXTURE"
+  },
+  {
+    "schema_version": "1.0",
+    "created_at": "2026-10-09T17:00:00.004000Z",
+    "content_sha256": "a23e11648be1f350c8fc30388d95866987741a571f7cfdb20e9f8ecfc40eab4b",
+    "detection_id": "01a1219b-7a82-7129-be59-466b707f0de0",
+    "video_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b",
+    "frame_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b:f3",
+    "pts_us": 200000,
+    "model_id": "fixture/synthetic-gt-detector-v1",
+    "model_sha256": null,
+    "class_id": 0,
+    "class_name": "license_plate",
+    "confidence": 0.6532,
+    "bbox_px": [
+      66,
+      113,
+      286,
+      185
+    ],
+    "bbox_norm": [
+      0.1375,
+      0.3923611111111111,
+      0.5958333333333333,
+      0.6423611111111112
+    ],
+    "occlusion_score": null,
+    "inference_mode": "FIXTURE"
+  },
+  {
+    "schema_version": "1.0",
+    "created_at": "2026-10-09T17:00:00.005000Z",
+    "content_sha256": "877ae7e4a709ea748c3c62ff50a2d30980854e939262dac832ecb40b04c9a336",
+    "detection_id": "01a1219b-7a82-7df6-8323-2e5a19f547e2",
+    "video_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b",
+    "frame_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b:f4",
+    "pts_us": 266666,
+    "model_id": "fixture/synthetic-gt-detector-v1",
+    "model_sha256": null,
+    "class_id": 0,
+    "class_name": "license_plate",
+    "confidence": 0.643,
+    "bbox_px": [
+      67,
+      113,
+      287,
+      185
+    ],
+    "bbox_norm": [
+      0.13958333333333334,
+      0.3923611111111111,
+      0.5979166666666667,
+      0.6423611111111112
+    ],
+    "occlusion_score": null,
+    "inference_mode": "FIXTURE"
+  },
+  {
+    "schema_version": "1.0",
+    "created_at": "2026-10-09T17:00:00.006000Z",
+    "content_sha256": "9b89db5c4711f64b34774fa5f7a31e88646e5859602b6ec1d9cca29f8a3e63bb",
+    "detection_id": "01a1219b-7a82-767f-9069-df7271bc875e",
+    "video_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b",
+    "frame_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b:f5",
+    "pts_us": 333333,
+    "model_id": "fixture/synthetic-gt-detector-v1",
+    "model_sha256": null,
+    "class_id": 0,
+    "class_name": "license_plate",
+    "confidence": 0.6408,
+    "bbox_px": [
+      67,
+      113,
+      287,
+      185
+    ],
+    "bbox_norm": [
+      0.13958333333333334,
+      0.3923611111111111,
+      0.5979166666666667,
+      0.6423611111111112
+    ],
+    "occlusion_score": null,
+    "inference_mode": "FIXTURE"
+  },
+  {
+    "schema_version": "1.0",
+    "created_at": "2026-10-09T17:00:00.007000Z",
+    "content_sha256": "1f25f72d52db315a6abc661da21320a42a5b2407e3c7a5bc5972250efbdbd556",
+    "detection_id": "01a1219b-7a82-7b82-bd40-84bcd025da21",
+    "video_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b",
+    "frame_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b:f6",
+    "pts_us": 400000,
+    "model_id": "fixture/synthetic-gt-detector-v1",
+    "model_sha256": null,
+    "class_id": 0,
+    "class_name": "license_plate",
+    "confidence": 0.6543,
+    "bbox_px": [
+      68,
+      113,
+      288,
+      185
+    ],
+    "bbox_norm": [
+      0.14166666666666666,
+      0.3923611111111111,
+      0.6,
+      0.6423611111111112
+    ],
+    "occlusion_score": null,
+    "inference_mode": "FIXTURE"
+  },
+  {
+    "schema_version": "1.0",
+    "created_at": "2026-10-09T17:00:00.008000Z",
+    "content_sha256": "1fa3340006df1709f80d619925d722d46d734065875a54eb848a48fd8236958c",
+    "detection_id": "01a1219b-7a82-77b6-801a-57890ad0962f",
+    "video_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b",
+    "frame_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b:f7",
+    "pts_us": 466666,
+    "model_id": "fixture/synthetic-gt-detector-v1",
+    "model_sha256": null,
+    "class_id": 0,
+    "class_name": "license_plate",
+    "confidence": 0.6229,
+    "bbox_px": [
+      68,
+      113,
+      288,
+      185
+    ],
+    "bbox_norm": [
+      0.14166666666666666,
+      0.3923611111111111,
+      0.6,
+      0.6423611111111112
+    ],
+    "occlusion_score": null,
+    "inference_mode": "FIXTURE"
+  },
+  {
+    "schema_version": "1.0",
+    "created_at": "2026-10-09T17:00:00.009000Z",
+    "content_sha256": "18e0f314035b2b93321a7c8178aad79a170da040562cda295305bd60a5f6f65f",
+    "detection_id": "01a1219b-7a82-71b5-97c1-a0870385dd84",
+    "video_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b",
+    "frame_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b:f8",
+    "pts_us": 533333,
+    "model_id": "fixture/synthetic-gt-detector-v1",
+    "model_sha256": null,
+    "class_id": 0,
+    "class_name": "license_plate",
+    "confidence": 0.6403,
+    "bbox_px": [
+      69,
+      114,
+      289,
+      186
+    ],
+    "bbox_norm": [
+      0.14375,
+      0.3958333333333333,
+      0.6020833333333333,
+      0.6458333333333334
+    ],
+    "occlusion_score": null,
+    "inference_mode": "FIXTURE"
+  },
+  {
+    "schema_version": "1.0",
+    "created_at": "2026-10-09T17:00:00.010000Z",
+    "content_sha256": "1fcd79c2fa1dae55a9f8d21c3516b22e627107433a82721e6f047cc7e4460dd6",
+    "detection_id": "01a1219b-7a82-753c-ac19-ab999aa53673",
+    "video_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b",
+    "frame_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b:f9",
+    "pts_us": 600000,
+    "model_id": "fixture/synthetic-gt-detector-v1",
+    "model_sha256": null,
+    "class_id": 0,
+    "class_name": "license_plate",
+    "confidence": 0.6564,
+    "bbox_px": [
+      70,
+      114,
+      290,
+      186
+    ],
+    "bbox_norm": [
+      0.14583333333333334,
+      0.3958333333333333,
+      0.6041666666666666,
+      0.6458333333333334
+    ],
+    "occlusion_score": null,
+    "inference_mode": "FIXTURE"
+  },
+  {
+    "schema_version": "1.0",
+    "created_at": "2026-10-09T17:00:00.011000Z",
+    "content_sha256": "870bcb41b7b78e0d89a5ab9a1d68b3bab6a52ba31ba6b5982a01aef1dffc0583",
+    "detection_id": "01a1219b-7a82-7b1b-b53d-6cb3b0e9580e",
+    "video_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b",
+    "frame_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b:f10",
+    "pts_us": 666666,
+    "model_id": "fixture/synthetic-gt-detector-v1",
+    "model_sha256": null,
+    "class_id": 0,
+    "class_name": "license_plate",
+    "confidence": 0.6477,
+    "bbox_px": [
+      70,
+      114,
+      290,
+      186
+    ],
+    "bbox_norm": [
+      0.14583333333333334,
+      0.3958333333333333,
+      0.6041666666666666,
+      0.6458333333333334
+    ],
+    "occlusion_score": null,
+    "inference_mode": "FIXTURE"
+  },
+  {
+    "schema_version": "1.0",
+    "created_at": "2026-10-09T17:00:00.012000Z",
+    "content_sha256": "c8fcd5af5ddeda3e9b3d06ea765bf782896963ade67b28eb949cc17a4f11bb58",
+    "detection_id": "01a1219b-7a82-7117-882f-f3820866b33a",
+    "video_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b",
+    "frame_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b:f11",
+    "pts_us": 733333,
+    "model_id": "fixture/synthetic-gt-detector-v1",
+    "model_sha256": null,
+    "class_id": 0,
+    "class_name": "license_plate",
+    "confidence": 0.6577,
+    "bbox_px": [
+      71,
+      114,
+      291,
+      186
+    ],
+    "bbox_norm": [
+      0.14791666666666667,
+      0.3958333333333333,
+      0.60625,
+      0.6458333333333334
+    ],
+    "occlusion_score": null,
+    "inference_mode": "FIXTURE"
+  },
+  {
+    "schema_version": "1.0",
+    "created_at": "2026-10-09T17:00:00.013000Z",
+    "content_sha256": "2f851b3b3f8212ed78991826e1767fc22024b57b54b023afbd5680ae5a541765",
+    "detection_id": "01a1219b-7a82-76c6-9e7d-4a7419eceb68",
+    "video_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b",
+    "frame_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b:f12",
+    "pts_us": 800000,
+    "model_id": "fixture/synthetic-gt-detector-v1",
+    "model_sha256": null,
+    "class_id": 0,
+    "class_name": "license_plate",
+    "confidence": 0.6538,
+    "bbox_px": [
+      71,
+      114,
+      291,
+      186
+    ],
+    "bbox_norm": [
+      0.14791666666666667,
+      0.3958333333333333,
+      0.60625,
+      0.6458333333333334
+    ],
+    "occlusion_score": null,
+    "inference_mode": "FIXTURE"
+  },
+  {
+    "schema_version": "1.0",
+    "created_at": "2026-10-09T17:00:00.014000Z",
+    "content_sha256": "8003faa960d9f3fdd15a8a5aa0c25d43871cf5e76114a7b01c640556e47135fc",
+    "detection_id": "01a1219b-7a82-7ba4-abab-6c8149208482",
+    "video_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b",
+    "frame_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b:f13",
+    "pts_us": 866666,
+    "model_id": "fixture/synthetic-gt-detector-v1",
+    "model_sha256": null,
+    "class_id": 0,
+    "class_name": "license_plate",
+    "confidence": 0.6286,
+    "bbox_px": [
+      72,
+      113,
+      292,
+      185
+    ],
+    "bbox_norm": [
+      0.15,
+      0.3923611111111111,
+      0.6083333333333333,
+      0.6423611111111112
+    ],
+    "occlusion_score": null,
+    "inference_mode": "FIXTURE"
+  },
+  {
+    "schema_version": "1.0",
+    "created_at": "2026-10-09T17:00:00.015000Z",
+    "content_sha256": "66029ec13c795daacb5922a48ec78859804fd44779729f9e878b80a5ad893a21",
+    "detection_id": "01a1219b-7a82-7e22-8e08-df028a9a2b16",
+    "video_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b",
+    "frame_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b:f14",
+    "pts_us": 933333,
+    "model_id": "fixture/synthetic-gt-detector-v1",
+    "model_sha256": null,
+    "class_id": 0,
+    "class_name": "license_plate",
+    "confidence": 0.6578,
+    "bbox_px": [
+      73,
+      113,
+      293,
+      185
+    ],
+    "bbox_norm": [
+      0.15208333333333332,
+      0.3923611111111111,
+      0.6104166666666667,
+      0.6423611111111112
+    ],
+    "occlusion_score": null,
+    "inference_mode": "FIXTURE"
+  },
+  {
+    "schema_version": "1.0",
+    "created_at": "2026-10-09T17:00:00.016000Z",
+    "content_sha256": "250b3454378e5a2a5f226fe898f6067cc46c42a04a0321f43c0954c032b66d1d",
+    "detection_id": "01a1219b-7a82-72cc-bbd9-93c27b4d36f7",
+    "video_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b",
+    "frame_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b:f15",
+    "pts_us": 1000000,
+    "model_id": "fixture/synthetic-gt-detector-v1",
+    "model_sha256": null,
+    "class_id": 0,
+    "class_name": "license_plate",
+    "confidence": 0.6415,
+    "bbox_px": [
+      73,
+      113,
+      293,
+      185
+    ],
+    "bbox_norm": [
+      0.15208333333333332,
+      0.3923611111111111,
+      0.6104166666666667,
+      0.6423611111111112
+    ],
+    "occlusion_score": null,
+    "inference_mode": "FIXTURE"
+  },
+  {
+    "schema_version": "1.0",
+    "created_at": "2026-10-09T17:00:00.017000Z",
+    "content_sha256": "b607737061b632ee36a9f43f4531ed6972e655af91595d35e2d22125ca764ce6",
+    "detection_id": "01a1219b-7a82-7aa1-a79b-7430b725d1da",
+    "video_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b",
+    "frame_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b:f16",
+    "pts_us": 1066666,
+    "model_id": "fixture/synthetic-gt-detector-v1",
+    "model_sha256": null,
+    "class_id": 0,
+    "class_name": "license_plate",
+    "confidence": 0.6253,
+    "bbox_px": [
+      74,
+      113,
+      294,
+      185
+    ],
+    "bbox_norm": [
+      0.15416666666666667,
+      0.3923611111111111,
+      0.6125,
+      0.6423611111111112
+    ],
+    "occlusion_score": null,
+    "inference_mode": "FIXTURE"
+  },
+  {
+    "schema_version": "1.0",
+    "created_at": "2026-10-09T17:00:00.018000Z",
+    "content_sha256": "14c84b7d532020109dba8fbad4d848e2ceeaf19a9be68b9a86dd1f65a1c8dd67",
+    "detection_id": "01a1219b-7a82-7103-a16a-46b63c3e6576",
+    "video_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b",
+    "frame_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b:f17",
+    "pts_us": 1133333,
+    "model_id": "fixture/synthetic-gt-detector-v1",
+    "model_sha256": null,
+    "class_id": 0,
+    "class_name": "license_plate",
+    "confidence": 0.6165,
+    "bbox_px": [
+      74,
+      113,
+      294,
+      185
+    ],
+    "bbox_norm": [
+      0.15416666666666667,
+      0.3923611111111111,
+      0.6125,
+      0.6423611111111112
+    ],
+    "occlusion_score": null,
+    "inference_mode": "FIXTURE"
+  },
+  {
+    "schema_version": "1.0",
+    "created_at": "2026-10-09T17:00:00.019000Z",
+    "content_sha256": "c854fc8d6f68769a2b3fbb454180a89684ecaaf30ba4f6c09a77f040b8883731",
+    "detection_id": "01a1219b-7a82-701b-8eab-c4bbb024122a",
+    "video_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b",
+    "frame_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b:f18",
+    "pts_us": 1200000,
+    "model_id": "fixture/synthetic-gt-detector-v1",
+    "model_sha256": null,
+    "class_id": 0,
+    "class_name": "license_plate",
+    "confidence": 0.6581,
+    "bbox_px": [
+      75,
+      113,
+      295,
+      185
+    ],
+    "bbox_norm": [
+      0.15625,
+      0.3923611111111111,
+      0.6145833333333334,
+      0.6423611111111112
+    ],
+    "occlusion_score": null,
+    "inference_mode": "FIXTURE"
+  },
+  {
+    "schema_version": "1.0",
+    "created_at": "2026-10-09T17:00:00.020000Z",
+    "content_sha256": "c89590a68de89bae9cb0e6ae207e3feb89f472d2d02be82698f2a842b64fae36",
+    "detection_id": "01a1219b-7a82-7adc-a9f8-4fd675453dc6",
+    "video_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b",
+    "frame_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b:f19",
+    "pts_us": 1266666,
+    "model_id": "fixture/synthetic-gt-detector-v1",
+    "model_sha256": null,
+    "class_id": 0,
+    "class_name": "license_plate",
+    "confidence": 0.6538,
+    "bbox_px": [
+      76,
+      112,
+      296,
+      184
+    ],
+    "bbox_norm": [
+      0.15833333333333333,
+      0.3888888888888889,
+      0.6166666666666667,
+      0.6388888888888888
+    ],
+    "occlusion_score": null,
+    "inference_mode": "FIXTURE"
+  },
+  {
+    "schema_version": "1.0",
+    "created_at": "2026-10-09T17:00:00.021000Z",
+    "content_sha256": "0249b7ee364c7d2f2f57cb3217f0984d1ba9005bb61d15e752839ee1b1c76436",
+    "detection_id": "01a1219b-7a82-79fd-82e1-e0b176d6cc56",
+    "video_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b",
+    "frame_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b:f20",
+    "pts_us": 1333333,
+    "model_id": "fixture/synthetic-gt-detector-v1",
+    "model_sha256": null,
+    "class_id": 0,
+    "class_name": "license_plate",
+    "confidence": 0.6273,
+    "bbox_px": [
+      76,
+      112,
+      296,
+      184
+    ],
+    "bbox_norm": [
+      0.15833333333333333,
+      0.3888888888888889,
+      0.6166666666666667,
+      0.6388888888888888
+    ],
+    "occlusion_score": null,
+    "inference_mode": "FIXTURE"
+  },
+  {
+    "schema_version": "1.0",
+    "created_at": "2026-10-09T17:00:00.022000Z",
+    "content_sha256": "95de6a59e1ab25300b2fc6c9de6cd129d4bfe23168c67aa797e6e2b8459c3060",
+    "detection_id": "01a1219b-7a82-7083-9f17-63b88258f7e2",
+    "video_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b",
+    "frame_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b:f21",
+    "pts_us": 1400000,
+    "model_id": "fixture/synthetic-gt-detector-v1",
+    "model_sha256": null,
+    "class_id": 0,
+    "class_name": "license_plate",
+    "confidence": 0.6596,
+    "bbox_px": [
+      77,
+      112,
+      297,
+      184
+    ],
+    "bbox_norm": [
+      0.16041666666666668,
+      0.3888888888888889,
+      0.61875,
+      0.6388888888888888
+    ],
+    "occlusion_score": null,
+    "inference_mode": "FIXTURE"
+  },
+  {
+    "schema_version": "1.0",
+    "created_at": "2026-10-09T17:00:00.023000Z",
+    "content_sha256": "f3f99e7bc9b733a62a98363c742e71004fd8b503c82d287aa345514bc35e362f",
+    "detection_id": "01a1219b-7a82-7fe3-b18b-323d63de70b2",
+    "video_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b",
+    "frame_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b:f22",
+    "pts_us": 1466666,
+    "model_id": "fixture/synthetic-gt-detector-v1",
+    "model_sha256": null,
+    "class_id": 0,
+    "class_name": "license_plate",
+    "confidence": 0.6453,
+    "bbox_px": [
+      77,
+      112,
+      297,
+      184
+    ],
+    "bbox_norm": [
+      0.16041666666666668,
+      0.3888888888888889,
+      0.61875,
+      0.6388888888888888
+    ],
+    "occlusion_score": null,
+    "inference_mode": "FIXTURE"
+  },
+  {
+    "schema_version": "1.0",
+    "created_at": "2026-10-09T17:00:00.024000Z",
+    "content_sha256": "b0f9e576c6be91aac424e8e2f2344a39bdceb6a9d0885eb8ecf9db9b4a3815c3",
+    "detection_id": "01a1219b-7a82-7c8b-a8e8-e95ff56e96b6",
+    "video_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b",
+    "frame_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b:f23",
+    "pts_us": 1533333,
+    "model_id": "fixture/synthetic-gt-detector-v1",
+    "model_sha256": null,
+    "class_id": 0,
+    "class_name": "license_plate",
+    "confidence": 0.6672,
+    "bbox_px": [
+      78,
+      111,
+      298,
+      183
+    ],
+    "bbox_norm": [
+      0.1625,
+      0.3854166666666667,
+      0.6208333333333333,
+      0.6354166666666666
+    ],
+    "occlusion_score": null,
+    "inference_mode": "FIXTURE"
+  },
+  {
+    "schema_version": "1.0",
+    "created_at": "2026-10-09T17:00:00.025000Z",
+    "content_sha256": "7bf34dccb159ed8527de43a0908d6814ec47387319c4b030c95a2c0fbf12909b",
+    "detection_id": "01a1219b-7a82-7e36-90ca-5bf333b6ca2d",
+    "video_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b",
+    "frame_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b:f24",
+    "pts_us": 1600000,
+    "model_id": "fixture/synthetic-gt-detector-v1",
+    "model_sha256": null,
+    "class_id": 0,
+    "class_name": "license_plate",
+    "confidence": 0.6465,
+    "bbox_px": [
+      79,
+      111,
+      299,
+      183
+    ],
+    "bbox_norm": [
+      0.16458333333333333,
+      0.3854166666666667,
+      0.6229166666666667,
+      0.6354166666666666
+    ],
+    "occlusion_score": null,
+    "inference_mode": "FIXTURE"
+  },
+  {
+    "schema_version": "1.0",
+    "created_at": "2026-10-09T17:00:00.026000Z",
+    "content_sha256": "f9eedd743bff4efcc36122e80e95595ab5c893ef8ae9c2d1c8a3ae27e28c9789",
+    "detection_id": "01a1219b-7a82-7ec8-9393-230236125ef4",
+    "video_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b",
+    "frame_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b:f25",
+    "pts_us": 1666666,
+    "model_id": "fixture/synthetic-gt-detector-v1",
+    "model_sha256": null,
+    "class_id": 0,
+    "class_name": "license_plate",
+    "confidence": 0.6402,
+    "bbox_px": [
+      79,
+      111,
+      299,
+      183
+    ],
+    "bbox_norm": [
+      0.16458333333333333,
+      0.3854166666666667,
+      0.6229166666666667,
+      0.6354166666666666
+    ],
+    "occlusion_score": null,
+    "inference_mode": "FIXTURE"
+  },
+  {
+    "schema_version": "1.0",
+    "created_at": "2026-10-09T17:00:00.027000Z",
+    "content_sha256": "cf99dd65aefd0923fa94c6071ff5ab0b9a66b9b50940f99c0b4d9b3b404b8d78",
+    "detection_id": "01a1219b-7a82-7b2e-bff6-8a9332dac578",
+    "video_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b",
+    "frame_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b:f26",
+    "pts_us": 1733333,
+    "model_id": "fixture/synthetic-gt-detector-v1",
+    "model_sha256": null,
+    "class_id": 0,
+    "class_name": "license_plate",
+    "confidence": 0.64,
+    "bbox_px": [
+      80,
+      111,
+      300,
+      183
+    ],
+    "bbox_norm": [
+      0.16666666666666666,
+      0.3854166666666667,
+      0.625,
+      0.6354166666666666
+    ],
+    "occlusion_score": null,
+    "inference_mode": "FIXTURE"
+  },
+  {
+    "schema_version": "1.0",
+    "created_at": "2026-10-09T17:00:00.028000Z",
+    "content_sha256": "1ec8c173e53054e09e12253917060e98621116fb59800a98e947f82c2037b8bb",
+    "detection_id": "01a1219b-7a82-7328-9be8-d1c7b65a01dc",
+    "video_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b",
+    "frame_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b:f27",
+    "pts_us": 1800000,
+    "model_id": "fixture/synthetic-gt-detector-v1",
+    "model_sha256": null,
+    "class_id": 0,
+    "class_name": "license_plate",
+    "confidence": 0.6228,
+    "bbox_px": [
+      80,
+      111,
+      300,
+      183
+    ],
+    "bbox_norm": [
+      0.16666666666666666,
+      0.3854166666666667,
+      0.625,
+      0.6354166666666666
+    ],
+    "occlusion_score": null,
+    "inference_mode": "FIXTURE"
+  },
+  {
+    "schema_version": "1.0",
+    "created_at": "2026-10-09T17:00:00.029000Z",
+    "content_sha256": "1d5e3a1ebddce9a8a734342dfb024fe5016338da422f33d47207ca04200771b9",
+    "detection_id": "01a1219b-7a82-7a90-9062-30710c7a4c2d",
+    "video_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b",
+    "frame_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b:f28",
+    "pts_us": 1866666,
+    "model_id": "fixture/synthetic-gt-detector-v1",
+    "model_sha256": null,
+    "class_id": 0,
+    "class_name": "license_plate",
+    "confidence": 0.6206,
+    "bbox_px": [
+      81,
+      111,
+      301,
+      183
+    ],
+    "bbox_norm": [
+      0.16875,
+      0.3854166666666667,
+      0.6270833333333333,
+      0.6354166666666666
+    ],
+    "occlusion_score": null,
+    "inference_mode": "FIXTURE"
+  },
+  {
+    "schema_version": "1.0",
+    "created_at": "2026-10-09T17:00:00.030000Z",
+    "content_sha256": "0bac1dde7eb4795c1ab2c27e6a5aacf75d751f07db39bee75d512ed4b373afd6",
+    "detection_id": "01a1219b-7a82-71f4-8f5b-4b92dd046432",
+    "video_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b",
+    "frame_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b:f29",
+    "pts_us": 1933333,
+    "model_id": "fixture/synthetic-gt-detector-v1",
+    "model_sha256": null,
+    "class_id": 0,
+    "class_name": "license_plate",
+    "confidence": 0.6301,
+    "bbox_px": [
+      82,
+      111,
+      302,
+      183
+    ],
+    "bbox_norm": [
+      0.17083333333333334,
+      0.3854166666666667,
+      0.6291666666666667,
+      0.6354166666666666
+    ],
+    "occlusion_score": null,
+    "inference_mode": "FIXTURE"
+  },
+  {
+    "schema_version": "1.0",
+    "created_at": "2026-10-09T17:00:00.031000Z",
+    "content_sha256": "4af0747908e70126dbbcf130809c5b13a062f1d3f75f687671af2f89c8d0ba63",
+    "detection_id": "01a1219b-7a82-7964-b753-431978736f9b",
+    "video_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b",
+    "frame_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b:f30",
+    "pts_us": 2000000,
+    "model_id": "fixture/synthetic-gt-detector-v1",
+    "model_sha256": null,
+    "class_id": 0,
+    "class_name": "license_plate",
+    "confidence": 0.6591,
+    "bbox_px": [
+      82,
+      111,
+      302,
+      183
+    ],
+    "bbox_norm": [
+      0.17083333333333334,
+      0.3854166666666667,
+      0.6291666666666667,
+      0.6354166666666666
+    ],
+    "occlusion_score": null,
+    "inference_mode": "FIXTURE"
+  },
+  {
+    "schema_version": "1.0",
+    "created_at": "2026-10-09T17:00:00.032000Z",
+    "content_sha256": "161532c43cca2c111f08bef126ebe3d1c0b41671ded2c3b92f5524e16204acf3",
+    "detection_id": "01a1219b-7a82-7cef-ae67-732cea5d1c80",
+    "video_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b",
+    "frame_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b:f31",
+    "pts_us": 2066666,
+    "model_id": "fixture/synthetic-gt-detector-v1",
+    "model_sha256": null,
+    "class_id": 0,
+    "class_name": "license_plate",
+    "confidence": 0.647,
+    "bbox_px": [
+      83,
+      111,
+      303,
+      183
+    ],
+    "bbox_norm": [
+      0.17291666666666666,
+      0.3854166666666667,
+      0.63125,
+      0.6354166666666666
+    ],
+    "occlusion_score": null,
+    "inference_mode": "FIXTURE"
+  },
+  {
+    "schema_version": "1.0",
+    "created_at": "2026-10-09T17:00:00.033000Z",
+    "content_sha256": "c4903f2f18855e65e2aae513527e3f089dcb65e903a3c2cfd0ed12c2c4afb6a2",
+    "detection_id": "01a1219b-7a82-783e-b5f1-462c095b30ae",
+    "video_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b",
+    "frame_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b:f32",
+    "pts_us": 2133333,
+    "model_id": "fixture/synthetic-gt-detector-v1",
+    "model_sha256": null,
+    "class_id": 0,
+    "class_name": "license_plate",
+    "confidence": 0.6424,
+    "bbox_px": [
+      83,
+      111,
+      303,
+      183
+    ],
+    "bbox_norm": [
+      0.17291666666666666,
+      0.3854166666666667,
+      0.63125,
+      0.6354166666666666
+    ],
+    "occlusion_score": null,
+    "inference_mode": "FIXTURE"
+  },
+  {
+    "schema_version": "1.0",
+    "created_at": "2026-10-09T17:00:00.034000Z",
+    "content_sha256": "a163f57eede7187243a090f37a278521949dfa86634e107aad986012a7232964",
+    "detection_id": "01a1219b-7a82-7cfc-823d-3bf8e8e87dd1",
+    "video_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b",
+    "frame_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b:f33",
+    "pts_us": 2200000,
+    "model_id": "fixture/synthetic-gt-detector-v1",
+    "model_sha256": null,
+    "class_id": 0,
+    "class_name": "license_plate",
+    "confidence": 0.6507,
+    "bbox_px": [
+      84,
+      111,
+      304,
+      183
+    ],
+    "bbox_norm": [
+      0.175,
+      0.3854166666666667,
+      0.6333333333333333,
+      0.6354166666666666
+    ],
+    "occlusion_score": null,
+    "inference_mode": "FIXTURE"
+  },
+  {
+    "schema_version": "1.0",
+    "created_at": "2026-10-09T17:00:00.035000Z",
+    "content_sha256": "7d490a3b4ab078bc897adb9f3d8d64e300bbf50ff5773b2d1a87f87828148444",
+    "detection_id": "01a1219b-7a82-726f-a12c-c6afe2ba8b4b",
+    "video_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b",
+    "frame_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b:f34",
+    "pts_us": 2266666,
+    "model_id": "fixture/synthetic-gt-detector-v1",
+    "model_sha256": null,
+    "class_id": 0,
+    "class_name": "license_plate",
+    "confidence": 0.7246,
+    "bbox_px": [
+      85,
+      111,
+      305,
+      183
+    ],
+    "bbox_norm": [
+      0.17708333333333334,
+      0.3854166666666667,
+      0.6354166666666666,
+      0.6354166666666666
+    ],
+    "occlusion_score": 0.3,
+    "inference_mode": "FIXTURE"
+  },
+  {
+    "schema_version": "1.0",
+    "created_at": "2026-10-09T17:00:00.036000Z",
+    "content_sha256": "ca181291baae518d1ba95c388fa9aaf18ad2696e001f971bf88b83e900f92af6",
+    "detection_id": "01a1219b-7a82-79da-8f07-90db58d0d668",
+    "video_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b",
+    "frame_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b:f35",
+    "pts_us": 2333333,
+    "model_id": "fixture/synthetic-gt-detector-v1",
+    "model_sha256": null,
+    "class_id": 0,
+    "class_name": "license_plate",
+    "confidence": 0.6544,
+    "bbox_px": [
+      85,
+      111,
+      305,
+      183
+    ],
+    "bbox_norm": [
+      0.17708333333333334,
+      0.3854166666666667,
+      0.6354166666666666,
+      0.6354166666666666
+    ],
+    "occlusion_score": null,
+    "inference_mode": "FIXTURE"
+  },
+  {
+    "schema_version": "1.0",
+    "created_at": "2026-10-09T17:00:00.037000Z",
+    "content_sha256": "d4a91694b01f56ec64fc116ed2c7351e54df354479ed198723ae299104ec3378",
+    "detection_id": "01a1219b-7a82-7c55-af7d-7dade00a89f0",
+    "video_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b",
+    "frame_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b:f36",
+    "pts_us": 2400000,
+    "model_id": "fixture/synthetic-gt-detector-v1",
+    "model_sha256": null,
+    "class_id": 0,
+    "class_name": "license_plate",
+    "confidence": 0.6242,
+    "bbox_px": [
+      86,
+      111,
+      306,
+      183
+    ],
+    "bbox_norm": [
+      0.17916666666666667,
+      0.3854166666666667,
+      0.6375,
+      0.6354166666666666
+    ],
+    "occlusion_score": null,
+    "inference_mode": "FIXTURE"
+  },
+  {
+    "schema_version": "1.0",
+    "created_at": "2026-10-09T17:00:00.038000Z",
+    "content_sha256": "c0541fa18b5c617904e074665b1b8acccf3156699bfbee8d8efd20c0bde09204",
+    "detection_id": "01a1219b-7a82-73ce-9a7a-17375b7d8dbe",
+    "video_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b",
+    "frame_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b:f37",
+    "pts_us": 2466666,
+    "model_id": "fixture/synthetic-gt-detector-v1",
+    "model_sha256": null,
+    "class_id": 0,
+    "class_name": "license_plate",
+    "confidence": 0.594,
+    "bbox_px": [
+      86,
+      111,
+      306,
+      183
+    ],
+    "bbox_norm": [
+      0.17916666666666667,
+      0.3854166666666667,
+      0.6375,
+      0.6354166666666666
+    ],
+    "occlusion_score": null,
+    "inference_mode": "FIXTURE"
+  },
+  {
+    "schema_version": "1.0",
+    "created_at": "2026-10-09T17:00:00.039000Z",
+    "content_sha256": "eb3e931f446b4f21fbdc81b606fa404a42c2db1dc04a9f8a9ba7d647a236dde2",
+    "detection_id": "01a1219b-7a82-7698-b44b-ded8bfed5ffb",
+    "video_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b",
+    "frame_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b:f38",
+    "pts_us": 2533333,
+    "model_id": "fixture/synthetic-gt-detector-v1",
+    "model_sha256": null,
+    "class_id": 0,
+    "class_name": "license_plate",
+    "confidence": 0.6195,
+    "bbox_px": [
+      87,
+      112,
+      307,
+      184
+    ],
+    "bbox_norm": [
+      0.18125,
+      0.3888888888888889,
+      0.6395833333333333,
+      0.6388888888888888
+    ],
+    "occlusion_score": null,
+    "inference_mode": "FIXTURE"
+  },
+  {
+    "schema_version": "1.0",
+    "created_at": "2026-10-09T17:00:00.040000Z",
+    "content_sha256": "e7ef4886e3d8b63fade36c867a4fc841ee54942bccba1aad55346144ce91f394",
+    "detection_id": "01a1219b-7a82-7dd1-b674-8628525051ff",
+    "video_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b",
+    "frame_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b:f39",
+    "pts_us": 2600000,
+    "model_id": "fixture/synthetic-gt-detector-v1",
+    "model_sha256": null,
+    "class_id": 0,
+    "class_name": "license_plate",
+    "confidence": 0.6275,
+    "bbox_px": [
+      88,
+      112,
+      308,
+      184
+    ],
+    "bbox_norm": [
+      0.18333333333333332,
+      0.3888888888888889,
+      0.6416666666666667,
+      0.6388888888888888
+    ],
+    "occlusion_score": null,
+    "inference_mode": "FIXTURE"
+  },
+  {
+    "schema_version": "1.0",
+    "created_at": "2026-10-09T17:00:00.041000Z",
+    "content_sha256": "b7a0fb009cfc5a3b1de467461a9b21660a1291999842b3f7919e85b079812f06",
+    "detection_id": "01a1219b-7a82-74ec-a9a6-92aca73feecb",
+    "video_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b",
+    "frame_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b:f40",
+    "pts_us": 2666666,
+    "model_id": "fixture/synthetic-gt-detector-v1",
+    "model_sha256": null,
+    "class_id": 0,
+    "class_name": "license_plate",
+    "confidence": 0.8768,
+    "bbox_px": [
+      88,
+      112,
+      308,
+      184
+    ],
+    "bbox_norm": [
+      0.18333333333333332,
+      0.3888888888888889,
+      0.6416666666666667,
+      0.6388888888888888
+    ],
+    "occlusion_score": null,
+    "inference_mode": "FIXTURE"
+  },
+  {
+    "schema_version": "1.0",
+    "created_at": "2026-10-09T17:00:00.042000Z",
+    "content_sha256": "71e0e46665356e48770a175848d082e21e9f1ed92592e26d76701f2e77a209d1",
+    "detection_id": "01a1219b-7a82-755a-a34b-03e29c44c26f",
+    "video_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b",
+    "frame_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b:f41",
+    "pts_us": 2733333,
+    "model_id": "fixture/synthetic-gt-detector-v1",
+    "model_sha256": null,
+    "class_id": 0,
+    "class_name": "license_plate",
+    "confidence": 0.6694,
+    "bbox_px": [
+      89,
+      112,
+      309,
+      184
+    ],
+    "bbox_norm": [
+      0.18541666666666667,
+      0.3888888888888889,
+      0.64375,
+      0.6388888888888888
+    ],
+    "occlusion_score": null,
+    "inference_mode": "FIXTURE"
+  },
+  {
+    "schema_version": "1.0",
+    "created_at": "2026-10-09T17:00:00.043000Z",
+    "content_sha256": "f25151e046eb6a7455330516ef6f8679596bcfce098cb9205c8e60d0317581ae",
+    "detection_id": "01a1219b-7a82-7f7f-836b-998335ca3859",
+    "video_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b",
+    "frame_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b:f42",
+    "pts_us": 2800000,
+    "model_id": "fixture/synthetic-gt-detector-v1",
+    "model_sha256": null,
+    "class_id": 0,
+    "class_name": "license_plate",
+    "confidence": 0.6374,
+    "bbox_px": [
+      89,
+      113,
+      309,
+      185
+    ],
+    "bbox_norm": [
+      0.18541666666666667,
+      0.3923611111111111,
+      0.64375,
+      0.6423611111111112
+    ],
+    "occlusion_score": null,
+    "inference_mode": "FIXTURE"
+  },
+  {
+    "schema_version": "1.0",
+    "created_at": "2026-10-09T17:00:00.044000Z",
+    "content_sha256": "3995b295de1a7b2cccc5e3c29522ce860f8d08bf6fd54e94779622b5ea9a2026",
+    "detection_id": "01a1219b-7a82-77db-b17a-406dbac25b8c",
+    "video_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b",
+    "frame_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b:f43",
+    "pts_us": 2866666,
+    "model_id": "fixture/synthetic-gt-detector-v1",
+    "model_sha256": null,
+    "class_id": 0,
+    "class_name": "license_plate",
+    "confidence": 0.8635,
+    "bbox_px": [
+      90,
+      113,
+      310,
+      185
+    ],
+    "bbox_norm": [
+      0.1875,
+      0.3923611111111111,
+      0.6458333333333334,
+      0.6423611111111112
+    ],
+    "occlusion_score": null,
+    "inference_mode": "FIXTURE"
+  },
+  {
+    "schema_version": "1.0",
+    "created_at": "2026-10-09T17:00:00.045000Z",
+    "content_sha256": "4ec3d645d5fa00544481fe94b45fbf69e0cbc873c50fab5e4691c072185ab025",
+    "detection_id": "01a1219b-7a82-7b3f-9a40-178ec85654d0",
+    "video_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b",
+    "frame_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b:f44",
+    "pts_us": 2933333,
+    "model_id": "fixture/synthetic-gt-detector-v1",
+    "model_sha256": null,
+    "class_id": 0,
+    "class_name": "license_plate",
+    "confidence": 0.6571,
+    "bbox_px": [
+      91,
+      113,
+      311,
+      185
+    ],
+    "bbox_norm": [
+      0.18958333333333333,
+      0.3923611111111111,
+      0.6479166666666667,
+      0.6423611111111112
+    ],
+    "occlusion_score": null,
+    "inference_mode": "FIXTURE"
+  },
+  {
+    "schema_version": "1.0",
+    "created_at": "2026-10-09T17:00:00.046000Z",
+    "content_sha256": "eecda8a454c3cf5bd53b370b913e2a2db2c8e66d00115c88d464afbc6d0b7a7f",
+    "detection_id": "01a1219b-7a82-7f81-89b4-ae28bd0c4e02",
+    "video_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b",
+    "frame_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b:f45",
+    "pts_us": 3000000,
+    "model_id": "fixture/synthetic-gt-detector-v1",
+    "model_sha256": null,
+    "class_id": 0,
+    "class_name": "license_plate",
+    "confidence": 0.631,
+    "bbox_px": [
+      91,
+      113,
+      311,
+      185
+    ],
+    "bbox_norm": [
+      0.18958333333333333,
+      0.3923611111111111,
+      0.6479166666666667,
+      0.6423611111111112
+    ],
+    "occlusion_score": null,
+    "inference_mode": "FIXTURE"
+  },
+  {
+    "schema_version": "1.0",
+    "created_at": "2026-10-09T17:00:00.047000Z",
+    "content_sha256": "6f546afa944c3a98470297364bc0773e265c87e932af526999a2538e3d01e855",
+    "detection_id": "01a1219b-7a82-70b8-a7c5-0bf4193387a2",
+    "video_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b",
+    "frame_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b:f46",
+    "pts_us": 3066666,
+    "model_id": "fixture/synthetic-gt-detector-v1",
+    "model_sha256": null,
+    "class_id": 0,
+    "class_name": "license_plate",
+    "confidence": 0.6621,
+    "bbox_px": [
+      92,
+      113,
+      312,
+      185
+    ],
+    "bbox_norm": [
+      0.19166666666666668,
+      0.3923611111111111,
+      0.65,
+      0.6423611111111112
+    ],
+    "occlusion_score": null,
+    "inference_mode": "FIXTURE"
+  },
+  {
+    "schema_version": "1.0",
+    "created_at": "2026-10-09T17:00:00.048000Z",
+    "content_sha256": "cbe0bff365d0c061b64cf60fd476c401e9eae8a2c0186a2221c0803d32f8fa6a",
+    "detection_id": "01a1219b-7a82-77d0-b47e-709d50b79f06",
+    "video_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b",
+    "frame_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b:f47",
+    "pts_us": 3133333,
+    "model_id": "fixture/synthetic-gt-detector-v1",
+    "model_sha256": null,
+    "class_id": 0,
+    "class_name": "license_plate",
+    "confidence": 0.6459,
+    "bbox_px": [
+      92,
+      113,
+      312,
+      185
+    ],
+    "bbox_norm": [
+      0.19166666666666668,
+      0.3923611111111111,
+      0.65,
+      0.6423611111111112
+    ],
+    "occlusion_score": null,
+    "inference_mode": "FIXTURE"
+  },
+  {
+    "schema_version": "1.0",
+    "created_at": "2026-10-09T17:00:00.049000Z",
+    "content_sha256": "949b3de46380c13adda45087304f2965e2ed35f7575f42f64a5b2cc43800db2c",
+    "detection_id": "01a1219b-7a82-7342-ab7f-755c06c32617",
+    "video_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b",
+    "frame_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b:f48",
+    "pts_us": 3200000,
+    "model_id": "fixture/synthetic-gt-detector-v1",
+    "model_sha256": null,
+    "class_id": 0,
+    "class_name": "license_plate",
+    "confidence": 0.673,
+    "bbox_px": [
+      93,
+      114,
+      313,
+      186
+    ],
+    "bbox_norm": [
+      0.19375,
+      0.3958333333333333,
+      0.6520833333333333,
+      0.6458333333333334
+    ],
+    "occlusion_score": null,
+    "inference_mode": "FIXTURE"
+  },
+  {
+    "schema_version": "1.0",
+    "created_at": "2026-10-09T17:00:00.050000Z",
+    "content_sha256": "ed4a0df5fc61bdcf53f7bd51aa206bf034a3440678c6c1bea7c43881fffbcfc3",
+    "detection_id": "01a1219b-7a82-7688-b1b3-2d890e34c20d",
+    "video_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b",
+    "frame_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b:f49",
+    "pts_us": 3266666,
+    "model_id": "fixture/synthetic-gt-detector-v1",
+    "model_sha256": null,
+    "class_id": 0,
+    "class_name": "license_plate",
+    "confidence": 0.67,
+    "bbox_px": [
+      94,
+      114,
+      314,
+      186
+    ],
+    "bbox_norm": [
+      0.19583333333333333,
+      0.3958333333333333,
+      0.6541666666666667,
+      0.6458333333333334
+    ],
+    "occlusion_score": null,
+    "inference_mode": "FIXTURE"
+  },
+  {
+    "schema_version": "1.0",
+    "created_at": "2026-10-09T17:00:00.051000Z",
+    "content_sha256": "14e981023a1b5871a113a7c796ffd1d46e60fcde34432ad36c2aa30bda49d445",
+    "detection_id": "01a1219b-7a82-75ba-8e96-dfb19f5dab72",
+    "video_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b",
+    "frame_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b:f50",
+    "pts_us": 3333333,
+    "model_id": "fixture/synthetic-gt-detector-v1",
+    "model_sha256": null,
+    "class_id": 0,
+    "class_name": "license_plate",
+    "confidence": 0.611,
+    "bbox_px": [
+      94,
+      114,
+      314,
+      186
+    ],
+    "bbox_norm": [
+      0.19583333333333333,
+      0.3958333333333333,
+      0.6541666666666667,
+      0.6458333333333334
+    ],
+    "occlusion_score": null,
+    "inference_mode": "FIXTURE"
+  },
+  {
+    "schema_version": "1.0",
+    "created_at": "2026-10-09T17:00:00.052000Z",
+    "content_sha256": "80b139a697b6f5e44cb707831c774110b04291acc331cf46bce2babe16208f0e",
+    "detection_id": "01a1219b-7a82-7e01-9fea-aa84e2871dba",
+    "video_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b",
+    "frame_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b:f51",
+    "pts_us": 3400000,
+    "model_id": "fixture/synthetic-gt-detector-v1",
+    "model_sha256": null,
+    "class_id": 0,
+    "class_name": "license_plate",
+    "confidence": 0.6495,
+    "bbox_px": [
+      95,
+      114,
+      315,
+      186
+    ],
+    "bbox_norm": [
+      0.19791666666666666,
+      0.3958333333333333,
+      0.65625,
+      0.6458333333333334
+    ],
+    "occlusion_score": null,
+    "inference_mode": "FIXTURE"
+  },
+  {
+    "schema_version": "1.0",
+    "created_at": "2026-10-09T17:00:00.055000Z",
+    "content_sha256": "006fa28af3fd61fb4a53c32f6c18c0c6cd2afddc33137569cccd885d66c19036",
+    "detection_id": "01a1219b-7a82-7e51-8756-6343eab79f62",
+    "video_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b",
+    "frame_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b:f54",
+    "pts_us": 3600000,
+    "model_id": "fixture/synthetic-gt-detector-v1",
+    "model_sha256": null,
+    "class_id": 0,
+    "class_name": "license_plate",
+    "confidence": 0.6403,
+    "bbox_px": [
+      97,
+      113,
+      317,
+      185
+    ],
+    "bbox_norm": [
+      0.20208333333333334,
+      0.3923611111111111,
+      0.6604166666666667,
+      0.6423611111111112
+    ],
+    "occlusion_score": null,
+    "inference_mode": "FIXTURE"
+  },
+  {
+    "schema_version": "1.0",
+    "created_at": "2026-10-09T17:00:00.056000Z",
+    "content_sha256": "bd2ad3a579432cf990912fefe6aaa0ff8c8c6f95281a4dd06a86418bec97eee3",
+    "detection_id": "01a1219b-7a82-72e5-8b4b-e2d27d3b2e2b",
+    "video_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b",
+    "frame_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b:f55",
+    "pts_us": 3666666,
+    "model_id": "fixture/synthetic-gt-detector-v1",
+    "model_sha256": null,
+    "class_id": 0,
+    "class_name": "license_plate",
+    "confidence": 0.6559,
+    "bbox_px": [
+      97,
+      113,
+      317,
+      185
+    ],
+    "bbox_norm": [
+      0.20208333333333334,
+      0.3923611111111111,
+      0.6604166666666667,
+      0.6423611111111112
+    ],
+    "occlusion_score": null,
+    "inference_mode": "FIXTURE"
+  },
+  {
+    "schema_version": "1.0",
+    "created_at": "2026-10-09T17:00:00.057000Z",
+    "content_sha256": "b3e077bdca62198d7b849b6b709967beb6f66d5d232d17651fc9f69bb77a474d",
+    "detection_id": "01a1219b-7a82-7e2a-8ba7-a5a372c41c48",
+    "video_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b",
+    "frame_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b:f56",
+    "pts_us": 3733333,
+    "model_id": "fixture/synthetic-gt-detector-v1",
+    "model_sha256": null,
+    "class_id": 0,
+    "class_name": "license_plate",
+    "confidence": 0.6297,
+    "bbox_px": [
+      98,
+      113,
+      318,
+      185
+    ],
+    "bbox_norm": [
+      0.20416666666666666,
+      0.3923611111111111,
+      0.6625,
+      0.6423611111111112
+    ],
+    "occlusion_score": null,
+    "inference_mode": "FIXTURE"
+  },
+  {
+    "schema_version": "1.0",
+    "created_at": "2026-10-09T17:00:00.058000Z",
+    "content_sha256": "fc1eae09c6d00b6eadbaedfd7068e8f31ee120d0b4aecabd0ed4e78cb5168d3e",
+    "detection_id": "01a1219b-7a82-7432-b826-219e48218423",
+    "video_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b",
+    "frame_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b:f57",
+    "pts_us": 3800000,
+    "model_id": "fixture/synthetic-gt-detector-v1",
+    "model_sha256": null,
+    "class_id": 0,
+    "class_name": "license_plate",
+    "confidence": 0.6617,
+    "bbox_px": [
+      98,
+      113,
+      318,
+      185
+    ],
+    "bbox_norm": [
+      0.20416666666666666,
+      0.3923611111111111,
+      0.6625,
+      0.6423611111111112
+    ],
+    "occlusion_score": null,
+    "inference_mode": "FIXTURE"
+  },
+  {
+    "schema_version": "1.0",
+    "created_at": "2026-10-09T17:00:00.059000Z",
+    "content_sha256": "72236616453615a583fd0bbad627708eb0d84cf1eec8a8b0b24a877c584161dd",
+    "detection_id": "01a1219b-7a82-7da5-a35c-22096abeb9a9",
+    "video_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b",
+    "frame_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b:f58",
+    "pts_us": 3866666,
+    "model_id": "fixture/synthetic-gt-detector-v1",
+    "model_sha256": null,
+    "class_id": 0,
+    "class_name": "license_plate",
+    "confidence": 0.6234,
+    "bbox_px": [
+      99,
+      113,
+      319,
+      185
+    ],
+    "bbox_norm": [
+      0.20625,
+      0.3923611111111111,
+      0.6645833333333333,
+      0.6423611111111112
+    ],
+    "occlusion_score": null,
+    "inference_mode": "FIXTURE"
+  },
+  {
+    "schema_version": "1.0",
+    "created_at": "2026-10-09T17:00:00.060000Z",
+    "content_sha256": "5b6669e54bb041d5527cccedb3930afce6a3290184020c8cde3e117b061b92e4",
+    "detection_id": "01a1219b-7a82-786f-a3ae-4e9d0b21e42e",
+    "video_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b",
+    "frame_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b:f59",
+    "pts_us": 3933333,
+    "model_id": "fixture/synthetic-gt-detector-v1",
+    "model_sha256": null,
+    "class_id": 0,
+    "class_name": "license_plate",
+    "confidence": 0.6314,
+    "bbox_px": [
+      100,
+      112,
+      320,
+      184
+    ],
+    "bbox_norm": [
+      0.20833333333333334,
+      0.3888888888888889,
+      0.6666666666666666,
+      0.6388888888888888
+    ],
+    "occlusion_score": null,
+    "inference_mode": "FIXTURE"
+  },
+  {
+    "schema_version": "1.0",
+    "created_at": "2026-10-09T17:00:00.061000Z",
+    "content_sha256": "3a003e5ead394610306e198dab77cd342b6d15413ecc0df31e4ecacc1aaabe1d",
+    "detection_id": "01a1219b-7a82-7bc3-b174-b2673fd7f23d",
+    "video_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b",
+    "frame_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b:f60",
+    "pts_us": 4000000,
+    "model_id": "fixture/synthetic-gt-detector-v1",
+    "model_sha256": null,
+    "class_id": 0,
+    "class_name": "license_plate",
+    "confidence": 0.6321,
+    "bbox_px": [
+      100,
+      112,
+      320,
+      184
+    ],
+    "bbox_norm": [
+      0.20833333333333334,
+      0.3888888888888889,
+      0.6666666666666666,
+      0.6388888888888888
+    ],
+    "occlusion_score": null,
+    "inference_mode": "FIXTURE"
+  },
+  {
+    "schema_version": "1.0",
+    "created_at": "2026-10-09T17:00:00.062000Z",
+    "content_sha256": "54e68aab28509140199088fee641adefa731ec137d49acc1196431a3ccf35003",
+    "detection_id": "01a1219b-7a82-76dc-aba8-6d4c06560aca",
+    "video_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b",
+    "frame_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b:f61",
+    "pts_us": 4066666,
+    "model_id": "fixture/synthetic-gt-detector-v1",
+    "model_sha256": null,
+    "class_id": 0,
+    "class_name": "license_plate",
+    "confidence": 0.6673,
+    "bbox_px": [
+      101,
+      112,
+      321,
+      184
+    ],
+    "bbox_norm": [
+      0.21041666666666667,
+      0.3888888888888889,
+      0.66875,
+      0.6388888888888888
+    ],
+    "occlusion_score": null,
+    "inference_mode": "FIXTURE"
+  },
+  {
+    "schema_version": "1.0",
+    "created_at": "2026-10-09T17:00:00.063000Z",
+    "content_sha256": "be19aa95944efbd65bb9c21d931499df206ea6a439f7b73d66bb54deb674d859",
+    "detection_id": "01a1219b-7a82-72c5-b6f5-a8962b8e61e3",
+    "video_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b",
+    "frame_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b:f62",
+    "pts_us": 4133333,
+    "model_id": "fixture/synthetic-gt-detector-v1",
+    "model_sha256": null,
+    "class_id": 0,
+    "class_name": "license_plate",
+    "confidence": 0.6372,
+    "bbox_px": [
+      101,
+      112,
+      321,
+      184
+    ],
+    "bbox_norm": [
+      0.21041666666666667,
+      0.3888888888888889,
+      0.66875,
+      0.6388888888888888
+    ],
+    "occlusion_score": null,
+    "inference_mode": "FIXTURE"
+  },
+  {
+    "schema_version": "1.0",
+    "created_at": "2026-10-09T17:00:00.064000Z",
+    "content_sha256": "f98dffd54d7bfc4e0a71fb9584226c8dfafe00890513941ecb47b5fe275bfa16",
+    "detection_id": "01a1219b-7a82-7897-9d75-28c36ebbe3f3",
+    "video_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b",
+    "frame_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b:f63",
+    "pts_us": 4200000,
+    "model_id": "fixture/synthetic-gt-detector-v1",
+    "model_sha256": null,
+    "class_id": 0,
+    "class_name": "license_plate",
+    "confidence": 0.6284,
+    "bbox_px": [
+      102,
+      111,
+      322,
+      183
+    ],
+    "bbox_norm": [
+      0.2125,
+      0.3854166666666667,
+      0.6708333333333333,
+      0.6354166666666666
+    ],
+    "occlusion_score": null,
+    "inference_mode": "FIXTURE"
+  },
+  {
+    "schema_version": "1.0",
+    "created_at": "2026-10-09T17:00:00.065000Z",
+    "content_sha256": "14932d230a5921e75fed2b9df8c4285314b8b66caccbc5269dbe573733e07799",
+    "detection_id": "01a1219b-7a82-7f83-8491-5b70daa7f2d0",
+    "video_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b",
+    "frame_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b:f64",
+    "pts_us": 4266666,
+    "model_id": "fixture/synthetic-gt-detector-v1",
+    "model_sha256": null,
+    "class_id": 0,
+    "class_name": "license_plate",
+    "confidence": 0.6097,
+    "bbox_px": [
+      103,
+      111,
+      323,
+      183
+    ],
+    "bbox_norm": [
+      0.21458333333333332,
+      0.3854166666666667,
+      0.6729166666666667,
+      0.6354166666666666
+    ],
+    "occlusion_score": null,
+    "inference_mode": "FIXTURE"
+  },
+  {
+    "schema_version": "1.0",
+    "created_at": "2026-10-09T17:00:00.066000Z",
+    "content_sha256": "baeb6734d79cf7abda4fab3d5beaf8a3b590733da7c346efa204233a2cc2ffb0",
+    "detection_id": "01a1219b-7a82-7371-8c23-f739aa04c390",
+    "video_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b",
+    "frame_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b:f65",
+    "pts_us": 4333333,
+    "model_id": "fixture/synthetic-gt-detector-v1",
+    "model_sha256": null,
+    "class_id": 0,
+    "class_name": "license_plate",
+    "confidence": 0.6349,
+    "bbox_px": [
+      103,
+      111,
+      323,
+      183
+    ],
+    "bbox_norm": [
+      0.21458333333333332,
+      0.3854166666666667,
+      0.6729166666666667,
+      0.6354166666666666
+    ],
+    "occlusion_score": null,
+    "inference_mode": "FIXTURE"
+  },
+  {
+    "schema_version": "1.0",
+    "created_at": "2026-10-09T17:00:00.067000Z",
+    "content_sha256": "de1e960079ccaa8188eb1e5629ab60739258a5e0a58540f27d8e65367d597112",
+    "detection_id": "01a1219b-7a82-7a08-81cb-de3a43ff6e53",
+    "video_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b",
+    "frame_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b:f66",
+    "pts_us": 4400000,
+    "model_id": "fixture/synthetic-gt-detector-v1",
+    "model_sha256": null,
+    "class_id": 0,
+    "class_name": "license_plate",
+    "confidence": 0.6239,
+    "bbox_px": [
+      104,
+      111,
+      324,
+      183
+    ],
+    "bbox_norm": [
+      0.21666666666666667,
+      0.3854166666666667,
+      0.675,
+      0.6354166666666666
+    ],
+    "occlusion_score": null,
+    "inference_mode": "FIXTURE"
+  },
+  {
+    "schema_version": "1.0",
+    "created_at": "2026-10-09T17:00:00.068000Z",
+    "content_sha256": "fa378dda6a435b55ad7ace8eaa383ac43c4be97d94bcb672569e37b9d99b32ef",
+    "detection_id": "01a1219b-7a82-7939-9d1d-c0ec33fd94ce",
+    "video_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b",
+    "frame_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b:f67",
+    "pts_us": 4466666,
+    "model_id": "fixture/synthetic-gt-detector-v1",
+    "model_sha256": null,
+    "class_id": 0,
+    "class_name": "license_plate",
+    "confidence": 0.6699,
+    "bbox_px": [
+      104,
+      111,
+      324,
+      183
+    ],
+    "bbox_norm": [
+      0.21666666666666667,
+      0.3854166666666667,
+      0.675,
+      0.6354166666666666
+    ],
+    "occlusion_score": null,
+    "inference_mode": "FIXTURE"
+  },
+  {
+    "schema_version": "1.0",
+    "created_at": "2026-10-09T17:00:00.069000Z",
+    "content_sha256": "41d0a77680e66d54363732a5c665445134514704a18f45e8de800ad0998fc4c7",
+    "detection_id": "01a1219b-7a82-7cac-9986-382f7caf45fe",
+    "video_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b",
+    "frame_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b:f68",
+    "pts_us": 4533333,
+    "model_id": "fixture/synthetic-gt-detector-v1",
+    "model_sha256": null,
+    "class_id": 0,
+    "class_name": "license_plate",
+    "confidence": 0.6412,
+    "bbox_px": [
+      105,
+      111,
+      325,
+      183
+    ],
+    "bbox_norm": [
+      0.21875,
+      0.3854166666666667,
+      0.6770833333333334,
+      0.6354166666666666
+    ],
+    "occlusion_score": null,
+    "inference_mode": "FIXTURE"
+  },
+  {
+    "schema_version": "1.0",
+    "created_at": "2026-10-09T17:00:00.070000Z",
+    "content_sha256": "0c6785ecca1ba8581db35488d10d7c695b2ff1057c166e980f1bd003fbfa01dd",
+    "detection_id": "01a1219b-7a82-7de5-b18c-481811c749d0",
+    "video_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b",
+    "frame_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b:f69",
+    "pts_us": 4600000,
+    "model_id": "fixture/synthetic-gt-detector-v1",
+    "model_sha256": null,
+    "class_id": 0,
+    "class_name": "license_plate",
+    "confidence": 0.6625,
+    "bbox_px": [
+      106,
+      111,
+      326,
+      183
+    ],
+    "bbox_norm": [
+      0.22083333333333333,
+      0.3854166666666667,
+      0.6791666666666667,
+      0.6354166666666666
+    ],
+    "occlusion_score": null,
+    "inference_mode": "FIXTURE"
+  },
+  {
+    "schema_version": "1.0",
+    "created_at": "2026-10-09T17:00:00.071000Z",
+    "content_sha256": "f7eb03420df78e7e07f7ead0769ee2697ff3017e37e67e844713a8f1c0c9346b",
+    "detection_id": "01a1219b-7a82-7995-9d6c-a7009c195a32",
+    "video_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b",
+    "frame_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b:f70",
+    "pts_us": 4666666,
+    "model_id": "fixture/synthetic-gt-detector-v1",
+    "model_sha256": null,
+    "class_id": 0,
+    "class_name": "license_plate",
+    "confidence": 0.6474,
+    "bbox_px": [
+      106,
+      111,
+      326,
+      183
+    ],
+    "bbox_norm": [
+      0.22083333333333333,
+      0.3854166666666667,
+      0.6791666666666667,
+      0.6354166666666666
+    ],
+    "occlusion_score": null,
+    "inference_mode": "FIXTURE"
+  },
+  {
+    "schema_version": "1.0",
+    "created_at": "2026-10-09T17:00:00.072000Z",
+    "content_sha256": "c8d1f11bfbb9d8b0ccd9019bf252e9462085c36a1574d552a5a80e2c1d33a0da",
+    "detection_id": "01a1219b-7a82-76f3-9b90-11ecf78175a1",
+    "video_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b",
+    "frame_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b:f71",
+    "pts_us": 4733333,
+    "model_id": "fixture/synthetic-gt-detector-v1",
+    "model_sha256": null,
+    "class_id": 0,
+    "class_name": "license_plate",
+    "confidence": 0.6345,
+    "bbox_px": [
+      107,
+      111,
+      327,
+      183
+    ],
+    "bbox_norm": [
+      0.22291666666666668,
+      0.3854166666666667,
+      0.68125,
+      0.6354166666666666
+    ],
+    "occlusion_score": null,
+    "inference_mode": "FIXTURE"
+  },
+  {
+    "schema_version": "1.0",
+    "created_at": "2026-10-09T17:00:00.073000Z",
+    "content_sha256": "b117b95ca3fa05ae5446014e7b1bfd51540f7b4b75f3644c1d4b5d02c6e92ab4",
+    "detection_id": "01a1219b-7a82-7ecf-b867-6988f23d4087",
+    "video_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b",
+    "frame_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b:f72",
+    "pts_us": 4800000,
+    "model_id": "fixture/synthetic-gt-detector-v1",
+    "model_sha256": null,
+    "class_id": 0,
+    "class_name": "license_plate",
+    "confidence": 0.6452,
+    "bbox_px": [
+      107,
+      111,
+      327,
+      183
+    ],
+    "bbox_norm": [
+      0.22291666666666668,
+      0.3854166666666667,
+      0.68125,
+      0.6354166666666666
+    ],
+    "occlusion_score": null,
+    "inference_mode": "FIXTURE"
+  },
+  {
+    "schema_version": "1.0",
+    "created_at": "2026-10-09T17:00:00.074000Z",
+    "content_sha256": "31dde8ffbc9990f0387b2ed291c6d8513ddf00616289f34e8a3b5eb6d678df21",
+    "detection_id": "01a1219b-7a82-73d5-a6cb-5978db87678d",
+    "video_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b",
+    "frame_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b:f73",
+    "pts_us": 4866666,
+    "model_id": "fixture/synthetic-gt-detector-v1",
+    "model_sha256": null,
+    "class_id": 0,
+    "class_name": "license_plate",
+    "confidence": 0.656,
+    "bbox_px": [
+      108,
+      111,
+      328,
+      183
+    ],
+    "bbox_norm": [
+      0.225,
+      0.3854166666666667,
+      0.6833333333333333,
+      0.6354166666666666
+    ],
+    "occlusion_score": null,
+    "inference_mode": "FIXTURE"
+  },
+  {
+    "schema_version": "1.0",
+    "created_at": "2026-10-09T17:00:00.075000Z",
+    "content_sha256": "32b50d1783a239b4072ebfd7bad31515ce7bdbb253b3be2abd16be48ff23169f",
+    "detection_id": "01a1219b-7a82-7e7e-9242-965ec76a033f",
+    "video_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b",
+    "frame_id": "01a1219b-7a80-79a4-8c6a-74e9f9284d8b:f74",
+    "pts_us": 4933333,
+    "model_id": "fixture/synthetic-gt-detector-v1",
+    "model_sha256": null,
+    "class_id": 0,
+    "class_name": "license_plate",
+    "confidence": 0.6395,
+    "bbox_px": [
+      109,
+      111,
+      329,
+      183
+    ],
+    "bbox_norm": [
+      0.22708333333333333,
+      0.3854166666666667,
+      0.6854166666666667,
+      0.6354166666666666
+    ],
+    "occlusion_score": null,
+    "inference_mode": "FIXTURE"
+  }
+]

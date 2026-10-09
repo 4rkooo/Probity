@@ -1,0 +1,107 @@
+{
+  "base": "person2/trueframe",
+  "frozen": [
+    "pyproject.toml",
+    "uv.lock",
+    ".gitattributes",
+    "config/**",
+    "contracts/**",
+    "fixtures/schema/**",
+    "fixtures/demo/**",
+    "fixtures/synthetic/**",
+    "src/probity/domain/**",
+    "src/probity/ports.py",
+    "src/probity/reconstruction/types.py",
+    "src/probity/reconstruction/__init__.py",
+    "src/probity/reconstruction/decisions.py",
+    "src/probity/reconstruction/determinism.py",
+    "src/probity/reconstruction/io.py",
+    "src/probity/reconstruction/quality.py",
+    "src/probity/reconstruction/tracking.py",
+    "src/probity/reconstruction/preflight.py",
+    "src/probity/eval/__init__.py",
+    "src/probity/eval/synth.py",
+    "src/probity/eval/window.py",
+    "tests/unit/reconstruction/conftest.py",
+    "tests/unit/reconstruction/test_guards.py",
+    "scripts/check_lane.py",
+    "scripts/lanes.json",
+    "scripts/golden_hashes.json",
+    "scripts/frozen_hashes.json",
+    "scripts/make_worktrees.ps1",
+    "docs/person2-lanes.md"
+  ],
+  "lanes": {
+    "b": {
+      "title": "AKAZE/RANSAC alignment, one ECC fallback, bounded color fit (kickoff steps 4-5)",
+      "allow": [
+        "src/probity/reconstruction/align.py",
+        "src/probity/reconstruction/color.py",
+        "tests/unit/reconstruction/lane_b/**",
+        "notes/lane-b.md",
+        "notes/lane-b-requests.md"
+      ]
+    },
+    "c": {
+      "title": "Donor ranking and 8x8 winner-take-all tile fusion (kickoff step 6)",
+      "allow": [
+        "src/probity/reconstruction/fuse.py",
+        "tests/unit/reconstruction/lane_c/**",
+        "notes/lane-c.md",
+        "notes/lane-c-requests.md"
+      ]
+    },
+    "d": {
+      "title": "Provenance writer/validator and integrity-v1",
+      "allow": [
+        "src/probity/reconstruction/provenance.py",
+        "src/probity/reconstruction/integrity.py",
+        "tests/unit/reconstruction/lane_d/**",
+        "notes/lane-d.md",
+        "notes/lane-d-requests.md"
+      ]
+    },
+    "e": {
+      "title": "Real-ESRGAN baseline isolation and evaluation metrics (kickoff step 9)",
+      "allow": [
+        "src/probity/reconstruction/baseline.py",
+        "src/probity/eval/metrics.py",
+        "tests/unit/reconstruction/lane_e/**",
+        "notes/lane-e.md",
+        "notes/lane-e-requests.md"
+      ]
+    },
+    "integrator": {
+      "title": "INTEGRATOR (sequential, after B-E merge): trueframe.py, revert-only validation pass, golden regeneration",
+      "allow": [
+        "src/probity/reconstruction/trueframe.py",
+        "src/probity/reconstruction/validate.py",
+        "src/probity/eval/handbuilt_runs.py",
+        "tests/integration/test_trueframe.py",
+        "tests/unit/reconstruction/test_golden_runs.py",
+        "tests/unit/reconstruction/integrator/**",
+        "NOTES-person2.md",
+        "notes/**"
+      ],
+      "frozen_exempt": [
+        "fixtures/synthetic/*/reconstructions/**",
+        "fixtures/demo/detections/**",
+        "fixtures/demo/tracks/**",
+        "fixtures/demo/reconstructions/**",
+        "fixtures/demo/frames/**",
+        "scripts/golden_hashes.json"
+      ]
+    },
+    "f": {
+      "title": "YOLO/ByteTrack live and fixture adapters (only after the integrator is green)",
+      "allow": [
+        "src/probity/adapters/live/yolo.py",
+        "src/probity/adapters/fixture/yolo.py",
+        "tests/contract/test_detector_tracker.py",
+        "tests/unit/reconstruction/lane_f/**",
+        "notes/lane-f.md",
+        "notes/lane-f-requests.md"
+      ]
+    }
+  }
+}

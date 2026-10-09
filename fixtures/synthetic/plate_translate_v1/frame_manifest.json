@@ -1,0 +1,611 @@
+{
+  "schema_version": "1.0",
+  "created_at": "2026-10-09T17:00:00.000000Z",
+  "content_sha256": "2465e52957531e4960938a7993b66e9d94ab8379c6f6918946e4c24e1f4e7a54",
+  "video_id": "01a1219b-7a80-7bd1-b62c-670da892173e",
+  "source_sha256": "d31ad69e9591d11df9dd7a1a4d7301d9092790c3868a547430879f85f5addf05",
+  "time_base": "1/15",
+  "extractor": "probity-synth-v1 (lossless PNG sequence, no container)",
+  "frames": [
+    {
+      "frame_number": 0,
+      "pts_us": 0,
+      "pts": 0,
+      "is_keyframe": true,
+      "width_px": 480,
+      "height_px": 288
+    },
+    {
+      "frame_number": 1,
+      "pts_us": 66666,
+      "pts": 1,
+      "is_keyframe": true,
+      "width_px": 480,
+      "height_px": 288
+    },
+    {
+      "frame_number": 2,
+      "pts_us": 133333,
+      "pts": 2,
+      "is_keyframe": true,
+      "width_px": 480,
+      "height_px": 288
+    },
+    {
+      "frame_number": 3,
+      "pts_us": 200000,
+      "pts": 3,
+      "is_keyframe": true,
+      "width_px": 480,
+      "height_px": 288
+    },
+    {
+      "frame_number": 4,
+      "pts_us": 266666,
+      "pts": 4,
+      "is_keyframe": true,
+      "width_px": 480,
+      "height_px": 288
+    },
+    {
+      "frame_number": 5,
+      "pts_us": 333333,
+      "pts": 5,
+      "is_keyframe": true,
+      "width_px": 480,
+      "height_px": 288
+    },
+    {
+      "frame_number": 6,
+      "pts_us": 400000,
+      "pts": 6,
+      "is_keyframe": true,
+      "width_px": 480,
+      "height_px": 288
+    },
+    {
+      "frame_number": 7,
+      "pts_us": 466666,
+      "pts": 7,
+      "is_keyframe": true,
+      "width_px": 480,
+      "height_px": 288
+    },
+    {
+      "frame_number": 8,
+      "pts_us": 533333,
+      "pts": 8,
+      "is_keyframe": true,
+      "width_px": 480,
+      "height_px": 288
+    },
+    {
+      "frame_number": 9,
+      "pts_us": 600000,
+      "pts": 9,
+      "is_keyframe": true,
+      "width_px": 480,
+      "height_px": 288
+    },
+    {
+      "frame_number": 10,
+      "pts_us": 666666,
+      "pts": 10,
+      "is_keyframe": true,
+      "width_px": 480,
+      "height_px": 288
+    },
+    {
+      "frame_number": 11,
+      "pts_us": 733333,
+      "pts": 11,
+      "is_keyframe": true,
+      "width_px": 480,
+      "height_px": 288
+    },
+    {
+      "frame_number": 12,
+      "pts_us": 800000,
+      "pts": 12,
+      "is_keyframe": true,
+      "width_px": 480,
+      "height_px": 288
+    },
+    {
+      "frame_number": 13,
+      "pts_us": 866666,
+      "pts": 13,
+      "is_keyframe": true,
+      "width_px": 480,
+      "height_px": 288
+    },
+    {
+      "frame_number": 14,
+      "pts_us": 933333,
+      "pts": 14,
+      "is_keyframe": true,
+      "width_px": 480,
+      "height_px": 288
+    },
+    {
+      "frame_number": 15,
+      "pts_us": 1000000,
+      "pts": 15,
+      "is_keyframe": true,
+      "width_px": 480,
+      "height_px": 288
+    },
+    {
+      "frame_number": 16,
+      "pts_us": 1066666,
+      "pts": 16,
+      "is_keyframe": true,
+      "width_px": 480,
+      "height_px": 288
+    },
+    {
+      "frame_number": 17,
+      "pts_us": 1133333,
+      "pts": 17,
+      "is_keyframe": true,
+      "width_px": 480,
+      "height_px": 288
+    },
+    {
+      "frame_number": 18,
+      "pts_us": 1200000,
+      "pts": 18,
+      "is_keyframe": true,
+      "width_px": 480,
+      "height_px": 288
+    },
+    {
+      "frame_number": 19,
+      "pts_us": 1266666,
+      "pts": 19,
+      "is_keyframe": true,
+      "width_px": 480,
+      "height_px": 288
+    },
+    {
+      "frame_number": 20,
+      "pts_us": 1333333,
+      "pts": 20,
+      "is_keyframe": true,
+      "width_px": 480,
+      "height_px": 288
+    },
+    {
+      "frame_number": 21,
+      "pts_us": 1400000,
+      "pts": 21,
+      "is_keyframe": true,
+      "width_px": 480,
+      "height_px": 288
+    },
+    {
+      "frame_number": 22,
+      "pts_us": 1466666,
+      "pts": 22,
+      "is_keyframe": true,
+      "width_px": 480,
+      "height_px": 288
+    },
+    {
+      "frame_number": 23,
+      "pts_us": 1533333,
+      "pts": 23,
+      "is_keyframe": true,
+      "width_px": 480,
+      "height_px": 288
+    },
+    {
+      "frame_number": 24,
+      "pts_us": 1600000,
+      "pts": 24,
+      "is_keyframe": true,
+      "width_px": 480,
+      "height_px": 288
+    },
+    {
+      "frame_number": 25,
+      "pts_us": 1666666,
+      "pts": 25,
+      "is_keyframe": true,
+      "width_px": 480,
+      "height_px": 288
+    },
+    {
+      "frame_number": 26,
+      "pts_us": 1733333,
+      "pts": 26,
+      "is_keyframe": true,
+      "width_px": 480,
+      "height_px": 288
+    },
+    {
+      "frame_number": 27,
+      "pts_us": 1800000,
+      "pts": 27,
+      "is_keyframe": true,
+      "width_px": 480,
+      "height_px": 288
+    },
+    {
+      "frame_number": 28,
+      "pts_us": 1866666,
+      "pts": 28,
+      "is_keyframe": true,
+      "width_px": 480,
+      "height_px": 288
+    },
+    {
+      "frame_number": 29,
+      "pts_us": 1933333,
+      "pts": 29,
+      "is_keyframe": true,
+      "width_px": 480,
+      "height_px": 288
+    },
+    {
+      "frame_number": 30,
+      "pts_us": 2000000,
+      "pts": 30,
+      "is_keyframe": true,
+      "width_px": 480,
+      "height_px": 288
+    },
+    {
+      "frame_number": 31,
+      "pts_us": 2066666,
+      "pts": 31,
+      "is_keyframe": true,
+      "width_px": 480,
+      "height_px": 288
+    },
+    {
+      "frame_number": 32,
+      "pts_us": 2133333,
+      "pts": 32,
+      "is_keyframe": true,
+      "width_px": 480,
+      "height_px": 288
+    },
+    {
+      "frame_number": 33,
+      "pts_us": 2200000,
+      "pts": 33,
+      "is_keyframe": true,
+      "width_px": 480,
+      "height_px": 288
+    },
+    {
+      "frame_number": 34,
+      "pts_us": 2266666,
+      "pts": 34,
+      "is_keyframe": true,
+      "width_px": 480,
+      "height_px": 288
+    },
+    {
+      "frame_number": 35,
+      "pts_us": 2333333,
+      "pts": 35,
+      "is_keyframe": true,
+      "width_px": 480,
+      "height_px": 288
+    },
+    {
+      "frame_number": 36,
+      "pts_us": 2400000,
+      "pts": 36,
+      "is_keyframe": true,
+      "width_px": 480,
+      "height_px": 288
+    },
+    {
+      "frame_number": 37,
+      "pts_us": 2466666,
+      "pts": 37,
+      "is_keyframe": true,
+      "width_px": 480,
+      "height_px": 288
+    },
+    {
+      "frame_number": 38,
+      "pts_us": 2533333,
+      "pts": 38,
+      "is_keyframe": true,
+      "width_px": 480,
+      "height_px": 288
+    },
+    {
+      "frame_number": 39,
+      "pts_us": 2600000,
+      "pts": 39,
+      "is_keyframe": true,
+      "width_px": 480,
+      "height_px": 288
+    },
+    {
+      "frame_number": 40,
+      "pts_us": 2666666,
+      "pts": 40,
+      "is_keyframe": true,
+      "width_px": 480,
+      "height_px": 288
+    },
+    {
+      "frame_number": 41,
+      "pts_us": 2733333,
+      "pts": 41,
+      "is_keyframe": true,
+      "width_px": 480,
+      "height_px": 288
+    },
+    {
+      "frame_number": 42,
+      "pts_us": 2800000,
+      "pts": 42,
+      "is_keyframe": true,
+      "width_px": 480,
+      "height_px": 288
+    },
+    {
+      "frame_number": 43,
+      "pts_us": 2866666,
+      "pts": 43,
+      "is_keyframe": true,
+      "width_px": 480,
+      "height_px": 288
+    },
+    {
+      "frame_number": 44,
+      "pts_us": 2933333,
+      "pts": 44,
+      "is_keyframe": true,
+      "width_px": 480,
+      "height_px": 288
+    },
+    {
+      "frame_number": 45,
+      "pts_us": 3000000,
+      "pts": 45,
+      "is_keyframe": true,
+      "width_px": 480,
+      "height_px": 288
+    },
+    {
+      "frame_number": 46,
+      "pts_us": 3066666,
+      "pts": 46,
+      "is_keyframe": true,
+      "width_px": 480,
+      "height_px": 288
+    },
+    {
+      "frame_number": 47,
+      "pts_us": 3133333,
+      "pts": 47,
+      "is_keyframe": true,
+      "width_px": 480,
+      "height_px": 288
+    },
+    {
+      "frame_number": 48,
+      "pts_us": 3200000,
+      "pts": 48,
+      "is_keyframe": true,
+      "width_px": 480,
+      "height_px": 288
+    },
+    {
+      "frame_number": 49,
+      "pts_us": 3266666,
+      "pts": 49,
+      "is_keyframe": true,
+      "width_px": 480,
+      "height_px": 288
+    },
+    {
+      "frame_number": 50,
+      "pts_us": 3333333,
+      "pts": 50,
+      "is_keyframe": true,
+      "width_px": 480,
+      "height_px": 288
+    },
+    {
+      "frame_number": 51,
+      "pts_us": 3400000,
+      "pts": 51,
+      "is_keyframe": true,
+      "width_px": 480,
+      "height_px": 288
+    },
+    {
+      "frame_number": 52,
+      "pts_us": 3466666,
+      "pts": 52,
+      "is_keyframe": true,
+      "width_px": 480,
+      "height_px": 288
+    },
+    {
+      "frame_number": 53,
+      "pts_us": 3533333,
+      "pts": 53,
+      "is_keyframe": true,
+      "width_px": 480,
+      "height_px": 288
+    },
+    {
+      "frame_number": 54,
+      "pts_us": 3600000,
+      "pts": 54,
+      "is_keyframe": true,
+      "width_px": 480,
+      "height_px": 288
+    },
+    {
+      "frame_number": 55,
+      "pts_us": 3666666,
+      "pts": 55,
+      "is_keyframe": true,
+      "width_px": 480,
+      "height_px": 288
+    },
+    {
+      "frame_number": 56,
+      "pts_us": 3733333,
+      "pts": 56,
+      "is_keyframe": true,
+      "width_px": 480,
+      "height_px": 288
+    },
+    {
+      "frame_number": 57,
+      "pts_us": 3800000,
+      "pts": 57,
+      "is_keyframe": true,
+      "width_px": 480,
+      "height_px": 288
+    },
+    {
+      "frame_number": 58,
+      "pts_us": 3866666,
+      "pts": 58,
+      "is_keyframe": true,
+      "width_px": 480,
+      "height_px": 288
+    },
+    {
+      "frame_number": 59,
+      "pts_us": 3933333,
+      "pts": 59,
+      "is_keyframe": true,
+      "width_px": 480,
+      "height_px": 288
+    },
+    {
+      "frame_number": 60,
+      "pts_us": 4000000,
+      "pts": 60,
+      "is_keyframe": true,
+      "width_px": 480,
+      "height_px": 288
+    },
+    {
+      "frame_number": 61,
+      "pts_us": 4066666,
+      "pts": 61,
+      "is_keyframe": true,
+      "width_px": 480,
+      "height_px": 288
+    },
+    {
+      "frame_number": 62,
+      "pts_us": 4133333,
+      "pts": 62,
+      "is_keyframe": true,
+      "width_px": 480,
+      "height_px": 288
+    },
+    {
+      "frame_number": 63,
+      "pts_us": 4200000,
+      "pts": 63,
+      "is_keyframe": true,
+      "width_px": 480,
+      "height_px": 288
+    },
+    {
+      "frame_number": 64,
+      "pts_us": 4266666,
+      "pts": 64,
+      "is_keyframe": true,
+      "width_px": 480,
+      "height_px": 288
+    },
+    {
+      "frame_number": 65,
+      "pts_us": 4333333,
+      "pts": 65,
+      "is_keyframe": true,
+      "width_px": 480,
+      "height_px": 288
+    },
+    {
+      "frame_number": 66,
+      "pts_us": 4400000,
+      "pts": 66,
+      "is_keyframe": true,
+      "width_px": 480,
+      "height_px": 288
+    },
+    {
+      "frame_number": 67,
+      "pts_us": 4466666,
+      "pts": 67,
+      "is_keyframe": true,
+      "width_px": 480,
+      "height_px": 288
+    },
+    {
+      "frame_number": 68,
+      "pts_us": 4533333,
+      "pts": 68,
+      "is_keyframe": true,
+      "width_px": 480,
+      "height_px": 288
+    },
+    {
+      "frame_number": 69,
+      "pts_us": 4600000,
+      "pts": 69,
+      "is_keyframe": true,
+      "width_px": 480,
+      "height_px": 288
+    },
+    {
+      "frame_number": 70,
+      "pts_us": 4666666,
+      "pts": 70,
+      "is_keyframe": true,
+      "width_px": 480,
+      "height_px": 288
+    },
+    {
+      "frame_number": 71,
+      "pts_us": 4733333,
+      "pts": 71,
+      "is_keyframe": true,
+      "width_px": 480,
+      "height_px": 288
+    },
+    {
+      "frame_number": 72,
+      "pts_us": 4800000,
+      "pts": 72,
+      "is_keyframe": true,
+      "width_px": 480,
+      "height_px": 288
+    },
+    {
+      "frame_number": 73,
+      "pts_us": 4866666,
+      "pts": 73,
+      "is_keyframe": true,
+      "width_px": 480,
+      "height_px": 288
+    },
+    {
+      "frame_number": 74,
+      "pts_us": 4933333,
+      "pts": 74,
+      "is_keyframe": true,
+      "width_px": 480,
+      "height_px": 288
+    }
+  ]
+}

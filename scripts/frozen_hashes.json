@@ -1,0 +1,104 @@
+{
+  "files": {
+    "config/policy.demo.yaml": "3f80c1fd27b382c49161012f5996b6bda0f5bd94abb897d5a5f64ede11d8ae43",
+    "contracts/openapi.json": "98f1f1fd3c92cc129501a1b4151be30bbd4be00bbb4da9e3fde3b85da84ebeef",
+    "contracts/schemas/AdapterHealth.schema.json": "a1ba3fddcfeb467d568504388adf3482b32a611a076a88c9375190f2fd3ed9ba",
+    "contracts/schemas/AssetRef.schema.json": "7e8e485076758ecaa511cde3881e8cdd0fa8750f2d5ac9d7a740e5f8476dcf42",
+    "contracts/schemas/CaseWorkspace.schema.json": "12e7d7bf629595e2a5bedc85f8389bfe99c18a4bea867bbe9fc5bb3ef091461e",
+    "contracts/schemas/Detection.schema.json": "23e9f10b95ee31ec7ea00504e688c89d9f8777ff4d8b3fba23dc57f71c9ccada",
+    "contracts/schemas/Embedding.schema.json": "a6fe41c799ea7aaf830195e16521811b3907495960e474e557ef9ef7ee991e26",
+    "contracts/schemas/EvidenceReport.schema.json": "8315ec63842d98e6529e1ab4368d0c711849b925782f0885c0e91d2c7fc41697",
+    "contracts/schemas/FrameManifest.schema.json": "54a7b3108ad9999ff960430d6a37d77e4451f76602b1019a27911aa31aae4c76",
+    "contracts/schemas/FrameReference.schema.json": "9260486edac68e1a73c6defecf29a5ee7f9b0ae9d0ddb9b9681ff7424b0c180d",
+    "contracts/schemas/HumanReview.schema.json": "a66a7cace25fc7e13b92e76d2ec31fb44c53c096301e8bec60563f4383569c99",
+    "contracts/schemas/JobEvent.schema.json": "3bdec7cdffb65fb28df1ba9d201f555cd90cebb2c87143fac75a0def24102980",
+    "contracts/schemas/JobView.schema.json": "db351a6fe08be8b85d0f5201e0bdea76ecd1d7474802a48dbe2bcb938f40a0c0",
+    "contracts/schemas/LineageRecord.schema.json": "5b8d72277eef23bd433002883182a309a2a29751d20811d0a316b5935b0188e4",
+    "contracts/schemas/PixelOrigin.schema.json": "396bcb5724603700d12b3a1636d3a834f8d7f0ad2d5bb5e4967a1125aa757d9f",
+    "contracts/schemas/PixelProvenance.schema.json": "afecb96a91bce4bb4b67da09c22d886412e607ae04ae5646ddf230f73f454a4e",
+    "contracts/schemas/PolicyConfig.schema.json": "00a0110d87b2d283d30f975842eadb4188ad3385fe4ab420bebe8bde4f9527c0",
+    "contracts/schemas/PolicyDecision.schema.json": "8294c937cef5597668ead999b16260f6c82bc0b6bdc8cee3582f6e5a5348474c",
+    "contracts/schemas/ReconstructionRun.schema.json": "aaf4d84f7bcb72c9e606bb22683439e25777b900b5b933ef48b640e3a1fcee0c",
+    "contracts/schemas/SearchEvidence.schema.json": "59a8574185152207b770408e6f79d0dd4079fc9f7109546b566c3c4500890130",
+    "contracts/schemas/SegmentDescription.schema.json": "dec4d5c21afd8a73531ebeb66b473c65b4fa1da804382755f83efc10f0589d57",
+    "contracts/schemas/SourceVideo.schema.json": "3934ba6669e10dc52dfb94ced6051084208468f91026e560356940f5bd754e18",
+    "contracts/schemas/Track.schema.json": "4e6073123621d8ac9c689c52be5c6d0ad1266c5fc823e691a2ea9234d0018672",
+    "contracts/schemas/VideoSegment.schema.json": "d436258d1a17b90e0da845d27a072e599ec8a85019086f67ab52250c801be5fb",
+    "fixtures/schema/catalog.schema.json": "d2024034679f697e12bffb3a7de72722ffedb68a6e39d39f7cab09964c8ce2bc",
+    "fixtures/schema/manifest.schema.json": "a05e1c0da32ef7f346bb0de68731d494b062f0a8f172985af8dfeb1f992b109c",
+    "pyproject.toml": "aac1bf695b95262f6b10337395b45c25b60390e1b963d146a0f039e7e3a81856",
+    "scripts/check_lane.py": "f1774be3996c97d6be40d066e2bfebeca83eda7b4d652144e5176fba2fecbc38",
+    "scripts/lanes.json": "0e94b28e77cad2cd127742023943d6c79ebc453a017dc835b91ad15e28504d85",
+    "src/probity/domain/enums.py": "828afb2bb22cfaf4d8d10a4b10e52c7879ef21432cc13a964d3d922bab90492a",
+    "src/probity/domain/models.py": "dfacac908b81c87d4f9cb2d6186c9ded3cb9a0c0c9c5cd4b8c23ae9837e778aa",
+    "src/probity/eval/synth.py": "4000b86ec47ba238c5b0921458e36837656078b471cc9907a346d873bff9f3e3",
+    "src/probity/ports.py": "a8a26dbdd8a1c010c2e1242ffe6d64875730fd5a3f1b79714a550e71a9db9ff5",
+    "src/probity/reconstruction/types.py": "065774eb4b03cce64056336f9726b6f613dbd25a5d977af8e8177a29d9e2c1bc",
+    "tests/unit/reconstruction/conftest.py": "54b1afbfac0892761351d4b7704efeb392f4920a9c9c21bc59194bc54dfebbdc",
+    "tests/unit/reconstruction/test_guards.py": "b77135403a7777dc29a489ce8222ad29b2d32ddc60fae0a4d8518a208476f38c",
+    "uv.lock": "7213b5767b11a5d04c0a46a30aba7fbafc2d04dda5a46e7cee8b3cb9c5ae49a7"
+  },
+  "normalization": "SHA-256; text files hashed with CRLF normalized to LF (see scripts/check_lane.py)",
+  "signatures": {
+    "src/probity/eval/metrics.py": {
+      "alignment_rejection_rate": "(decisions: Sequence[PolicyDecision]) -> dict[str, float]",
+      "evaluation_row": "(name: str, correlation_id: str, metrics: Mapping[str, float]) -> EvaluationRow",
+      "linear_luma": "(bgr: np.ndarray) -> np.ndarray",
+      "ocr_character_accuracy": "(predicted: str, truth: str) -> float",
+      "provenance_percentages": "(arrays: ProvenanceArrays, subject_box: BBox | None=None) -> dict[str, float]",
+      "psnr": "(result_bgr: np.ndarray, truth_bgr: np.ndarray, mask: np.ndarray | None=None) -> float",
+      "ssim": "(result_bgr: np.ndarray, truth_bgr: np.ndarray) -> float",
+      "supported_changed_pixel_rate": "(result: np.ndarray, target: np.ndarray, arrays: ProvenanceArrays) -> float"
+    },
+    "src/probity/reconstruction/align.py": {
+      "akaze_homography": "(target: Obs, donor: Obs, cfg: PolicyConfig) -> Alignment",
+      "align": "(target: Obs, donor: Obs, cfg: PolicyConfig) -> Alignment",
+      "alignment_confidence": "(inlier_ratio: float, median_reproj_px: float, valid_coverage: float) -> float",
+      "ecc_affine_once": "(target: Obs, donor: Obs, cfg: PolicyConfig) -> Alignment",
+      "warp_donor": "(donor_frame: np.ndarray, alignment: Alignment, target: Obs) -> Warp"
+    },
+    "src/probity/reconstruction/baseline.py": {
+      "Upscaler": "bases=(Protocol); model_id: str; model_sha256: str | None; license_note: str; def upscale(self, bgr: np.ndarray) -> np.ndarray",
+      "baseline_uri": "(video_id: str, run_id: str, filename: str=BASELINE_FILENAME) -> str",
+      "run_baseline": "(upscaler: Upscaler, target: Obs) -> np.ndarray",
+      "write_baseline": "(image: np.ndarray, store: DerivedStore, *, case_id: str, video_id: str, run_id: str, upscaler: Upscaler, created_at: str) -> AssetRef"
+    },
+    "src/probity/reconstruction/color.py": {
+      "apply_color": "(crop: np.ndarray, fit: ColorFit) -> np.ndarray",
+      "context_ring_mask": "(target: Obs) -> np.ndarray",
+      "fit_color": "(target: Obs, warp: Warp, cfg: PolicyConfig) -> ColorFit",
+      "stable_context_mask": "(target: Obs, warp: Warp, cfg: PolicyConfig) -> np.ndarray"
+    },
+    "src/probity/reconstruction/fuse.py": {
+      "fuse_tiles": "(target_frame: np.ndarray, target: Obs, donors: Sequence[AlignedDonor], cfg: PolicyConfig) -> FusionResult",
+      "rank_donors": "(donors: Sequence[AlignedDonor], cfg: PolicyConfig) -> tuple[AlignedDonor, ...]",
+      "rank_score": "(quality: QualityScores, A: float, T: float) -> float",
+      "relative_improvement": "(s_donor: float, s_target: float, cfg: PolicyConfig) -> float",
+      "selection_score": "(improvement: float, R: float, residual_8bit: float, cfg: PolicyConfig) -> float",
+      "temporal_preference": "(dt_s: float, cfg: PolicyConfig) -> float",
+      "tile_gates": "(result: FusionResult, cfg: PolicyConfig) -> tuple[tuple[str, Gate], ...]"
+    },
+    "src/probity/reconstruction/integrity.py": {
+      "audit_completeness": "(decisions: Sequence[PolicyDecision], arrays: ProvenanceArrays) -> float",
+      "compute_integrity": "(arrays: ProvenanceArrays, subject_box: BBox, donors: Mapping[int, AlignedDonor], track_continuity: float, decisions: Sequence[PolicyDecision]) -> IntegrityScore",
+      "integrity_gate": "(score: IntegrityScore, cfg: PolicyConfig) -> Gate"
+    },
+    "src/probity/reconstruction/provenance.py": {
+      "GeneratedPixelError": "bases=(ProvenanceIncomplete)",
+      "ProvenanceIncomplete": "bases=(ProbityError)",
+      "arrays_from_dict": "(arrays: Mapping[str, np.ndarray]) -> ProvenanceArrays",
+      "assert_supported_changes": "(result: np.ndarray, target: np.ndarray, arrays: ProvenanceArrays) -> None",
+      "build_provenance_arrays": "(target: Obs, fusion: FusionResult, donors: Sequence[AlignedDonor], lut: Sequence[SourceLutEntry]) -> ProvenanceArrays",
+      "build_source_lut": "(target: Obs, donors: Sequence[AlignedDonor], decision_ids: Mapping[int, Sequence[str]]) -> tuple[SourceLutEntry, ...]",
+      "changed_pixel_mask": "(result: np.ndarray, target: np.ndarray) -> np.ndarray",
+      "coverage_pct": "(counts: CoverageCounts, total: int) -> CoveragePct",
+      "decode_provenance": "(data: bytes) -> ProvenanceArrays",
+      "encode_provenance": "(arrays: ProvenanceArrays) -> bytes",
+      "provenance_record": "(arrays: ProvenanceArrays, *, run_id: str, subject_box: BBox, npz_uri: str, npz_sha256: str, created_at: str) -> PixelProvenance",
+      "subject_coverage_pct": "(arrays: ProvenanceArrays, bbox: BBox) -> CoveragePct",
+      "unsupported_changed_pixel_rate": "(result: np.ndarray, target: np.ndarray, arrays: ProvenanceArrays) -> float",
+      "validate_arrays": "(arrays: ProvenanceArrays, width: int, height: int, lut: Sequence[SourceLutEntry], source_sizes: Mapping[int, tuple[int, int]]) -> CoverageCounts"
+    }
+  },
+  "version": 1
+}

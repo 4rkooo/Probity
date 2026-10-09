@@ -1,0 +1,948 @@
+{
+  "schema_version": "1.0",
+  "created_at": "2026-10-09T17:00:00.200000Z",
+  "content_sha256": "b10f5470307b445e0218791974bd6feb05301de1d1f5708fcd78f13a4a24ca8d",
+  "track_id": "01a1219b-7a81-7637-9c64-97d31e3071ff",
+  "case_id": "01a1219b-7a80-71a9-89ee-ba5341bea516",
+  "video_id": "01a1219b-7a80-7bd1-b62c-670da892173e",
+  "subject_type": "LICENSE_PLATE",
+  "seed_frame_id": "01a1219b-7a80-7bd1-b62c-670da892173e:f37",
+  "seed_bbox_px": [
+    86,
+    111,
+    306,
+    183
+  ],
+  "seed_detection_id": "01a1219b-7a82-7526-81c0-957b56759305",
+  "tracker": "bytetrack",
+  "tracker_version": "probity-track-v1+synthetic-replay",
+  "detector_model_id": "fixture/synthetic-gt-detector-v1",
+  "window_start_us": 466666,
+  "window_end_us": 4466666,
+  "state": "CONFIRMED",
+  "mean_confidence": 0.6466,
+  "continuity_score": 0.9672,
+  "confirmed": true,
+  "detector_observation_count": 59,
+  "observations": [
+    {
+      "frame_id": "01a1219b-7a80-7bd1-b62c-670da892173e:f7",
+      "pts_us": 466666,
+      "bbox_px": [
+        68,
+        113,
+        288,
+        185
+      ],
+      "source": "DETECTOR",
+      "detection_id": "01a1219b-7a82-7cd4-b223-b4449958ccb5",
+      "confidence": 0.626,
+      "accepted": true,
+      "reason_code": null
+    },
+    {
+      "frame_id": "01a1219b-7a80-7bd1-b62c-670da892173e:f8",
+      "pts_us": 533333,
+      "bbox_px": [
+        69,
+        114,
+        289,
+        186
+      ],
+      "source": "DETECTOR",
+      "detection_id": "01a1219b-7a82-7c90-80bb-3c5c7a93afe1",
+      "confidence": 0.606,
+      "accepted": true,
+      "reason_code": null
+    },
+    {
+      "frame_id": "01a1219b-7a80-7bd1-b62c-670da892173e:f9",
+      "pts_us": 600000,
+      "bbox_px": [
+        70,
+        114,
+        290,
+        186
+      ],
+      "source": "DETECTOR",
+      "detection_id": "01a1219b-7a82-72c9-b72b-2aab151f7e03",
+      "confidence": 0.6181,
+      "accepted": true,
+      "reason_code": null
+    },
+    {
+      "frame_id": "01a1219b-7a80-7bd1-b62c-670da892173e:f10",
+      "pts_us": 666666,
+      "bbox_px": [
+        70,
+        114,
+        290,
+        186
+      ],
+      "source": "DETECTOR",
+      "detection_id": "01a1219b-7a82-787f-a0cb-c6fa57f486d3",
+      "confidence": 0.6482,
+      "accepted": true,
+      "reason_code": null
+    },
+    {
+      "frame_id": "01a1219b-7a80-7bd1-b62c-670da892173e:f11",
+      "pts_us": 733333,
+      "bbox_px": [
+        71,
+        114,
+        291,
+        186
+      ],
+      "source": "DETECTOR",
+      "detection_id": "01a1219b-7a82-76c9-9ae1-d02b3eedf9b8",
+      "confidence": 0.6427,
+      "accepted": true,
+      "reason_code": null
+    },
+    {
+      "frame_id": "01a1219b-7a80-7bd1-b62c-670da892173e:f12",
+      "pts_us": 800000,
+      "bbox_px": [
+        71,
+        114,
+        291,
+        186
+      ],
+      "source": "DETECTOR",
+      "detection_id": "01a1219b-7a82-7305-87d0-d13de9dfa1f1",
+      "confidence": 0.6283,
+      "accepted": true,
+      "reason_code": null
+    },
+    {
+      "frame_id": "01a1219b-7a80-7bd1-b62c-670da892173e:f13",
+      "pts_us": 866666,
+      "bbox_px": [
+        72,
+        113,
+        292,
+        185
+      ],
+      "source": "DETECTOR",
+      "detection_id": "01a1219b-7a82-7431-8e01-c908093aecd9",
+      "confidence": 0.6318,
+      "accepted": true,
+      "reason_code": null
+    },
+    {
+      "frame_id": "01a1219b-7a80-7bd1-b62c-670da892173e:f14",
+      "pts_us": 933333,
+      "bbox_px": [
+        73,
+        113,
+        293,
+        185
+      ],
+      "source": "DETECTOR",
+      "detection_id": "01a1219b-7a82-7640-a226-69b2c9390a78",
+      "confidence": 0.6238,
+      "accepted": true,
+      "reason_code": null
+    },
+    {
+      "frame_id": "01a1219b-7a80-7bd1-b62c-670da892173e:f15",
+      "pts_us": 1000000,
+      "bbox_px": [
+        73,
+        113,
+        293,
+        185
+      ],
+      "source": "DETECTOR",
+      "detection_id": "01a1219b-7a82-74e7-9f9b-b894606397b1",
+      "confidence": 0.6395,
+      "accepted": true,
+      "reason_code": null
+    },
+    {
+      "frame_id": "01a1219b-7a80-7bd1-b62c-670da892173e:f16",
+      "pts_us": 1066666,
+      "bbox_px": [
+        74,
+        113,
+        294,
+        185
+      ],
+      "source": "DETECTOR",
+      "detection_id": "01a1219b-7a82-79f9-91b0-a99c25119350",
+      "confidence": 0.6464,
+      "accepted": true,
+      "reason_code": null
+    },
+    {
+      "frame_id": "01a1219b-7a80-7bd1-b62c-670da892173e:f17",
+      "pts_us": 1133333,
+      "bbox_px": [
+        74,
+        113,
+        294,
+        185
+      ],
+      "source": "DETECTOR",
+      "detection_id": "01a1219b-7a82-7b5f-bcdc-e05f9acd3444",
+      "confidence": 0.6334,
+      "accepted": true,
+      "reason_code": null
+    },
+    {
+      "frame_id": "01a1219b-7a80-7bd1-b62c-670da892173e:f18",
+      "pts_us": 1200000,
+      "bbox_px": [
+        75,
+        113,
+        295,
+        185
+      ],
+      "source": "DETECTOR",
+      "detection_id": "01a1219b-7a82-7cfe-9383-7b47acdcc684",
+      "confidence": 0.6221,
+      "accepted": true,
+      "reason_code": null
+    },
+    {
+      "frame_id": "01a1219b-7a80-7bd1-b62c-670da892173e:f19",
+      "pts_us": 1266666,
+      "bbox_px": [
+        76,
+        112,
+        296,
+        184
+      ],
+      "source": "DETECTOR",
+      "detection_id": "01a1219b-7a82-7f18-9380-b1a7f272b98a",
+      "confidence": 0.6427,
+      "accepted": true,
+      "reason_code": null
+    },
+    {
+      "frame_id": "01a1219b-7a80-7bd1-b62c-670da892173e:f20",
+      "pts_us": 1333333,
+      "bbox_px": [
+        76,
+        112,
+        296,
+        184
+      ],
+      "source": "DETECTOR",
+      "detection_id": "01a1219b-7a82-721f-a1aa-6f6b121388bd",
+      "confidence": 0.67,
+      "accepted": true,
+      "reason_code": null
+    },
+    {
+      "frame_id": "01a1219b-7a80-7bd1-b62c-670da892173e:f21",
+      "pts_us": 1400000,
+      "bbox_px": [
+        77,
+        112,
+        297,
+        184
+      ],
+      "source": "DETECTOR",
+      "detection_id": "01a1219b-7a82-7c81-922b-b404b3c34d6b",
+      "confidence": 0.6349,
+      "accepted": true,
+      "reason_code": null
+    },
+    {
+      "frame_id": "01a1219b-7a80-7bd1-b62c-670da892173e:f22",
+      "pts_us": 1466666,
+      "bbox_px": [
+        77,
+        112,
+        297,
+        184
+      ],
+      "source": "DETECTOR",
+      "detection_id": "01a1219b-7a82-7eb6-89d5-81a3d2d4bf11",
+      "confidence": 0.6529,
+      "accepted": true,
+      "reason_code": null
+    },
+    {
+      "frame_id": "01a1219b-7a80-7bd1-b62c-670da892173e:f23",
+      "pts_us": 1533333,
+      "bbox_px": [
+        78,
+        111,
+        298,
+        183
+      ],
+      "source": "DETECTOR",
+      "detection_id": "01a1219b-7a82-7a20-b73c-8589b838e42d",
+      "confidence": 0.6503,
+      "accepted": true,
+      "reason_code": null
+    },
+    {
+      "frame_id": "01a1219b-7a80-7bd1-b62c-670da892173e:f24",
+      "pts_us": 1600000,
+      "bbox_px": [
+        79,
+        111,
+        299,
+        183
+      ],
+      "source": "DETECTOR",
+      "detection_id": "01a1219b-7a82-7cda-a633-7b216b95db25",
+      "confidence": 0.6192,
+      "accepted": true,
+      "reason_code": null
+    },
+    {
+      "frame_id": "01a1219b-7a80-7bd1-b62c-670da892173e:f25",
+      "pts_us": 1666666,
+      "bbox_px": [
+        79,
+        111,
+        299,
+        183
+      ],
+      "source": "DETECTOR",
+      "detection_id": "01a1219b-7a82-7017-8808-c63e7136ca66",
+      "confidence": 0.6333,
+      "accepted": true,
+      "reason_code": null
+    },
+    {
+      "frame_id": "01a1219b-7a80-7bd1-b62c-670da892173e:f26",
+      "pts_us": 1733333,
+      "bbox_px": [
+        80,
+        111,
+        300,
+        183
+      ],
+      "source": "DETECTOR",
+      "detection_id": "01a1219b-7a82-7f41-974d-e93a0061343a",
+      "confidence": 0.7369,
+      "accepted": true,
+      "reason_code": null
+    },
+    {
+      "frame_id": "01a1219b-7a80-7bd1-b62c-670da892173e:f27",
+      "pts_us": 1800000,
+      "bbox_px": [
+        80,
+        111,
+        300,
+        183
+      ],
+      "source": "DETECTOR",
+      "detection_id": "01a1219b-7a82-75b6-bb18-0644c2fd81b5",
+      "confidence": 0.6407,
+      "accepted": true,
+      "reason_code": null
+    },
+    {
+      "frame_id": "01a1219b-7a80-7bd1-b62c-670da892173e:f28",
+      "pts_us": 1866666,
+      "bbox_px": [
+        81,
+        111,
+        301,
+        183
+      ],
+      "source": "DETECTOR",
+      "detection_id": "01a1219b-7a82-71f0-b3fe-0078a4ffbc0e",
+      "confidence": 0.6322,
+      "accepted": true,
+      "reason_code": null
+    },
+    {
+      "frame_id": "01a1219b-7a80-7bd1-b62c-670da892173e:f29",
+      "pts_us": 1933333,
+      "bbox_px": [
+        82,
+        111,
+        302,
+        183
+      ],
+      "source": "DETECTOR",
+      "detection_id": "01a1219b-7a82-7356-a3fc-c6ccb6619cdd",
+      "confidence": 0.634,
+      "accepted": true,
+      "reason_code": null
+    },
+    {
+      "frame_id": "01a1219b-7a80-7bd1-b62c-670da892173e:f30",
+      "pts_us": 2000000,
+      "bbox_px": [
+        82,
+        111,
+        302,
+        183
+      ],
+      "source": "DETECTOR",
+      "detection_id": "01a1219b-7a82-784e-931c-d6470d8343b0",
+      "confidence": 0.6354,
+      "accepted": true,
+      "reason_code": null
+    },
+    {
+      "frame_id": "01a1219b-7a80-7bd1-b62c-670da892173e:f31",
+      "pts_us": 2066666,
+      "bbox_px": [
+        83,
+        111,
+        303,
+        183
+      ],
+      "source": "DETECTOR",
+      "detection_id": "01a1219b-7a82-7fad-b3e1-3e1e32b9e413",
+      "confidence": 0.6133,
+      "accepted": true,
+      "reason_code": null
+    },
+    {
+      "frame_id": "01a1219b-7a80-7bd1-b62c-670da892173e:f32",
+      "pts_us": 2133333,
+      "bbox_px": [
+        83,
+        111,
+        303,
+        183
+      ],
+      "source": "DETECTOR",
+      "detection_id": "01a1219b-7a82-7098-88ce-a432702839b1",
+      "confidence": 0.6414,
+      "accepted": true,
+      "reason_code": null
+    },
+    {
+      "frame_id": "01a1219b-7a80-7bd1-b62c-670da892173e:f33",
+      "pts_us": 2200000,
+      "bbox_px": [
+        84,
+        111,
+        304,
+        183
+      ],
+      "source": "DETECTOR",
+      "detection_id": "01a1219b-7a82-7767-9a70-3a0cf42e9eb9",
+      "confidence": 0.6467,
+      "accepted": true,
+      "reason_code": null
+    },
+    {
+      "frame_id": "01a1219b-7a80-7bd1-b62c-670da892173e:f34",
+      "pts_us": 2266666,
+      "bbox_px": [
+        85,
+        111,
+        305,
+        183
+      ],
+      "source": "DETECTOR",
+      "detection_id": "01a1219b-7a82-784e-9a94-0cc43a77ab33",
+      "confidence": 0.7329,
+      "accepted": true,
+      "reason_code": null
+    },
+    {
+      "frame_id": "01a1219b-7a80-7bd1-b62c-670da892173e:f35",
+      "pts_us": 2333333,
+      "bbox_px": [
+        85,
+        111,
+        305,
+        183
+      ],
+      "source": "DETECTOR",
+      "detection_id": "01a1219b-7a82-768e-b12c-3b596d3bb9e6",
+      "confidence": 0.6355,
+      "accepted": true,
+      "reason_code": null
+    },
+    {
+      "frame_id": "01a1219b-7a80-7bd1-b62c-670da892173e:f36",
+      "pts_us": 2400000,
+      "bbox_px": [
+        86,
+        111,
+        306,
+        183
+      ],
+      "source": "DETECTOR",
+      "detection_id": "01a1219b-7a82-70a7-a723-2520542c8310",
+      "confidence": 0.6403,
+      "accepted": true,
+      "reason_code": null
+    },
+    {
+      "frame_id": "01a1219b-7a80-7bd1-b62c-670da892173e:f37",
+      "pts_us": 2466666,
+      "bbox_px": [
+        86,
+        111,
+        306,
+        183
+      ],
+      "source": "DETECTOR",
+      "detection_id": "01a1219b-7a82-7526-81c0-957b56759305",
+      "confidence": 0.6257,
+      "accepted": true,
+      "reason_code": null
+    },
+    {
+      "frame_id": "01a1219b-7a80-7bd1-b62c-670da892173e:f38",
+      "pts_us": 2533333,
+      "bbox_px": [
+        87,
+        112,
+        307,
+        184
+      ],
+      "source": "DETECTOR",
+      "detection_id": "01a1219b-7a82-7ec8-9264-ff5c1369e80c",
+      "confidence": 0.6356,
+      "accepted": true,
+      "reason_code": null
+    },
+    {
+      "frame_id": "01a1219b-7a80-7bd1-b62c-670da892173e:f39",
+      "pts_us": 2600000,
+      "bbox_px": [
+        88,
+        112,
+        308,
+        184
+      ],
+      "source": "DETECTOR",
+      "detection_id": "01a1219b-7a82-7bd2-8625-363f2203602b",
+      "confidence": 0.6569,
+      "accepted": true,
+      "reason_code": null
+    },
+    {
+      "frame_id": "01a1219b-7a80-7bd1-b62c-670da892173e:f40",
+      "pts_us": 2666666,
+      "bbox_px": [
+        88,
+        112,
+        308,
+        184
+      ],
+      "source": "DETECTOR",
+      "detection_id": "01a1219b-7a82-7e5d-91d1-6f67d39cbdf7",
+      "confidence": 0.8452,
+      "accepted": true,
+      "reason_code": null
+    },
+    {
+      "frame_id": "01a1219b-7a80-7bd1-b62c-670da892173e:f41",
+      "pts_us": 2733333,
+      "bbox_px": [
+        89,
+        112,
+        309,
+        184
+      ],
+      "source": "DETECTOR",
+      "detection_id": "01a1219b-7a82-7f64-8f6f-24a504477bed",
+      "confidence": 0.6432,
+      "accepted": true,
+      "reason_code": null
+    },
+    {
+      "frame_id": "01a1219b-7a80-7bd1-b62c-670da892173e:f42",
+      "pts_us": 2800000,
+      "bbox_px": [
+        89,
+        113,
+        309,
+        185
+      ],
+      "source": "DETECTOR",
+      "detection_id": "01a1219b-7a82-7f6b-ad03-a8156571cda2",
+      "confidence": 0.6434,
+      "accepted": true,
+      "reason_code": null
+    },
+    {
+      "frame_id": "01a1219b-7a80-7bd1-b62c-670da892173e:f43",
+      "pts_us": 2866666,
+      "bbox_px": [
+        90,
+        113,
+        310,
+        185
+      ],
+      "source": "DETECTOR",
+      "detection_id": "01a1219b-7a82-782c-ac7e-da5ec4b4289a",
+      "confidence": 0.5942,
+      "accepted": true,
+      "reason_code": null
+    },
+    {
+      "frame_id": "01a1219b-7a80-7bd1-b62c-670da892173e:f44",
+      "pts_us": 2933333,
+      "bbox_px": [
+        91,
+        113,
+        311,
+        185
+      ],
+      "source": "DETECTOR",
+      "detection_id": "01a1219b-7a82-737a-97c8-e67efafa71ff",
+      "confidence": 0.6295,
+      "accepted": true,
+      "reason_code": null
+    },
+    {
+      "frame_id": "01a1219b-7a80-7bd1-b62c-670da892173e:f45",
+      "pts_us": 3000000,
+      "bbox_px": [
+        91,
+        113,
+        311,
+        185
+      ],
+      "source": "DETECTOR",
+      "detection_id": "01a1219b-7a82-7378-bd32-b57604ba2fb3",
+      "confidence": 0.6635,
+      "accepted": true,
+      "reason_code": null
+    },
+    {
+      "frame_id": "01a1219b-7a80-7bd1-b62c-670da892173e:f46",
+      "pts_us": 3066666,
+      "bbox_px": [
+        92,
+        113,
+        312,
+        185
+      ],
+      "source": "DETECTOR",
+      "detection_id": "01a1219b-7a82-7895-b6b2-d4bc0d1d0eb8",
+      "confidence": 0.674,
+      "accepted": true,
+      "reason_code": null
+    },
+    {
+      "frame_id": "01a1219b-7a80-7bd1-b62c-670da892173e:f47",
+      "pts_us": 3133333,
+      "bbox_px": [
+        92,
+        113,
+        312,
+        185
+      ],
+      "source": "DETECTOR",
+      "detection_id": "01a1219b-7a82-7372-bfa2-40f2466052c7",
+      "confidence": 0.6355,
+      "accepted": true,
+      "reason_code": null
+    },
+    {
+      "frame_id": "01a1219b-7a80-7bd1-b62c-670da892173e:f48",
+      "pts_us": 3200000,
+      "bbox_px": [
+        93,
+        114,
+        313,
+        186
+      ],
+      "source": "DETECTOR",
+      "detection_id": "01a1219b-7a82-76ae-b14d-5391d5f9618c",
+      "confidence": 0.756,
+      "accepted": true,
+      "reason_code": null
+    },
+    {
+      "frame_id": "01a1219b-7a80-7bd1-b62c-670da892173e:f49",
+      "pts_us": 3266666,
+      "bbox_px": [
+        94,
+        114,
+        314,
+        186
+      ],
+      "source": "DETECTOR",
+      "detection_id": "01a1219b-7a82-7759-b4c4-c5550f7b8ca2",
+      "confidence": 0.6433,
+      "accepted": true,
+      "reason_code": null
+    },
+    {
+      "frame_id": "01a1219b-7a80-7bd1-b62c-670da892173e:f50",
+      "pts_us": 3333333,
+      "bbox_px": [
+        94,
+        114,
+        314,
+        186
+      ],
+      "source": "DETECTOR",
+      "detection_id": "01a1219b-7a82-7fcb-9bd4-ff4352cd5016",
+      "confidence": 0.648,
+      "accepted": true,
+      "reason_code": null
+    },
+    {
+      "frame_id": "01a1219b-7a80-7bd1-b62c-670da892173e:f51",
+      "pts_us": 3400000,
+      "bbox_px": [
+        95,
+        114,
+        315,
+        186
+      ],
+      "source": "DETECTOR",
+      "detection_id": "01a1219b-7a82-7ed9-877d-fabfa94fbe32",
+      "confidence": 0.6372,
+      "accepted": true,
+      "reason_code": null
+    },
+    {
+      "frame_id": "01a1219b-7a80-7bd1-b62c-670da892173e:f52",
+      "pts_us": 3466666,
+      "bbox_px": [
+        95,
+        114,
+        315,
+        186
+      ],
+      "source": "CSRT_BRIDGE",
+      "detection_id": null,
+      "confidence": 0.0,
+      "accepted": true,
+      "reason_code": null
+    },
+    {
+      "frame_id": "01a1219b-7a80-7bd1-b62c-670da892173e:f53",
+      "pts_us": 3533333,
+      "bbox_px": [
+        96,
+        113,
+        316,
+        185
+      ],
+      "source": "CSRT_BRIDGE",
+      "detection_id": null,
+      "confidence": 0.0,
+      "accepted": true,
+      "reason_code": null
+    },
+    {
+      "frame_id": "01a1219b-7a80-7bd1-b62c-670da892173e:f54",
+      "pts_us": 3600000,
+      "bbox_px": [
+        97,
+        113,
+        317,
+        185
+      ],
+      "source": "DETECTOR",
+      "detection_id": "01a1219b-7a82-7b57-8615-042259c2974b",
+      "confidence": 0.6698,
+      "accepted": true,
+      "reason_code": null
+    },
+    {
+      "frame_id": "01a1219b-7a80-7bd1-b62c-670da892173e:f55",
+      "pts_us": 3666666,
+      "bbox_px": [
+        97,
+        113,
+        317,
+        185
+      ],
+      "source": "DETECTOR",
+      "detection_id": "01a1219b-7a82-72f4-adf2-f686131e946b",
+      "confidence": 0.6447,
+      "accepted": true,
+      "reason_code": null
+    },
+    {
+      "frame_id": "01a1219b-7a80-7bd1-b62c-670da892173e:f56",
+      "pts_us": 3733333,
+      "bbox_px": [
+        98,
+        113,
+        318,
+        185
+      ],
+      "source": "DETECTOR",
+      "detection_id": "01a1219b-7a82-71f4-8ae6-c81a58131da3",
+      "confidence": 0.6558,
+      "accepted": true,
+      "reason_code": null
+    },
+    {
+      "frame_id": "01a1219b-7a80-7bd1-b62c-670da892173e:f57",
+      "pts_us": 3800000,
+      "bbox_px": [
+        98,
+        113,
+        318,
+        185
+      ],
+      "source": "DETECTOR",
+      "detection_id": "01a1219b-7a82-78d1-b0e7-38137f288aed",
+      "confidence": 0.5994,
+      "accepted": true,
+      "reason_code": null
+    },
+    {
+      "frame_id": "01a1219b-7a80-7bd1-b62c-670da892173e:f58",
+      "pts_us": 3866666,
+      "bbox_px": [
+        99,
+        113,
+        319,
+        185
+      ],
+      "source": "DETECTOR",
+      "detection_id": "01a1219b-7a82-7b38-b8e6-e8c00207c969",
+      "confidence": 0.6313,
+      "accepted": true,
+      "reason_code": null
+    },
+    {
+      "frame_id": "01a1219b-7a80-7bd1-b62c-670da892173e:f59",
+      "pts_us": 3933333,
+      "bbox_px": [
+        100,
+        112,
+        320,
+        184
+      ],
+      "source": "DETECTOR",
+      "detection_id": "01a1219b-7a82-725f-884c-c330978be9ca",
+      "confidence": 0.6266,
+      "accepted": true,
+      "reason_code": null
+    },
+    {
+      "frame_id": "01a1219b-7a80-7bd1-b62c-670da892173e:f60",
+      "pts_us": 4000000,
+      "bbox_px": [
+        100,
+        112,
+        320,
+        184
+      ],
+      "source": "DETECTOR",
+      "detection_id": "01a1219b-7a82-7395-9d9c-079a114d3d84",
+      "confidence": 0.6555,
+      "accepted": true,
+      "reason_code": null
+    },
+    {
+      "frame_id": "01a1219b-7a80-7bd1-b62c-670da892173e:f61",
+      "pts_us": 4066666,
+      "bbox_px": [
+        101,
+        112,
+        321,
+        184
+      ],
+      "source": "DETECTOR",
+      "detection_id": "01a1219b-7a82-7028-bdee-62b376c5369d",
+      "confidence": 0.6309,
+      "accepted": true,
+      "reason_code": null
+    },
+    {
+      "frame_id": "01a1219b-7a80-7bd1-b62c-670da892173e:f62",
+      "pts_us": 4133333,
+      "bbox_px": [
+        101,
+        112,
+        321,
+        184
+      ],
+      "source": "DETECTOR",
+      "detection_id": "01a1219b-7a82-79fe-8e91-f2cf8329878e",
+      "confidence": 0.6571,
+      "accepted": true,
+      "reason_code": null
+    },
+    {
+      "frame_id": "01a1219b-7a80-7bd1-b62c-670da892173e:f63",
+      "pts_us": 4200000,
+      "bbox_px": [
+        102,
+        111,
+        322,
+        183
+      ],
+      "source": "DETECTOR",
+      "detection_id": "01a1219b-7a82-7f3b-88ef-10b1a9d2249e",
+      "confidence": 0.6232,
+      "accepted": true,
+      "reason_code": null
+    },
+    {
+      "frame_id": "01a1219b-7a80-7bd1-b62c-670da892173e:f64",
+      "pts_us": 4266666,
+      "bbox_px": [
+        103,
+        111,
+        323,
+        183
+      ],
+      "source": "DETECTOR",
+      "detection_id": "01a1219b-7a82-7e8f-925f-a2ba98427454",
+      "confidence": 0.6199,
+      "accepted": true,
+      "reason_code": null
+    },
+    {
+      "frame_id": "01a1219b-7a80-7bd1-b62c-670da892173e:f65",
+      "pts_us": 4333333,
+      "bbox_px": [
+        103,
+        111,
+        323,
+        183
+      ],
+      "source": "DETECTOR",
+      "detection_id": "01a1219b-7a82-7556-a4aa-89e9affb3eac",
+      "confidence": 0.6563,
+      "accepted": true,
+      "reason_code": null
+    },
+    {
+      "frame_id": "01a1219b-7a80-7bd1-b62c-670da892173e:f66",
+      "pts_us": 4400000,
+      "bbox_px": [
+        104,
+        111,
+        324,
+        183
+      ],
+      "source": "DETECTOR",
+      "detection_id": "01a1219b-7a82-7cb4-a1e6-8e94eaacf8d2",
+      "confidence": 0.6259,
+      "accepted": true,
+      "reason_code": null
+    },
+    {
+      "frame_id": "01a1219b-7a80-7bd1-b62c-670da892173e:f67",
+      "pts_us": 4466666,
+      "bbox_px": [
+        104,
+        111,
+        324,
+        183
+      ],
+      "source": "DETECTOR",
+      "detection_id": "01a1219b-7a82-7d59-8aab-03adf90b1be1",
+      "confidence": 0.6619,
+      "accepted": true,
+      "reason_code": null
+    }
+  ],
+  "reason_codes": [
+    "TRACK_CONFIRMED"
+  ],
+  "mode": "FIXTURE"
+}

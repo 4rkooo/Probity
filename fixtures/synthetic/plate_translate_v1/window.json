@@ -1,0 +1,16 @@
+{
+  "fixture_id": "plate_translate_v1",
+  "synth_version": "probity-synth-v1",
+  "case_id": "01a1219b-7a80-71a9-89ee-ba5341bea516",
+  "video_id": "01a1219b-7a80-7bd1-b62c-670da892173e",
+  "track_id": "01a1219b-7a81-7637-9c64-97d31e3071ff",
+  "source_sha256": "d31ad69e9591d11df9dd7a1a4d7301d9092790c3868a547430879f85f5addf05",
+  "target_frame_id": "01a1219b-7a80-7bd1-b62c-670da892173e:f37",
+  "target_bbox_px": [
+    86,
+    111,
+    306,
+    183
+  ],
+  "config_sha256": "4b092bf020018373de8fd528f9dd62748017d3e8fafd3f169d7f9d774a6ef28c"
+}
