@@ -35,9 +35,14 @@ contradict it is a bug in this file.
   block edges; the step-8 boundary-discontinuity pass may only revert such tiles.
 - **Golden runs are synthetic, not demo.** The completed and refused `ReconstructionRun` goldens
   live in `fixtures/synthetic/plate_translate_v1/reconstructions/completed` and
-  `fixtures/synthetic/plate_single_donor_v1/reconstructions/refused`. `fixtures/demo/` holds only
-  Person 1's manifest and clip; demo detections/tracks/reconstructions wait on the regenerated
-  clip and ffmpeg (requests above).
+  `fixtures/synthetic/plate_single_donor_v1/reconstructions/refused`. They are TrueFrame AKAZE
+  output (same `run_id` / `track_id` / `target_frame_id` as the old hand-built files). Completed
+  coverage is ORIGINAL 94.35 / BORROWED 5.65, integrity 94 (`Ad` 0.86 from AKAZE inliers, not
+  1.0). `fixtures/demo/` holds only Person 1's manifest and clip; demo detections/tracks/
+  reconstructions wait on the regenerated clip and ffmpeg (requests above).
+- **Person 3:** refresh the UI against the regenerated synthetic goldens. IDs are unchanged;
+  coverage, integrity, donor order, and decision log are not. There is still no
+  `fixtures/demo/reconstructions/`.
 - **No fixture YOLO adapter exists yet.** `adapters/fixture/yolo.py` was listed under lane A but
   was never written (tracking consumes recorded detections directly). It moved to lane F with the
   live adapter so one contract test covers both.
@@ -140,14 +145,15 @@ contradict it is a bug in this file.
     measure blurrier than the target, breaking "target is the blurriest". The range is now
     0.80-0.95x, still far below the 0.10 quality-gain threshold.
 
-### Hand-built golden runs (step 1 only; removed in step 8)
+### Hand-built golden runs (step 1 generator kept; goldens replaced in step 8)
 
-33. `src/probity/eval/handbuilt_runs.py` builds the goldens with ground-truth translations in
-    place of AKAZE/ECC. Every run carries the hand-built note in `uncertainty`, and every alignment
-    decision says so. A uses inlier=1 and error=0, so `mean_alignment_confidence = 1.0` and the
-    integrity score (96) is optimistic; step 8 replaces these files with real pipeline output.
-34. Color in the hand-built run is identity gain/bias with the context-ring residual and sample
-    gates still enforced. Audit completeness Au = 1.0 by construction.
+33. `src/probity/eval/handbuilt_runs.py` still builds GT-alignment runs (inlier=1, error=0,
+    `Ad` = 1.0, integrity 96) for debugging. Committed goldens are TrueFrame AKAZE output:
+    donors 26/31/43/48, coverage 94.35/5.65, `Ad` 0.86, integrity 94. The hand-built
+    `uncertainty` note is gone from the committed files.
+34. Color on the committed translate golden is identity gain/bias (rank-deficient IRLS /
+    identity residual already inside the residual gate; lane-b request #3). Audit completeness
+    Au = 1.0.
 
 ### Preflight hard gates (step 3, `reconstruction/preflight.py`)
 

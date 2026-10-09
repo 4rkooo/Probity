@@ -1,4 +1,4 @@
-"""Step-1 golden runs (HAND-BUILT; step 8 regenerates them from the real pipeline)."""
+"""Golden runs: TrueFrame pipeline output (same IDs as the step-1 hand-built files)."""
 
 from __future__ import annotations
 
@@ -26,7 +26,6 @@ from probity.domain.models import (
     integrity_score_0_100,
 )
 from probity.domain.policy import default_policy
-from probity.eval.handbuilt_runs import build_handbuilt_run
 from probity.eval.window import WindowBundle, load_truth, load_window
 from probity.reconstruction.io import (
     array_sha256,
@@ -42,6 +41,7 @@ from probity.reconstruction.provenance import (
     unsupported_changed_pixel_rate,
     validate_arrays,
 )
+from probity.reconstruction.trueframe import NeverCancelled, TrueFrame, request_from_window
 
 REPO = Path(__file__).resolve().parents[3]
 SYNTH = REPO / "fixtures" / "synthetic"
@@ -233,17 +233,18 @@ def test_refused_run_is_successful_refusal_with_rule_code() -> None:
                                                    ("plate_single_donor_v1", "refused")])
 def test_regeneration_is_deterministic(fixture_id: str, label: str) -> None:
     win = load_window(SYNTH / fixture_id)
-    built = build_handbuilt_run(win, CFG, label)
+    built = TrueFrame.from_window(win, CFG).run(
+        request_from_window(win, CFG, run_label=label), NeverCancelled())
     out = SYNTH / fixture_id / "reconstructions" / label
-    assert json_bytes(list(built.decisions)) == (out / "decisions.json").read_bytes()
-    if built.provenance is None:
-        assert json_bytes(built.run) == (out / "run.json").read_bytes()
+    assert json_bytes(list(built.result.decisions)) == (out / "decisions.json").read_bytes()
+    if built.result.provenance is None:
+        assert json_bytes(built.result.run) == (out / "run.json").read_bytes()
         return
-    assert built.arrays is not None and built.result_png is not None
+    assert built.arrays is not None and built.png is not None and built.npz is not None
     committed = decode_provenance((out / "provenance.npz").read_bytes())
     assert array_sha256(built.arrays.as_dict()) == array_sha256(committed.as_dict())
-    rebuilt = cv2.imdecode(np.frombuffer(built.result_png, np.uint8), cv2.IMREAD_COLOR)
+    rebuilt = cv2.imdecode(np.frombuffer(built.png, np.uint8), cv2.IMREAD_COLOR)
     assert pixel_sha256(rebuilt) == pixel_sha256(read_png(out / "result.png"))
     if load_truth(win.root)["opencv_version"] == cv2.__version__:
-        assert json_bytes(built.run) == (out / "run.json").read_bytes()
+        assert json_bytes(built.result.run) == (out / "run.json").read_bytes()
         assert built.npz == (out / "provenance.npz").read_bytes()

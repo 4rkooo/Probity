@@ -92,10 +92,7 @@ def test_golden_window_aligns_at_least_two_same_track_donors() -> None:
 
 
 def test_committed_golden_has_zero_unsupported_changed_pixels() -> None:
-    """Hand-built completed golden: >=2 same-track donors, winner-take-all, no unsupported pixels.
-
-    TrueFrame now emits SUCCEEDED on this window (identity color; lane-b request #3).
-    """
+    """Committed completed golden: >=2 same-track donors, winner-take-all, no unsupported pixels."""
     window = _window("plate_translate_v1")
     run = ReconstructionRun.model_validate(read_json(COMPLETED / "run.json"))
     arrays = decode_provenance((COMPLETED / "provenance.npz").read_bytes())
