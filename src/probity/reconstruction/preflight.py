@@ -11,8 +11,7 @@ from __future__ import annotations
 import dataclasses
 import math
 import statistics
-from collections.abc import Callable, Mapping, Sequence
-from dataclasses import dataclass
+from collections.abc import Mapping, Sequence
 
 import numpy as np
 
@@ -30,40 +29,16 @@ from probity.reconstruction.io import (
     assert_evidentiary_input,
 )
 from probity.reconstruction.tracking import iou
+from probity.reconstruction.types import (
+    BBox,
+    DonorMeasure,
+    FrameLoader,
+    PreflightResult,
+    QualityScores,
+    SubjectMeasure,
+)
 
-BBox = tuple[int, int, int, int]
-FrameLoader = Callable[[FrameReference], np.ndarray]
-
-
-@dataclass(frozen=True)
-class SubjectMeasure:
-    obs: TrackObservation
-    frame: FrameReference
-    image: np.ndarray
-    box: BBox
-    occluded: float
-    quality: q.QualityComponents
-
-    @property
-    def frame_number(self) -> int:
-        return self.frame.frame_number
-
-
-@dataclass(frozen=True)
-class DonorMeasure(SubjectMeasure):
-    dt_s: float
-    scale: float
-    aspect_change: float
-    exposure_stops: float
-    decision_ids: tuple[str, ...]
-
-
-@dataclass(frozen=True)
-class PreflightResult:
-    target: SubjectMeasure | None
-    donors: tuple[DonorMeasure, ...]
-    refusal: ReasonCode | None
-    median_aspect: float
+__all__ = ["DonorMeasure", "PreflightResult", "SubjectMeasure", "run_preflight"]
 
 
 # ------------------------------------------------------------------------------------------------
@@ -160,7 +135,7 @@ def target_selection_gates(obs: TrackObservation | None, target_box: BBox, cfg: 
     return gates
 
 
-def target_quality_gates(box: BBox, quality: q.QualityComponents, cfg: PolicyConfig
+def target_quality_gates(box: BBox, quality: QualityScores, cfg: PolicyConfig
                          ) -> list[Gate]:
     w, h = q.box_size(box)
     t = cfg.target
@@ -288,7 +263,7 @@ def run_preflight(
     by_det = {d.detection_id: d for ds in detections.values() for d in ds}
 
     def measure(obs: TrackObservation, box: BBox, image: np.ndarray, ref: FrameReference
-                ) -> tuple[float, q.QualityComponents]:
+                ) -> tuple[float, QualityScores]:
         own = by_det.get(obs.detection_id) if obs.detection_id else None
         occ = occluded_fraction(box, ref.width_px, ref.height_px, own,
                                 detections.get(ref.frame_id, ()))

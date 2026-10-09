@@ -7,12 +7,12 @@ from __future__ import annotations
 
 import math
 from collections.abc import Sequence
-from dataclasses import dataclass
 
 import cv2
 import numpy as np
 
 from probity.domain.policy import PolicyConfig
+from probity.reconstruction.types import QualityScores
 
 BBox = tuple[int, int, int, int]
 
@@ -126,17 +126,6 @@ def exposure_delta_stops(subject_luma_a: np.ndarray, subject_luma_b: np.ndarray)
     return abs(math.log2(a / b))
 
 
-@dataclass(frozen=True)
-class QualityComponents:
-    D: float
-    S: float
-    Z: float
-    E: float
-    O: float  # noqa: E741 - section 9 symbol
-    P: float
-    Q: float
-
-
 def measure_observation(
     frame_bgr: np.ndarray,
     box: BBox,
@@ -144,7 +133,7 @@ def measure_observation(
     occluded_fraction: float,
     median_track_aspect: float,
     cfg: PolicyConfig,
-) -> QualityComponents:
+) -> QualityScores:
     luma = crop(to_luma(frame_bgr), box)
     d = clip01(confidence)
     s = sharpness_score(luma, cfg)
@@ -152,7 +141,7 @@ def measure_observation(
     e = exposure_score(luma, cfg)
     o = occlusion_score(occluded_fraction)
     p = pose_score(box_aspect(box), median_track_aspect, cfg)
-    return QualityComponents(D=d, S=s, Z=z, E=e, O=o, P=p, Q=observation_quality(d, s, z, e, o, p))
+    return QualityScores(D=d, S=s, Z=z, E=e, O=o, P=p, Q=observation_quality(d, s, z, e, o, p))
 
 
 # ------------------------------------------------------------------------------------------------

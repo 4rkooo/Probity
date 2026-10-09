@@ -7,7 +7,6 @@ problem and raises ``ProvenanceIncomplete`` (or ``GeneratedPixelError`` for clas
 from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
-from dataclasses import dataclass
 
 import numpy as np
 
@@ -15,6 +14,7 @@ from probity.domain.enums import ProvenanceClass, ReasonCode, SourceRole
 from probity.domain.errors import ProbityError
 from probity.domain.models import CoverageCounts, CoveragePct, SourceLutEntry
 from probity.reconstruction.io import decode_npz, encode_npz
+from probity.reconstruction.types import ProvenanceArrays
 
 BBox = tuple[int, int, int, int]
 
@@ -40,49 +40,20 @@ class GeneratedPixelError(ProvenanceIncomplete):
     reason_code = ReasonCode.GENERATED_SEMANTIC_PIXEL
 
 
-@dataclass(frozen=True)
-class ProvenanceArrays:
-    cls: np.ndarray
-    source_index: np.ndarray
-    source_x: np.ndarray
-    source_y: np.ndarray
-
-    @classmethod
-    def identity(cls, width: int, height: int) -> ProvenanceArrays:
-        """Every pixel ORIGINAL from LUT row 0 at its own coordinate."""
-        xs, ys = np.meshgrid(
-            np.arange(width, dtype=np.float32), np.arange(height, dtype=np.float32)
+def arrays_from_dict(arrays: Mapping[str, np.ndarray]) -> ProvenanceArrays:
+    missing = set(ARRAY_DTYPES) - set(arrays)
+    extra = set(arrays) - set(ARRAY_DTYPES)
+    if missing or extra:
+        raise ProvenanceIncomplete(
+            [f"npz arrays must be exactly {sorted(ARRAY_DTYPES)}; "
+             f"missing={sorted(missing)} extra={sorted(extra)}"]
         )
-        return cls(
-            cls=np.zeros((height, width), dtype=np.uint8),
-            source_index=np.zeros((height, width), dtype=np.uint16),
-            source_x=xs,
-            source_y=ys,
-        )
-
-    def as_dict(self) -> dict[str, np.ndarray]:
-        return {
-            "class": self.cls,
-            "source_index": self.source_index,
-            "source_x": self.source_x,
-            "source_y": self.source_y,
-        }
-
-    @classmethod
-    def from_dict(cls, arrays: Mapping[str, np.ndarray]) -> ProvenanceArrays:
-        missing = set(ARRAY_DTYPES) - set(arrays)
-        extra = set(arrays) - set(ARRAY_DTYPES)
-        if missing or extra:
-            raise ProvenanceIncomplete(
-                [f"npz arrays must be exactly {sorted(ARRAY_DTYPES)}; "
-                 f"missing={sorted(missing)} extra={sorted(extra)}"]
-            )
-        return cls(
-            cls=arrays["class"],
-            source_index=arrays["source_index"],
-            source_x=arrays["source_x"],
-            source_y=arrays["source_y"],
-        )
+    return ProvenanceArrays(
+        cls=arrays["class"],
+        source_index=arrays["source_index"],
+        source_x=arrays["source_x"],
+        source_y=arrays["source_y"],
+    )
 
 
 def encode_provenance(arrays: ProvenanceArrays) -> bytes:
@@ -90,7 +61,7 @@ def encode_provenance(arrays: ProvenanceArrays) -> bytes:
 
 
 def decode_provenance(data: bytes) -> ProvenanceArrays:
-    return ProvenanceArrays.from_dict(decode_npz(data))
+    return arrays_from_dict(decode_npz(data))
 
 
 def validate_arrays(

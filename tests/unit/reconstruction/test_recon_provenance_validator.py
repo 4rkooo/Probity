@@ -13,12 +13,12 @@ from probity.domain.models import SourceLutEntry
 from probity.reconstruction.determinism import seeded_uuid7
 from probity.reconstruction.provenance import (
     GeneratedPixelError,
-    ProvenanceArrays,
     ProvenanceIncomplete,
     assert_supported_changes,
     unsupported_changed_pixel_rate,
     validate_arrays,
 )
+from probity.reconstruction.types import ProvenanceArrays
 
 VID = seeded_uuid7("prov:video", 1_760_000_000_000)
 

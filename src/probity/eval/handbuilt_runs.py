@@ -66,13 +66,13 @@ from probity.reconstruction.io import (
 )
 from probity.reconstruction.preflight import run_preflight
 from probity.reconstruction.provenance import (
-    ProvenanceArrays,
     assert_supported_changes,
     coverage_pct,
     encode_provenance,
     subject_coverage_pct,
     validate_arrays,
 )
+from probity.reconstruction.types import ProvenanceArrays, QualityScores
 
 BBox = tuple[int, int, int, int]
 
@@ -92,7 +92,7 @@ class Donor:
     obs: TrackObservation
     frame_number: int
     image: np.ndarray
-    quality: q.QualityComponents
+    quality: QualityScores
     dt_s: float
     tx: float = 0.0
     ty: float = 0.0

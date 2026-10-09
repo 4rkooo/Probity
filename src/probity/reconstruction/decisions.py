@@ -3,56 +3,13 @@
 from __future__ import annotations
 
 from collections.abc import Iterable
-from dataclasses import dataclass
-from typing import Literal
 
 from probity.domain.enums import PolicyOutcome, PolicyStage, ReasonCode
 from probity.domain.models import PolicyDecision, ScalarValue
 from probity.reconstruction.determinism import FixedClock, seeded_uuid7
+from probity.reconstruction.types import Gate, GateResult, Operator, passes
 
-Operator = Literal["<", "<=", ">", ">=", "==", "!=", "in", "none"]
-
-
-def passes(observed: ScalarValue, operator: Operator, threshold: ScalarValue) -> bool:
-    if operator == "==":
-        return observed == threshold
-    if operator == "!=":
-        return observed != threshold
-    if not isinstance(observed, int | float) or not isinstance(threshold, int | float):
-        raise ValueError(f"operator {operator!r} needs numeric operands")
-    if operator == "<":
-        return observed < threshold
-    if operator == "<=":
-        return observed <= threshold
-    if operator == ">":
-        return observed > threshold
-    if operator == ">=":
-        return observed >= threshold
-    raise ValueError(f"operator {operator!r} is not a comparison")
-
-
-@dataclass(frozen=True)
-class Gate:
-    """One material comparison. ``reject_code`` defaults to ``rule_code``."""
-
-    rule_code: ReasonCode
-    stage: PolicyStage
-    observed: ScalarValue
-    operator: Operator
-    threshold: ScalarValue
-    units: str | None
-    policy_key: str | None
-    accept_reason: str
-    reject_reason: str
-    reject_code: ReasonCode | None = None
-
-    @property
-    def ok(self) -> bool:
-        return passes(self.observed, self.operator, self.threshold)
-
-    @property
-    def failure_code(self) -> ReasonCode:
-        return self.reject_code or self.rule_code
+__all__ = ["DecisionLog", "Gate", "GateResult", "Operator", "first_failure", "passes"]
 
 
 def first_failure(gates: Iterable[Gate]) -> Gate | None:
@@ -129,6 +86,18 @@ class DecisionLog:
             policy_key=gate.policy_key,
         )
         return ok
+
+    def apply(self, gates: Iterable[Gate], subject_ref: str, *, all_gates: bool = False
+              ) -> GateResult:
+        """Record gates in order. By default stop after the first failure (one REJECT row);
+        with ``all_gates`` record every gate. Accepted iff every recorded gate passed."""
+        start = len(self._rows)
+        accepted = True
+        for g in gates:
+            accepted = self.check(g, subject_ref) and accepted
+            if not accepted and not all_gates:
+                break
+        return GateResult(accepted, tuple(self._rows[start:]))
 
     def gate(
         self,

@@ -23,10 +23,10 @@ from probity.domain.policy import default_policy
 from probity.eval import synth
 from probity.eval.window import WindowBundle, load_window
 from probity.reconstruction import preflight as pf
-from probity.reconstruction import quality as q
 from probity.reconstruction.decisions import DecisionLog
 from probity.reconstruction.determinism import FixedClock, seeded_uuid7
 from probity.reconstruction.io import FrameIntegrityError, json_bytes, load_frame
+from probity.reconstruction.types import QualityScores
 
 REPO = Path(__file__).resolve().parents[3]
 SYNTH = REPO / "fixtures" / "synthetic"
@@ -182,7 +182,7 @@ def test_target_box_must_match_tracked_box(win: WindowBundle,
     assert res.refusal is ReasonCode.IDENTITY_GEOMETRY_MISMATCH
 
 
-TARGET_Q = q.QualityComponents(D=0.6, S=0.4, Z=0.8, E=1.0, O=1.0, P=1.0, Q=0.5)
+TARGET_Q = QualityScores(D=0.6, S=0.4, Z=0.8, E=1.0, O=1.0, P=1.0, Q=0.5)
 
 
 @pytest.mark.parametrize(("box", "quality", "code"), [

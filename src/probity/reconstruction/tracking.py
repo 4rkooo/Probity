@@ -13,78 +13,41 @@ from __future__ import annotations
 
 import math
 import statistics
-from collections.abc import Callable, Mapping, Sequence
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
-from typing import Protocol
 
 import cv2
 import numpy as np
 
-from probity.domain.enums import InferenceMode, ObservationSource, ReasonCode, TrackState
+from probity.domain.enums import ObservationSource, ReasonCode, TrackState
 from probity.domain.errors import ProbityError, ValidationFailed
 from probity.domain.models import Detection, FrameReference, Track, TrackObservation
 from probity.domain.policy import PolicyConfig
 from probity.ports import TrackRequest
-from probity.reconstruction.decisions import Operator, passes
 from probity.reconstruction.io import assert_evidentiary_input
+from probity.reconstruction.types import (
+    BBox,
+    Bridger,
+    BridgerFactory,
+    FrameLoader,
+    GateFailure,
+    IdentityMetrics,
+    ObservationAudit,
+    Operator,
+    TrackedDetection,
+    TrackingOutcome,
+    TrackMeta,
+    passes,
+)
 
-BBox = tuple[int, int, int, int]
-FrameLoader = Callable[[FrameReference], np.ndarray]
+__all__ = [
+    "BBox", "Bridger", "BridgerFactory", "FrameLoader", "GateFailure", "IdentityMetrics",
+    "ObservationAudit", "TrackMeta", "TrackedDetection", "TrackingOutcome", "confirm_track",
+]
 
 TRACK_LOGIC_VERSION = "probity-track-v1"
 HS_BINS = (30, 32)
 BRIDGE_CONFIDENCE = 0.0
-
-
-# ------------------------------------------------------------------------------------------------
-# Inputs and outputs
-# ------------------------------------------------------------------------------------------------
-
-
-@dataclass(frozen=True)
-class TrackedDetection:
-    """A detector box plus the ByteTrack ID the tracker assigned to it (None if unassociated)."""
-
-    detection: Detection
-    tracker_id: int | None
-
-
-class Bridger(Protocol):
-    def start(self, frame_number: int, image: np.ndarray, box: BBox) -> None: ...
-    def step(self, frame_number: int, image: np.ndarray) -> BBox | None: ...
-
-
-BridgerFactory = Callable[[], Bridger]
-
-
-@dataclass(frozen=True)
-class ObservationAudit:
-    frame_number: int
-    source: ObservationSource
-    accepted: bool
-    reason_code: ReasonCode | None
-    gate: str
-    observed: float | str | None
-    operator: Operator
-    threshold: float | str | None
-    detail: str
-    detection_id: str | None = None
-
-
-@dataclass(frozen=True)
-class TrackingOutcome:
-    track: Track
-    audit: tuple[ObservationAudit, ...]
-    sampled_frame_numbers: tuple[int, ...]
-    tracker_id: int | None
-
-
-@dataclass(frozen=True)
-class TrackMeta:
-    tracker_version: str
-    detector_model_id: str | None
-    mode: InferenceMode
-    created_at: str
 
 
 # ------------------------------------------------------------------------------------------------
@@ -147,25 +110,6 @@ def clip_box(box: BBox, width: int, height: int) -> BBox | None:
 # ------------------------------------------------------------------------------------------------
 # Identity gates
 # ------------------------------------------------------------------------------------------------
-
-
-@dataclass(frozen=True)
-class IdentityMetrics:
-    association_iou: float
-    center_step: float
-    scale: float
-    aspect: float
-    appearance: float
-    competing_iou: float
-
-
-@dataclass(frozen=True)
-class GateFailure:
-    gate: str
-    observed: float
-    operator: Operator
-    threshold: float
-    detail: str
 
 
 def identity_gates(m: IdentityMetrics, cfg: PolicyConfig) -> GateFailure | None:
