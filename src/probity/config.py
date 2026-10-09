@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import os
+import sys
 from functools import lru_cache
 from pathlib import Path
 
@@ -38,12 +40,36 @@ class Settings(BaseSettings):
     cosmos_endpoint: str | None = None
     cosmos_token: SecretStr | None = None
     cosmos_model_id: str | None = None
+    wandb_enabled: bool = False
+    wandb_api_key: SecretStr | None = None
+    wandb_base_url: str = "https://api.inference.wandb.ai/v1"
+    wandb_project: str | None = None
 
     @property
     def resolved_database_url(self) -> str:
         return self.database_url or f"sqlite:///{self.data_dir / 'cases.db'}"
 
 
+def publish_process_secrets(settings: Settings) -> None:
+    """Expose ``.env`` secrets to adapters that read ``os.environ``.
+
+    Pytest keeps the process environment alone so offline adapter tests stay offline.
+    """
+    if "pytest" in sys.modules:
+        return
+    key = settings.wandb_api_key.get_secret_value() if settings.wandb_api_key else ""
+    if key:
+        os.environ.setdefault("WANDB_API_KEY", key)
+        os.environ.setdefault("PROBITY_WANDB_API_KEY", key)
+    if settings.wandb_base_url:
+        os.environ.setdefault("WANDB_BASE_URL", settings.wandb_base_url)
+    if settings.wandb_project:
+        os.environ.setdefault("WANDB_PROJECT", settings.wandb_project)
+        os.environ.setdefault("WEAVE_PROJECT", settings.wandb_project)
+
+
 @lru_cache(maxsize=1)
 def get_settings() -> Settings:
-    return Settings()
+    settings = Settings()
+    publish_process_secrets(settings)
+    return settings

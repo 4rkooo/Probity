@@ -44,10 +44,10 @@ class WandbLiveAdapter(EvidenceReasoner):
     def __init__(
         self,
         api_key: str | None = None,
-        base_url: str = "https://api.wandb.ai/v1",
+        base_url: str = "https://api.inference.wandb.ai/v1",
         timeout_s: float = 45.0,
     ) -> None:
-        self.api_key = api_key or os.getenv("WANDB_API_KEY")
+        self.api_key = api_key or os.getenv("WANDB_API_KEY") or os.getenv("PROBITY_WANDB_API_KEY")
         self.base_url = os.getenv("WANDB_BASE_URL", base_url)
         self.timeout_s = timeout_s
         self._fixture_fallback = WandbFixtureAdapter()
@@ -66,9 +66,9 @@ class WandbLiveAdapter(EvidenceReasoner):
             )
 
         try:
-            async with httpx.AsyncClient(timeout=2.0) as client:
+            async with httpx.AsyncClient(timeout=5.0) as client:
                 res = await client.get(
-                    f"{self.base_url}/health",
+                    f"{self.base_url}/models",
                     headers={"Authorization": f"Bearer {self.api_key}"},
                 )
                 if res.status_code == 200:
