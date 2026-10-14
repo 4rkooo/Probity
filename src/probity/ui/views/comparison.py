@@ -106,10 +106,32 @@ def render_comparison_view(client: MockApiClient) -> None:
     st.subheader("5. Probity Reconstruction & Provenance Comparison")
 
     target_frame = ss.get("target_frame", client.target_frame_number)
-    outcome = client.outcome_for_target(int(target_frame))
-    if not ss.get("recon_done"):
-        _run_progress(client, outcome)
-        return
+    if client.uses_live_upload:
+        # Keep the subject window bound if the Streamlit process restarted mid-flow.
+        if client._live_track is None:  # noqa: SLF001 - UI session recovery
+            try:
+                client.ensure_live_subject(int(ss.get("seek_us") or 0))
+            except Exception as exc:  # noqa: BLE001
+                st.error(f"Live subject frames unavailable: {exc}")
+                return
+        outcome = client.outcome_for_target(int(target_frame))
+        if not ss.get("recon_done"):
+            with st.spinner("Running live reconstruction on your uploaded clip..."):
+                try:
+                    client.ensure_live_reconstruction(int(target_frame))
+                except Exception as exc:  # noqa: BLE001
+                    st.error(f"Live reconstruction failed: {exc}")
+                    _choose_another_target()
+                    return
+            ss["run_outcome"] = outcome
+            ss["recon_done"] = True
+            st.rerun()
+            return
+    else:
+        outcome = client.outcome_for_target(int(target_frame))
+        if not ss.get("recon_done"):
+            _run_progress(client, outcome)
+            return
 
     outcome = ss.get("run_outcome") or outcome
     run = client.get_reconstruction(outcome=outcome)
@@ -148,17 +170,30 @@ def render_comparison_view(client: MockApiClient) -> None:
         _choose_another_target()
         return
 
-    st.caption(
-        f"Real Probity output on evaluation window `{client.window.fixture_id}` "
-        f"(algorithm {run.algorithm_version}, {len(run.accepted_donor_frame_ids)} donors)."
-    )
+    if client.uses_live_upload:
+        st.caption(
+            f"Live Probity output on uploaded clip `{client.source_video.original_name}` "
+            f"(algorithm {run.algorithm_version}, {len(run.accepted_donor_frame_ids)} donors from this clip)."
+        )
+    else:
+        st.caption(
+            f"Real Probity output on evaluation window `{client.window.fixture_id}` "
+            f"(algorithm {run.algorithm_version}, {len(run.accepted_donor_frame_ids)} donors)."
+        )
     lut = list(run.provenance.source_lut) if run.provenance else []
     donor_uris = {
         entry.index: load_b64(client.frame_path(entry.frame_number))
         for entry in lut
         if entry.role == "DONOR"
     }
-    frames = sorted(client.window.frames, key=lambda f: f.frame_number)
+    if client.uses_live_upload:
+        frames = sorted(client._live_frames, key=lambda f: f.frame_number)  # noqa: SLF001
+        frame_numbers = [f.frame_number for f in frames]
+        frame_pts = [f.pts_us for f in frames]
+    else:
+        frames = sorted(client.window.frames, key=lambda f: f.frame_number)
+        frame_numbers = [f.frame_number for f in frames]
+        frame_pts = [f.pts_us for f in frames]
     first_borrowed = next((r for r in client.provenance_exceptions() if r[2] == 1), None)
     initial = (int(first_borrowed[0]) + 8, int(first_borrowed[1]) + 3) if first_borrowed else (0, 0)
 
@@ -171,11 +206,11 @@ def render_comparison_view(client: MockApiClient) -> None:
 
     with tab1:
         render_provenance_canvas(
-            target_img_uri=load_b64(client.target_frame_path()),
+            target_img_uri=load_b64(client.frame_path(parse_frame_id(run.target_frame_id)[1])),
             result_img_uri=load_b64(client.result_path()),
             donor_img_uris=donor_uris,
-            source_frame_uris=[load_b64(client.frame_path(f.frame_number)) for f in frames],
-            source_frame_pts_us=[f.pts_us for f in frames],
+            source_frame_uris=[load_b64(client.frame_path(n)) for n in frame_numbers],
+            source_frame_pts_us=frame_pts,
             lut_entries=[e.model_dump(mode="json") for e in lut],
             exceptions=client.provenance_exceptions(),
             frame_size=client.provenance_shape(),

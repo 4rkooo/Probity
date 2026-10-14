@@ -13,6 +13,7 @@ from probity.domain.models import (
     SearchPlan,
     SearchResult,
     SourceVideo,
+    TimeRangeUs,
 )
 from probity.domain.policy import PolicyConfig
 from probity.ports import (
@@ -94,6 +95,8 @@ class LocalSearchService:
                 filtered_terms=plan.filtered_terms,
                 policy_reason_codes=plan.policy_reason_codes,
             )
+        # Never search outside the video's indexed coverage (bad reasoner windows).
+        plan = _clamp_plan_to_indexed(plan, video.indexed_range)
 
         def elapsed_ms() -> int:
             return max(0, int((self._clock.monotonic_ns() - started) / 1_000_000))
@@ -229,6 +232,35 @@ class LocalSearchService:
             latency_ms=elapsed_ms(),
             correlation_id=correlation_id,
         )
+
+
+def _clamp_plan_to_indexed(plan: SearchPlan, indexed) -> SearchPlan:
+    """Drop or intersect a planner time window that falls outside indexed coverage."""
+    if plan.time_range is None or indexed is None:
+        return plan
+    start = max(plan.time_range.start_pts_us, indexed.start_pts_us)
+    end = min(plan.time_range.end_pts_us, indexed.end_pts_us)
+    if end <= start:
+        return SearchPlan(
+            semantic_query=plan.semantic_query,
+            objective_terms=plan.objective_terms,
+            subject_classes=plan.subject_classes,
+            time_range=None,
+            needs_clarification=plan.needs_clarification,
+            filtered_terms=plan.filtered_terms,
+            policy_reason_codes=plan.policy_reason_codes,
+        )
+    if start == plan.time_range.start_pts_us and end == plan.time_range.end_pts_us:
+        return plan
+    return SearchPlan(
+        semantic_query=plan.semantic_query,
+        objective_terms=plan.objective_terms,
+        subject_classes=plan.subject_classes,
+        time_range=TimeRangeUs(start_pts_us=start, end_pts_us=end),
+        needs_clarification=plan.needs_clarification,
+        filtered_terms=plan.filtered_terms,
+        policy_reason_codes=plan.policy_reason_codes,
+    )
 
 
 def _outside_range(video: SourceVideo, start_pts_us: int, end_pts_us: int) -> bool:

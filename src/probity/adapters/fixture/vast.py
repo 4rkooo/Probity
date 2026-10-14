@@ -99,6 +99,20 @@ class FixtureEvidenceStore:
             raise ValidationFailed("query embedding must be non-zero")
         query = query / qnorm
         wanted_classes = set(request.subject_classes)
+        video_segments = [
+            segment
+            for segment in self._segments.values()
+            if segment.video_id == request.video_id
+            and segment.source_sha256 == request.source_sha256
+        ]
+        # Custom footage (games, indoor, etc.) often has empty YOLO class tags. If no
+        # segment in this video carries any requested class, skip the class gate so
+        # semantic/lexical retrieval still works.
+        video_has_wanted = any(
+            wanted_classes.intersection(item.class_name for item in segment.detected_classes)
+            for segment in video_segments
+        )
+        apply_class_filter = bool(wanted_classes) and video_has_wanted
         ranked: list[tuple[float, int, RetrievedSegment]] = []
         for segment_id, segment in self._segments.items():
             if (
@@ -112,7 +126,7 @@ class FixtureEvidenceStore:
                     or segment.start_pts_us >= request.time_range.end_pts_us
                 ):
                     continue
-            if wanted_classes:
+            if apply_class_filter:
                 present = {item.class_name for item in segment.detected_classes}
                 if not present.intersection(wanted_classes):
                     continue

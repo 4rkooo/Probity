@@ -9,9 +9,14 @@ from probity.api.mock_client import MockApiClient
 from probity.domain.enums import TrackState
 from probity.domain.ids import parse_frame_id
 
-SUBJECT_OPTIONS = (
+SUBJECT_OPTIONS_DEMO = (
     "Detected LICENSE_PLATE box (YOLO detection at seed frame)",
     "Analyst-drawn rigid ROI (requires detector-backed continuity)",
+)
+
+SUBJECT_OPTIONS_LIVE = (
+    "Analyst rigid ROI on the selected search moment",
+    "Unconfirmed ROI (blocks reconstruction)",
 )
 
 
@@ -27,15 +32,34 @@ def render_subject_view(client: MockApiClient) -> None:
     ss = st.session_state
     st.subheader("4. Tracked-Subject Confirmation & Target Frame Selection")
 
-    subject_choice = st.radio("Subject", SUBJECT_OPTIONS, index=0, horizontal=True)
-    track = client.get_track(confirmed=subject_choice == SUBJECT_OPTIONS[0])
-    confirmed = track.state is TrackState.CONFIRMED
+    if client.uses_live_upload:
+        seek_us = int(ss.get("seek_us") or 0)
+        with st.spinner("Extracting stills from your uploaded clip..."):
+            try:
+                track = client.ensure_live_subject(seek_us)
+            except Exception as exc:  # noqa: BLE001 - show in UI
+                st.error(f"Could not prepare subject frames from the upload: {exc}")
+                return
+        options = SUBJECT_OPTIONS_LIVE
+        subject_choice = st.radio("Subject", options, index=0, horizontal=True)
+        confirmed_choice = subject_choice == options[0]
+        track = client.get_track(confirmed=confirmed_choice)
+        st.info(
+            f"Live custom upload **{client.source_video.original_name}** — "
+            "frames below are extracted from your clip around the search hit, "
+            "not the bundled sedan evaluation window."
+        )
+    else:
+        options = SUBJECT_OPTIONS_DEMO
+        subject_choice = st.radio("Subject", options, index=0, horizontal=True)
+        track = client.get_track(confirmed=subject_choice == options[0])
+        st.info(
+            f"Reconstruction window: **{client.window.fixture_id}** - Person 2's synthetic evaluation "
+            "window with real Probity output. The bundled demo clip has not been re-rendered for "
+            "reconstruction yet, so the tracked subject below comes from this window."
+        )
 
-    st.info(
-        f"Reconstruction window: **{client.window.fixture_id}** - Person 2's synthetic evaluation "
-        "window with real Probity output. The bundled demo clip has not been re-rendered for "
-        "reconstruction yet, so the tracked subject below comes from this window."
-    )
+    confirmed = track.state is TrackState.CONFIRMED
 
     col1, col2 = st.columns([2, 1])
 
@@ -45,10 +69,13 @@ def render_subject_view(client: MockApiClient) -> None:
             by_frame = {parse_frame_id(o.frame_id)[1]: o for o in observations}
             frame_numbers = list(by_frame)
             seed_frame = parse_frame_id(track.seed_frame_id)[1]
+            prior = ss.get("subject_frame", seed_frame)
+            if prior not in frame_numbers:
+                prior = seed_frame
             shown = st.select_slider(
                 "Frame step (track window)",
                 options=frame_numbers,
-                value=ss.get("subject_frame", seed_frame),
+                value=prior,
                 format_func=lambda f: f"f{f}",
             )
             ss["subject_frame"] = shown
@@ -92,15 +119,32 @@ def render_subject_view(client: MockApiClient) -> None:
                 accepted_frames,
                 index=default_idx,
                 format_func=lambda f: f"Frame {f}"
-                + (" - evaluated target (verified cached run)" if f == client.target_frame_number else ""),
+                + (
+                    " - seed / search moment"
+                    if client.uses_live_upload and f == seed_frame
+                    else (
+                        " - evaluated target (verified cached run)"
+                        if f == client.target_frame_number
+                        else ""
+                    )
+                ),
             )
         else:
             target_frame = None
             st.image(str(client.target_frame_path()), caption="Seed frame (no confirmed track)")
 
-        with st.expander("Cited search moment in the demo clip"):
+        clip_label = (
+            "Cited search moment in your uploaded clip"
+            if client.uses_live_upload
+            else "Cited search moment in the demo clip"
+        )
+        with st.expander(clip_label):
             seek_us = ss.get("seek_us", 0)
-            st.video(str(client.source_path()), start_time=int(seek_us // 1_000_000))
+            source = client.source_path()
+            if source.is_file():
+                st.video(str(source), start_time=int(seek_us // 1_000_000))
+            else:
+                st.warning("Source MP4 is not available locally for playback.")
             st.caption(f"Seeked to {seek_us / 1e6:.2f}s from the selected search result.")
 
     with col2:
@@ -115,6 +159,7 @@ def render_subject_view(client: MockApiClient) -> None:
               <div>Mean Conf: <strong>{track.mean_confidence:.2f}</strong> · Continuity: <strong>{track.continuity_score * 100:.1f}%</strong></div>
               <div>Detector-backed observations: <strong>{track.detector_observation_count}</strong></div>
               <div>Track ID: <code>{track.track_id[:13]}…</code></div>
+              <div>Mode: <strong>{track.mode}</strong></div>
             </div>
             """,
             unsafe_allow_html=True,
@@ -123,8 +168,8 @@ def render_subject_view(client: MockApiClient) -> None:
         if not confirmed:
             st.warning(
                 "Reconstruction disabled: track not confirmed "
-                f"({', '.join(track.reason_codes)}). Only plate/sign detections or a rigid ROI with "
-                "detector-backed continuity may be reconstructed."
+                f"({', '.join(str(r) for r in track.reason_codes)}). Confirm the rigid ROI "
+                "on your clip to continue."
             )
         if st.button(
             "Run Probity Reconstruction ➔",

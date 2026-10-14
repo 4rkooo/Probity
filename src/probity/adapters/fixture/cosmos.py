@@ -39,7 +39,13 @@ class FixtureVideoUnderstanding:
     adapter_name = "cosmos-fixture"
     schema_version = "1.0"
 
-    def __init__(self, fixture_root: Path | str, catalog_path: Path | str | None = None) -> None:
+    def __init__(
+        self,
+        fixture_root: Path | str,
+        catalog_path: Path | str | None = None,
+        *,
+        allow_synthetic: bool = False,
+    ) -> None:
         self._root = Path(fixture_root)
         if catalog_path is not None:
             self._catalog_path = Path(catalog_path)
@@ -52,6 +58,7 @@ class FixtureVideoUnderstanding:
         self._by_key: dict[tuple[str, int, int, int], dict[str, Any]] = {}
         self._vectors: np.ndarray | None = None
         self._refs: dict[str, Any] = {}
+        self._allow_synthetic = allow_synthetic
         self._load()
 
     @property
@@ -156,12 +163,65 @@ class FixtureVideoUnderstanding:
         key = (source_sha256, ordinal, start_pts_us, end_pts_us)
         row = self._by_key.get(key)
         if row is None:
+            if self._allow_synthetic:
+                return self._synthetic_row(source_sha256, ordinal, start_pts_us, end_pts_us)
             raise FixtureNotFound(
                 "no fixture description for "
                 f"source_sha256={source_sha256} ordinal={ordinal} "
                 f"pts=[{start_pts_us},{end_pts_us})"
             )
         return row
+
+    def _synthetic_row(
+        self, source_sha256: str, ordinal: int, start_pts_us: int, end_pts_us: int
+    ) -> dict[str, Any]:
+        """Deterministic placeholder description for custom uploads (demo only)."""
+        start_s = start_pts_us / 1_000_000
+        end_s = end_pts_us / 1_000_000
+        summary = (
+            f"Custom upload segment {ordinal}: observable scene content between "
+            f"{start_s:.1f}s and {end_s:.1f}s. Synthetic description for demo ingest "
+            f"(no live Cosmos). Source {source_sha256[:12]}."
+        )
+        search_terms = ["custom", "upload", "video", "segment", f"s{ordinal:04d}"]
+        raw = json.dumps(
+            {
+                "summary": summary,
+                "ordinal": ordinal,
+                "start_pts_us": start_pts_us,
+                "end_pts_us": end_pts_us,
+                "source_sha256": source_sha256,
+            },
+            sort_keys=True,
+        )
+        return {
+            "source_sha256": source_sha256,
+            "ordinal": ordinal,
+            "start_pts_us": start_pts_us,
+            "end_pts_us": end_pts_us,
+            "model_id": DESCRIBE_MODEL_ID,
+            "prompt_sha256": COSMOS_INGESTION_PROMPT_SHA256,
+            "raw_output_sha256": sha256_hex(raw.encode("utf-8")),
+            "summary": summary,
+            "rigid_subjects": [],
+            "actions": [],
+            "visibility": [
+                {
+                    "kind": "CLEAR",
+                    "observable_source": None,
+                    "confidence": 0.5,
+                    "time_range": None,
+                }
+            ],
+            "scene_changes": [],
+            "search_terms": search_terms,
+            "uncertainty": [
+                "Synthetic description generated locally because this upload is not in the "
+                "verified fixture catalog and live Cosmos is unavailable."
+            ],
+            "confidence": 0.5,
+            "mode": InferenceMode.FIXTURE.value,
+        }
 
     def _to_description(
         self, row: dict[str, Any], video_id: str, segment_id: str
@@ -204,11 +264,17 @@ class FixtureVideoUnderstanding:
         self._require_ready()
         out: list[Embedding] = []
         for item in items:
-            if not any(item.source_sha256 == key[0] for key in self._by_key):
+            known = any(item.source_sha256 == key[0] for key in self._by_key)
+            if not known and not self._allow_synthetic:
                 raise FixtureNotFound(f"unknown source_sha256 {item.source_sha256}")
             ordinal = parse_segment_id(item.segment_id)[1]
             text = embedding_input_text(item.summary, item.search_terms)
-            out.append(self._embed_text(text, f"{FIXTURE_ID}/embeddings.npy#{ordinal}"))
+            ref = (
+                f"{FIXTURE_ID}/embeddings.npy#{ordinal}"
+                if known
+                else f"synthetic/{item.source_sha256[:16]}#{ordinal}"
+            )
+            out.append(self._embed_text(text, ref))
         return tuple(out)
 
     async def embed_query(self, query: str) -> Embedding:

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import html
+import re
 
 import streamlit as st
 
@@ -11,7 +12,7 @@ from probity.domain.enums import SearchStatus
 from probity.domain.models import SearchEvidence, TimeRangeUs
 from probity.ui.components.states import empty_state, partial_bar
 
-EXAMPLES = (
+DEMO_EXAMPLES = (
     "Find the blue sedan when its rear plate is most visible",
     "Find vehicle moving left to right",
     "Find the fleeing stolen car",
@@ -25,6 +26,34 @@ def _indexed_range(client: MockApiClient) -> TimeRangeUs | None:
     return None
 
 
+def _examples_for(client: MockApiClient) -> tuple[str, ...]:
+    """Prefer live-segment phrases for custom uploads; fall back to demo sedan queries."""
+    if not client.uses_live_upload:
+        return DEMO_EXAMPLES
+    try:
+        segments = client.list_segments()
+    except Exception:  # noqa: BLE001 - UI must stay up if listing fails
+        segments = []
+    phrases: list[str] = []
+    for segment in segments[:3]:
+        text = (segment.description or "").strip()
+        if not text:
+            continue
+        # First sentence / clause as a searchable example.
+        piece = re.split(r"[.!?]", text, maxsplit=1)[0].strip()
+        if 12 <= len(piece) <= 90:
+            phrases.append(piece)
+    if phrases:
+        while len(phrases) < 3:
+            phrases.append(phrases[0])
+        return tuple(phrases[:3])
+    return (
+        "Find characters fighting on screen",
+        "Find a bright explosion or game over text",
+        "Find the platform battle scene",
+    )
+
+
 def render_search_view(client: MockApiClient) -> None:
     ss = st.session_state
     st.subheader("3. Semantic Search & Objective Query Planning")
@@ -33,21 +62,47 @@ def render_search_view(client: MockApiClient) -> None:
     if covered is not None:
         partial_bar(covered.start_pts_us, covered.end_pts_us, client.source_video.duration_us)
 
-    st.caption("Use observable terms (object, color, direction, visibility). Intent and identity terms are filtered.")
-    ex_cols = st.columns(len(EXAMPLES))
-    for i, example in enumerate(EXAMPLES):
+    examples = _examples_for(client)
+    if client.uses_live_upload:
+        st.info(
+            "Custom upload is indexed with live Cosmos descriptions. "
+            "Use terms from the scene (not the demo sedan/plate examples)."
+        )
+        st.caption("Use observable terms from this clip. Intent and identity terms are filtered.")
+    else:
+        st.caption(
+            "Use observable terms (object, color, direction, visibility). "
+            "Intent and identity terms are filtered."
+        )
+
+    ex_cols = st.columns(len(examples))
+    for i, example in enumerate(examples):
         with ex_cols[i]:
             if st.button(f"Example {i + 1}: '{example}'", key=f"example_{i}", width="stretch"):
                 ss["query_input"] = example
+                ss.pop("search_result", None)
 
+    # Drop stale demo sedan queries once a custom live clip is bound.
+    if client.uses_live_upload:
+        prior = (ss.get("query_input") or "").lower()
+        if any(tok in prior for tok in ("sedan", "license plate", "stolen car")):
+            ss.pop("query_input", None)
+            ss.pop("search_result", None)
+
+    default_query = ss.get("query_input") or examples[0]
     query_text = st.text_input(
         "Natural-Language Query",
-        value=ss.get("query_input", EXAMPLES[0]),
-        placeholder="e.g. Find the blue sedan when its rear plate is most visible",
+        value=default_query,
+        placeholder=examples[0],
     )
     if st.button("🔎 Search", type="primary", disabled=not query_text.strip()):
-        ss["query_input"] = query_text
-        ss["search_result"] = client.search(query_text, indexed_range=covered)
+        with st.spinner("Searching indexed segments..."):
+            ss["query_input"] = query_text
+            try:
+                ss["search_result"] = client.search(query_text, indexed_range=covered)
+            except Exception as exc:  # noqa: BLE001 - show in UI
+                st.error(f"Search failed: {exc}")
+                return
 
     result: SearchEvidence | None = ss.get("search_result")
     if result is None:
@@ -73,13 +128,19 @@ def render_search_view(client: MockApiClient) -> None:
                 st.success("✅ Policy gate: objective terms only")
 
     if result.status is SearchStatus.NEEDS_CLARIFICATION:
-        empty_state("Query needs clarification", "Describe something observable, e.g. a vehicle color or a sign.")
+        empty_state(
+            "Query needs clarification",
+            "Describe something observable in this clip (objects, actions, on-screen text).",
+        )
         return
     if result.status is SearchStatus.NO_RESULTS or not result.results:
-        empty_state(
-            "No indexed moments matched",
-            "Try observable terms such as 'blue sedan', 'rear plate', or 'street sign'.",
+        hint = (
+            "Try phrases from the Cosmos description of this clip "
+            "(example chips above), not the demo sedan/plate queries."
+            if client.uses_live_upload
+            else "Try observable terms such as 'blue sedan', 'rear plate', or 'street sign'."
         )
+        empty_state("No indexed moments matched", hint)
         return
 
     st.markdown("### Ranked Grounded Evidence Results")
@@ -91,7 +152,8 @@ def render_search_view(client: MockApiClient) -> None:
         )
         comp = res.components
         warn = (
-            '<div style="margin-top:8px; color:#f59e0b; font-size:11px; font-weight:700;">⚠ PARTIAL INDEX - results limited to the covered time range</div>'
+            '<div style="margin-top:8px; color:#f59e0b; font-size:11px; font-weight:700;">'
+            "⚠ PARTIAL INDEX - results limited to the covered time range</div>"
             if covered is not None or res.outside_indexed_range_warning
             else ""
         )

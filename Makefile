@@ -4,7 +4,7 @@ UV_ENV ?= .uvenv
 export UV_PROJECT_ENVIRONMENT := $(abspath $(UV_ENV))
 UV ?= uv
 
-.PHONY: setup lint format test contracts contracts-check fixtures dev
+.PHONY: setup lint format test contracts contracts-check fixtures dev workshop-dev
 
 setup:
 	$(UV) sync --frozen
@@ -34,6 +34,19 @@ dev:
 	@port=$$($(UV) run python -c 'from probity.config import get_settings; print(get_settings().api_port)'); \
 	echo "API health: http://127.0.0.1:$$port/v1/health"; \
 	echo "Worker logs JSON lines on stdout. Stop both with Ctrl-C."; \
+	trap 'trap - INT TERM EXIT; echo "Stopping API and worker"; kill 0' INT TERM EXIT; \
+	PROBITY_HANDLER_FACTORY=probity.wiring:handler_factory \
+		$(UV) run uvicorn probity.api.main:app --host 127.0.0.1 --port $$port & \
+	PROBITY_HANDLER_FACTORY=probity.wiring:handler_factory \
+		$(UV) run python -m probity.worker & \
+	wait
+
+# Builders Challenge: source /config/<team>.config into PROBITY_* then run API+worker.
+workshop-dev:
+	@echo "Probity workshop-dev: live Cosmos/VAST adapters from /config."
+	@set -a; . ./scripts/workshop_env.sh; set +a; \
+	port=$$($(UV) run python -c 'from probity.config import get_settings; print(get_settings().api_port)'); \
+	echo "API health: http://127.0.0.1:$$port/v1/health"; \
 	trap 'trap - INT TERM EXIT; echo "Stopping API and worker"; kill 0' INT TERM EXIT; \
 	PROBITY_HANDLER_FACTORY=probity.wiring:handler_factory \
 		$(UV) run uvicorn probity.api.main:app --host 127.0.0.1 --port $$port & \

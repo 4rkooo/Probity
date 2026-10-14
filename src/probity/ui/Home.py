@@ -29,9 +29,9 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-client = get_client()
 ss = st.session_state
 ss.setdefault("step", "Source")
+client = get_client(ss)
 
 # ---------------------------------------------------------------------------------------------
 # Persistent Shell: Top Disclosure Bar

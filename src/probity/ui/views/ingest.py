@@ -82,7 +82,12 @@ def render_ingest_view(client: MockApiClient) -> None:
 
     state = ss.get("ingest_state")
     if state is None:
-        st.markdown("The bundled clip is stored and hashed. Start ingestion to index it for search.")
+        if client.uses_live_upload:
+            st.markdown("Custom upload is staged on the live API. Start ingestion to index it.")
+        else:
+            st.markdown(
+                "The bundled clip is stored and hashed. Start ingestion to index it for search."
+            )
         if st.button("▶ Start Ingestion", type="primary"):
             _restart(client)
             st.rerun()
@@ -91,9 +96,37 @@ def render_ingest_view(client: MockApiClient) -> None:
     col1, col2 = st.columns([3, 1])
 
     if state == "RUNNING":
-        seq = client.cancel_job_sequence() if ss.get("ingest_cancel") else client.ingest_job_sequence()
-        tick = min(ss.get("ingest_tick", 0), len(seq) - 1)
-        job = seq[tick]
+        if client.uses_live_upload:
+            if ss.get("ingest_cancel"):
+                try:
+                    job = client.cancel_live_ingest()
+                except Exception as exc:  # noqa: BLE001 - surface to UI
+                    st.error(f"Cancel failed: {exc}")
+                    job = client.poll_live_ingest()
+            else:
+                try:
+                    job = client.poll_live_ingest()
+                except Exception as exc:  # noqa: BLE001 - surface to UI
+                    failure_card(
+                        title="Live ingest poll failed",
+                        code="LIVE_API_ERROR",
+                        message=str(exc),
+                        correlation_id=client.correlation_id,
+                        retryable=True,
+                    )
+                    if st.button("↻ Retry poll", type="primary"):
+                        st.rerun()
+                    return
+        else:
+            seq = (
+                client.cancel_job_sequence()
+                if ss.get("ingest_cancel")
+                else client.ingest_job_sequence()
+            )
+            tick = min(ss.get("ingest_tick", 0), len(seq) - 1)
+            job = seq[tick]
+            ss["ingest_tick"] = tick + 1
+
         with col1:
             _stage_strip(job)
             if job.state is JobState.CANCELLING:
@@ -106,7 +139,8 @@ def render_ingest_view(client: MockApiClient) -> None:
                 )
         with col2:
             st.markdown("### Job Status")
-            st.markdown(f"**State:** `{job.state}`  \n**Attempt:** {job.attempt}")
+            mode = "LIVE API" if client.uses_live_upload else str(job.mode)
+            st.markdown(f"**State:** `{job.state}`  \n**Attempt:** {job.attempt}  \n**Mode:** {mode}")
             if job.state is not JobState.CANCELLING and st.button(
                 "■ Cancel Ingestion", width="stretch"
             ):
@@ -119,7 +153,6 @@ def render_ingest_view(client: MockApiClient) -> None:
             ss["ingest_job"] = job
             st.rerun()
         time.sleep(poll_interval(ss))
-        ss["ingest_tick"] = tick + 1
         st.rerun()
         return
 
